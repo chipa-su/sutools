@@ -1,0 +1,100 @@
+{
+  "portalTitle": "蘇的工具箱",
+  "portalSubtitle": "SU's TOOLBOX",
+  "updatedAt": "2026-11-24",
+  "tools": [
+    {
+      "id": "trip-planner",
+      "title": "行程規劃板",
+      "subtitle": "TRIP BOARD",
+      "version": "v6.0",
+      "category": "旅遊出行",
+      "icon": "map",
+      "accentColor": "#0B7285",
+      "accentSoft": "#E3F3F5",
+      "description": "多日自由行排程看板，支援事件庫拖曳、Leaflet 互動地圖路線、Excel 樣板匯入與 QR Code 跨裝置分享。",
+      "url": "./trip-planner/",
+      "isExternal": false,
+      "actionLabel": "開啟規劃板",
+      "tags": ["旅遊", "行程", "地圖", "Excel", "QR Code", "倫敦"],
+      "subLinks": [
+        {
+          "label": "倫敦樣板 (.xlsx)",
+          "url": "./trip-planner/template-london-35-v4.xlsx",
+          "icon": "download",
+          "download": true
+        }
+      ]
+    },
+    {
+      "id": "learning-language",
+      "title": "語言學習中心",
+      "subtitle": "LANGUAGE HUB",
+      "version": "2 主題",
+      "category": "語言學習",
+      "icon": "translate",
+      "accentColor": "#2F9E44",
+      "accentSoft": "#E9F5EC",
+      "description": "高對比、老花眼友善的實戰外語會話手冊集。點擊進入次主題頁面選擇「冬季旅遊日文」或「美東旅遊英文」。",
+      "url": "./learning-language/",
+      "isExternal": false,
+      "actionLabel": "選擇語言主題",
+      "tags": ["日文", "英文", "旅遊會話", "語言學習", "發音"],
+      "subLinks": [
+        {
+          "label": "冬季旅遊日文",
+          "url": "./learning-language/japanese.html",
+          "icon": "menu_book"
+        },
+        {
+          "label": "美東旅遊英文",
+          "url": "./learning-language/english.html",
+          "icon": "public"
+        }
+      ]
+    },
+    {
+      "id": "web-print",
+      "title": "純淨網頁列印",
+      "subtitle": "WEB PRINT STUDIO",
+      "version": "v2.2",
+      "category": "文書排版",
+      "icon": "print",
+      "accentColor": "#9C36B5",
+      "accentSoft": "#F6EAF9",
+      "description": "多通道擷取網頁核心正文，提供 1:1 A4 紙張分頁格線精準模擬、螢光筆標註、字級行距調整與省墨水列印。",
+      "url": "./web-print/",
+      "isExternal": false,
+      "actionLabel": "開啟列印編輯器",
+      "tags": ["列印", "A4", "排版", "閱讀器", "Markdown", "文章擷取"],
+      "subLinks": [
+        {
+          "label": "操作說明",
+          "url": "./web-print/guide.html",
+          "icon": "help"
+        },
+        {
+          "label": "改版紀錄",
+          "url": "./web-print/history.html",
+          "icon": "history"
+        }
+      ]
+    },
+    {
+      "id": "s2-design",
+      "title": "S2 Design 官方網站",
+      "subtitle": "S2DESIGN.COM.TW",
+      "version": "OFFICIAL",
+      "category": "個人品牌",
+      "icon": "captive_portal",
+      "accentColor": "#1971C2",
+      "accentSoft": "#E6F1FA",
+      "description": "前往蘇的設計品牌與官方網站（https://s2design.com.tw/），瀏覽完整設計服務與作品集。",
+      "url": "https://s2design.com.tw/",
+      "isExternal": true,
+      "actionLabel": "前往官方網站",
+      "tags": ["S2 Design", "官網", "設計", "品牌"],
+      "subLinks": []
+    }
+  ]
+}

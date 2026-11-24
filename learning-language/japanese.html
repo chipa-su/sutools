@@ -1,0 +1,2898 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>冬季旅遊日文實戰手冊</title>
+  <style>
+    /* =========================================================================
+       1. 設計系統變數與基礎重置 (低明度莫蘭迪日系清爽風・老花眼友善高對比)
+       ========================================================================= */
+    :root {
+      --bg-page: #F7F8FA;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F1F4F8;
+      --bg-mastered: #D6F0E0;
+      --border-default: #DCE2EA;
+      --border-strong: #CBD5E1;
+      --border-core: #C94A4A;
+      --border-mastered: #7CC49B;
+      --accent-mastered: #2A7B56;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #475569;
+      --sidebar-width: 240px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+      --font-sans: "PingFang TC", "Microsoft JhengHei", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-jp: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "Noto Sans JP", sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* =========================================================================
+       2. 全視窗雙區固定骨架 (Header 固定 + Sidebar 固定 + Main 獨立捲動)
+       ========================================================================= */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .app-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+      background-color: var(--bg-card);
+      border-bottom: 1.5px solid var(--border-default);
+      z-index: 30;
+    }
+
+    .header-brand {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px 8px;
+      border-right: 1.5px solid var(--border-default);
+    }
+
+    .header-brand h1 {
+      margin: 0;
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .header-controls-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px 12px;
+      padding: 8px 14px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .seg-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background-color: var(--bg-subtle);
+      border: 1.5px solid var(--border-default);
+      border-radius: 9px;
+      padding: 3px;
+    }
+
+    .ctrl-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .ctrl-btn:hover {
+      background-color: #E2E8F0;
+      color: var(--text-primary);
+    }
+
+    .ctrl-btn.is-active {
+      background-color: #334155;
+      color: #FFFFFF;
+    }
+
+    .ctrl-btn.is-core-active {
+      background-color: #FFFFFF;
+      color: var(--border-core);
+      box-shadow: inset 0 0 0 1.5px var(--border-core);
+    }
+
+    .ctrl-btn.is-rate-active {
+      background-color: #4B6B82;
+      color: #FFFFFF;
+    }
+
+    .outline-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 6px 11px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      background-color: #FFFFFF;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border-strong);
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .outline-btn:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    .outline-btn.is-active {
+      background-color: #334155;
+      border-color: #334155;
+      color: #FFFFFF;
+    }
+
+    .outline-btn.is-hide-active {
+      background-color: #2A7B56;
+      border-color: #2A7B56;
+      color: #FFFFFF;
+    }
+
+    .outline-btn.is-sync-btn {
+      color: #3B5B72;
+      border-color: #B4C4D1;
+      background-color: #F4F7FA;
+    }
+
+    .outline-btn.is-sync-btn:hover {
+      background-color: #E6EEF4;
+      border-color: #4B6B82;
+      color: #1E3A4C;
+    }
+
+    .core-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: var(--border-core);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .chip-num {
+      font-size: 12.5px;
+      opacity: 0.85;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .divider-v {
+      width: 1.5px;
+      height: 22px;
+      background-color: var(--border-default);
+      flex-shrink: 0;
+    }
+
+    /* 雙進度條區 */
+    .progress-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .progress-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      width: 72px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .progress-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .progress-track {
+      width: 195px;
+      height: 9px;
+      background-color: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .progress-stat {
+      font-weight: 700;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      min-width: 92px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .reset-btn {
+      padding: 6px 9px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border: 1.5px solid transparent;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .reset-btn:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      border-color: var(--border-default);
+    }
+
+    .reset-btn.is-confirm {
+      background-color: var(--border-core);
+      color: #FFFFFF;
+      border-color: var(--border-core);
+    }
+
+    /* =========================================================================
+       3. 下方左右主體 (左側固定分類欄 + 右側獨立捲動內容區)
+       ========================================================================= */
+    .app-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background-color: var(--bg-card);
+      border-right: 1.5px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 12px 10px;
+      gap: 10px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cat-card-btn {
+      width: 100%;
+      min-height: 74px;
+      padding: 12px 13px;
+      border-radius: 11px;
+      background-color: #FFFFFF;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      text-align: left;
+      transition: all 0.16s ease;
+    }
+
+    .cat-card-btn:hover {
+      background-color: #F8FAFC;
+      border-color: #94A3B8;
+    }
+
+    .cat-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .cat-card-title {
+      font-size: 16.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      line-height: 1.25;
+    }
+
+    .cat-card-count {
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-secondary);
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-default);
+      padding: 2px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .cat-card-meta {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+
+    .sidebar-legend {
+      margin-top: auto;
+      padding: 12px 10px 4px;
+      border-top: 1.5px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .legend-tip {
+      margin: 2px 0 0;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .main-scroll {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 14px 18px 36px;
+    }
+
+    .content-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-header {
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--border-default);
+      background: transparent;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.3;
+    }
+
+    .section-header p {
+      margin: 4px 0 0;
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .sub-heading {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-secondary);
+      letter-spacing: 0.03em;
+    }
+
+    /* =========================================================================
+       4. 卡片共用樣式 (必背粗紅框 / 已熟記柔綠底 / 遮罩偷看 / 發音與勾選)
+       ========================================================================= */
+    .card-base {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      transition: background-color 0.16s ease, border-color 0.16s ease;
+    }
+
+    .card-base:hover {
+      border-color: #B8C4D4;
+    }
+
+    .card-base.is-mastered {
+      background-color: var(--bg-mastered);
+      border-color: var(--border-mastered);
+    }
+
+    .card-base.is-core {
+      border: 2.5px solid var(--border-core);
+    }
+
+    .card-base.is-core.is-mastered {
+      background-color: var(--bg-mastered);
+      border: 2.5px solid var(--border-core);
+    }
+
+    .action-btns {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border-strong);
+      background-color: #FFFFFF;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      border-color: #94A3B8;
+    }
+
+    .icon-btn.is-checked {
+      background-color: var(--accent-mastered);
+      border-color: var(--accent-mastered);
+      color: #FFFFFF;
+    }
+
+    .icon-btn.is-speaking {
+      background-color: #4B6B82;
+      border-color: #4B6B82;
+      color: #FFFFFF;
+      transform: scale(1.06);
+    }
+
+    /* 遮罩色塊 */
+    .mask-btn {
+      display: inline-block;
+      position: relative;
+      text-align: left;
+      border-radius: 6px;
+      padding: 1px 7px;
+      background-color: #DDE4EE;
+      color: transparent;
+      user-select: none;
+      max-width: 100%;
+      vertical-align: middle;
+      transition: background-color 0.15s ease;
+    }
+
+    .mask-btn:hover {
+      background-color: #CBD5E1;
+    }
+
+    .mask-blur {
+      filter: blur(5px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .mask-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* =========================================================================
+       5. 單字卡網格：桌機一列三張・精簡留白・老花眼放大字體
+       ========================================================================= */
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .vocab-card {
+      padding: 9px 11px;
+      display: flex;
+      align-items: stretch;
+      gap: 9px;
+    }
+
+    .vocab-left {
+      width: 56%;
+      min-width: 0;
+      padding-right: 8px;
+      border-right: 1px solid rgba(148, 163, 184, 0.38);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .vocab-kana {
+      font-family: var(--font-jp);
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .vocab-ja {
+      font-family: var(--font-jp);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .vocab-romaji {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .vocab-right {
+      width: 44%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .vocab-zh {
+      font-size: 17.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .vocab-note {
+      margin: 3px 0 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .vocab-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* =========================================================================
+       6. 句型卡、店員聽力卡、動詞文法卡 (橫向雙欄精簡高度)
+       ========================================================================= */
+    .stack-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .sentence-card {
+      padding: 11px 14px;
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .sentence-left {
+      padding-right: 12px;
+      border-right: 1px solid rgba(148, 163, 184, 0.38);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .sentence-scene {
+      font-size: 13.5px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .sentence-kana {
+      font-family: var(--font-jp);
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+
+    .sentence-ja {
+      font-family: var(--font-jp);
+      font-size: 18.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .sentence-romaji {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .sentence-right {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .sentence-zh {
+      font-size: 16.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .sentence-tip {
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .listening-card {
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .listening-col {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .listening-col.clerk-col {
+      padding-right: 14px;
+      border-right: 1px solid rgba(148, 163, 184, 0.38);
+    }
+
+    .listening-body {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    .role-badge {
+      font-size: 12.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .role-clerk {
+      background-color: #E2E8F0;
+      color: #334155;
+    }
+
+    .role-reply {
+      background-color: rgba(78, 115, 99, 0.16);
+      color: #2D5242;
+    }
+
+    .scene-tag {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #8F7343;
+    }
+
+    .qa-ja {
+      font-family: var(--font-jp);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .qa-zh {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+
+    .grammar-card {
+      padding: 13px 15px;
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 15px;
+      align-items: stretch;
+    }
+
+    .grammar-left {
+      padding-right: 15px;
+      border-right: 1px solid rgba(148, 163, 184, 0.38);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .grammar-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .grammar-badge {
+      font-size: 12.5px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background-color: rgba(69, 110, 115, 0.15);
+      color: #2E5257;
+    }
+
+    .grammar-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .grammar-meaning {
+      font-size: 15px;
+      font-weight: 700;
+      color: #456E73;
+    }
+
+    .formula-box {
+      display: inline-block;
+      align-self: flex-start;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-default);
+      border-radius: 8px;
+      padding: 5px 11px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .formula-del {
+      text-decoration: line-through;
+      color: var(--border-core);
+      font-weight: 800;
+    }
+
+    .formula-hl {
+      color: #36595D;
+      font-weight: 800;
+    }
+
+    .formula-hl-warm {
+      color: #8F7343;
+      font-weight: 800;
+    }
+
+    .example-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .example-item {
+      background-color: rgba(248, 250, 252, 0.92);
+      border: 1px solid var(--border-default);
+      border-radius: 9px;
+      padding: 8px 11px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .grammar-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .grammar-right-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .grammar-note-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #36595D;
+    }
+
+    .grammar-notes {
+      margin: 0;
+      padding-left: 19px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .empty-state {
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .empty-state h3 {
+      margin: 0;
+      font-size: 17px;
+      color: var(--text-primary);
+    }
+
+    .empty-state p {
+      margin: 6px 0 14px;
+      font-size: 14.5px;
+      color: var(--text-muted);
+    }
+
+    .empty-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background-color: #334155;
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .empty-btn:hover {
+      background-color: #1E293B;
+    }
+
+    /* Toast 浮動提示（底部中央顯示） */
+    .toast-container {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+      width: min(92vw, 560px);
+    }
+
+    .toast-item {
+      background-color: #1E293B;
+      color: #FFFFFF;
+      font-size: 14.5px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.24);
+      text-align: center;
+      line-height: 1.45;
+      opacity: 1;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .toast-item.is-fading {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    /* 手動複製同步網址備援視窗（剪貼簿受限時顯示） */
+    .sync-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 80;
+    }
+
+    .sync-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .sync-modal {
+      width: min(520px, 100%);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sync-modal h3 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .sync-modal p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .sync-modal-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border-strong);
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      font-size: 13.5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .sync-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* =========================================================================
+       7. 響應式斷點 (桌機 3 欄 -> 中螢幕 2 欄 -> 手機 1 欄與頂部橫向分類)
+       ========================================================================= */
+    @media (max-width: 1180px) {
+      .vocab-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grammar-card {
+        grid-template-columns: 1fr;
+      }
+      .grammar-left {
+        padding-right: 0;
+        border-right: none;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.38);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app-header {
+        flex-direction: column;
+      }
+      .header-brand {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-default);
+        padding: 8px 14px;
+      }
+      .header-controls-wrap {
+        padding: 8px 10px;
+        gap: 6px 10px;
+      }
+      .divider-v {
+        display: none;
+      }
+      .app-body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1.5px solid var(--border-default);
+        padding: 8px 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+      .sidebar-nav {
+        flex-direction: row;
+        gap: 8px;
+      }
+      .cat-card-btn {
+        width: auto;
+        min-width: 160px;
+        min-height: 58px;
+        padding: 8px 12px;
+        flex-shrink: 0;
+      }
+      .sidebar-legend {
+        display: none;
+      }
+      .sentence-card,
+      .listening-card {
+        grid-template-columns: 1fr;
+      }
+      .sentence-left,
+      .listening-col.clerk-col {
+        padding-right: 0;
+        border-right: none;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.38);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .vocab-grid {
+        grid-template-columns: 1fr;
+      }
+      .progress-track {
+        width: 130px;
+      }
+      .main-scroll {
+        padding: 12px 10px 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- ==================== 頂部固定整合列 (不隨單字捲動) ==================== -->
+    <header class="app-header">
+      <div class="header-brand">
+        <h1>冬季旅遊日文實戰手冊</h1>
+      </div>
+
+      <div class="header-controls-wrap">
+        <!-- 範圍篩選：全部 / 必背 (紅點無星號) -->
+        <div class="seg-group" role="group" aria-label="學習範圍篩選">
+          <button id="btnFilterAll" type="button" class="ctrl-btn is-active" title="顯示全部項目">
+            <span>全部</span>
+            <span id="totalAllChip" class="chip-num">143</span>
+          </button>
+          <button id="btnFilterCore" type="button" class="ctrl-btn" title="只顯示粗紅框必背項目">
+            <span class="core-dot"></span>
+            <span>必背</span>
+            <span id="coreTotalChip" class="chip-num">0</span>
+          </button>
+        </div>
+
+        <!-- 獨立開關按鈕：隱藏已熟記 -->
+        <button id="btnHideMastered" type="button" class="outline-btn" title="隱藏所有已標記熟記的卡片，專心複習未熟記項目">
+          隱藏已熟記
+        </button>
+
+        <span class="divider-v" aria-hidden="true"></span>
+
+        <!-- 三向遮罩自我測驗 -->
+        <div class="control-group" role="group" aria-label="遮罩測驗模式">
+          <button id="btnMaskJa" type="button" class="outline-btn" title="隱藏日文與假名進行自我抽考">隱日文</button>
+          <button id="btnMaskRomaji" type="button" class="outline-btn" title="隱藏羅馬拼音">隱拼音</button>
+          <button id="btnMaskZh" type="button" class="outline-btn" title="隱藏中文翻譯">隱中文</button>
+        </div>
+
+        <span class="divider-v" aria-hidden="true"></span>
+
+        <!-- 語速切換 -->
+        <div class="seg-group" role="group" aria-label="日語朗讀語速">
+          <button id="btnRateNormal" type="button" class="ctrl-btn is-rate-active" title="正常語速 1.0x">1.0x</button>
+          <button id="btnRateSlow" type="button" class="ctrl-btn" title="慢速跟讀 0.75x">0.75x</button>
+        </div>
+
+        <!-- 跨裝置同步網址按鈕 -->
+        <button id="btnSyncProgress" type="button" class="outline-btn is-sync-btn" title="產生並複製專屬同步網址，在其他裝置打開即可同步進度">
+          🔗 同步進度
+        </button>
+
+        <span class="divider-v" aria-hidden="true"></span>
+
+        <!-- 加長版雙進度條 + 兩段式安全重置 -->
+        <div class="progress-cluster">
+          <div class="progress-stack">
+            <div class="progress-row">
+              <span class="progress-label">
+                <span class="progress-dot" style="background-color: #C94A4A;"></span>
+                必背進度
+              </span>
+              <div class="progress-track">
+                <div id="coreProgressFill" class="progress-fill" style="background-color: #C94A4A;"></div>
+              </div>
+              <span id="coreProgressText" class="progress-stat">0/0 (0%)</span>
+            </div>
+            <div class="progress-row">
+              <span class="progress-label">
+                <span class="progress-dot" style="background-color: #2A7B56;"></span>
+                全部進度
+              </span>
+              <div class="progress-track">
+                <div id="allProgressFill" class="progress-fill" style="background-color: #2A7B56;"></div>
+              </div>
+              <span id="allProgressText" class="progress-stat">0/143 (0%)</span>
+            </div>
+          </div>
+
+          <button id="btnResetProgress" type="button" class="reset-btn" title="清空所有已熟記紀錄">重置</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================== 下方主體：左側固定分類欄 + 右側捲動內容 ==================== -->
+    <div class="app-body">
+      <aside class="sidebar" aria-label="大分類導覽側欄">
+        <nav id="sidebarNav" class="sidebar-nav"></nav>
+
+        <div class="sidebar-legend">
+          <div class="legend-row">
+            <span class="legend-box" style="border: 2.5px solid #C94A4A; background: #FFFFFF;"></span>
+            <span>粗紅框：優先必背</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-box" style="border: 1.5px solid #6BBF92; background: #D6F0E0;"></span>
+            <span>柔綠底：已熟記卡片</span>
+          </div>
+          <p class="legend-tip">開啟遮罩後，點擊任一色塊即可單獨偷看答案。</p>
+        </div>
+      </aside>
+
+      <main id="mainScrollArea" class="main-scroll">
+        <div id="contentContainer" class="content-inner"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部中央浮動提示容器 -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- 手動複製備援視窗（僅在瀏覽器封鎖剪貼簿寫入時出現） -->
+  <div id="syncModalBackdrop" class="sync-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
+    <div class="sync-modal">
+      <h3 id="syncModalTitle">🔗 複製跨裝置同步網址</h3>
+      <p id="syncModalDesc">請全選複製下方網址，傳送到手機或平板並開啟，即可載入目前的熟記進度：</p>
+      <input id="syncModalInput" class="sync-modal-input" type="text" readonly />
+      <div class="sync-modal-actions">
+        <button id="btnSyncModalCopy" type="button" class="outline-btn is-sync-btn">全選並複製</button>
+        <button id="btnSyncModalClose" type="button" class="outline-btn">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. 完整 143 項冬季東京・輕井澤旅遊日文資料庫（修正＋擴充版）
+      //    (32 + 33 + 33 + 23 + 14 + 8 = 143 項)
+      // =========================================================================
+      const CATEGORIES = [
+        {
+          key: 'transport',
+          icon: '🚆',
+          name: '交通與移動',
+          meta: '24 單字 ・ 8 句型',
+          subtitle: '東京地鐵轉乘、IC 卡儲值、行李寄放宅配與北陸新幹線往輕井澤必備用語，粗紅框為優先準備項目。',
+          color: '#4B6B82',
+          bgTint: '#EEF3F7',
+          vocab: [
+            { id: 'tr-v1', core: true, kana: 'しんかんせん', ja: '新幹線', tts: 'しんかんせん', romaji: 'Shinkansen', zh: '新幹線', note: '往輕井澤搭北陸新幹線' },
+            { id: 'tr-v2', core: true, kana: 'していせき', ja: '指定席', tts: 'していせき', romaji: 'Shiteiseki', zh: '對號座', note: '冬季旺季建議先劃位' },
+            { id: 'tr-v3', core: true, kana: 'じゆうせき', ja: '自由席', tts: 'じゆうせき', romaji: 'Jiyūseki', zh: '自由座', note: '自由入座車廂' },
+            { id: 'tr-v4', core: true, kana: 'のりかえ', ja: '乗り換え', tts: 'のりかえ', romaji: 'Norikae', zh: '轉車 / 換乘', note: '東京地鐵高頻指標' },
+            { id: 'tr-v5', core: true, kana: 'かいさつぐち', ja: '改札口', tts: 'かいさつぐち', romaji: 'Kaisatsuguchi', zh: '剪票口', note: '進出車站刷卡閘門' },
+            { id: 'tr-v6', core: true, kana: 'でぐち', ja: '出口', tts: 'でぐち', romaji: 'Deguchi', zh: '出口', note: '搭配北口、南口、八重洲口' },
+            { id: 'tr-v7', core: true, kana: 'こうつうけいアイシーカード', ja: '交通系ICカード', tts: 'こうつうけいあいしーかーど', romaji: 'Kōtsūkei IC Kādo', zh: '交通 IC 卡', note: 'Suica、PASMO 等統稱' },
+            { id: 'tr-v8', core: true, kana: 'チャージ', ja: 'チャージ', tts: 'ちゃーじ', romaji: 'Chāji', zh: '儲值 / 加值', note: '機台或超商皆可加值' },
+            { id: 'tr-v9', core: true, kana: 'かたみち', ja: '片道', tts: 'かたみち', romaji: 'Katamichi', zh: '單程票', note: '購買單趟車票' },
+            { id: 'tr-v10', core: true, kana: 'おうふく', ja: '往復', tts: 'おうふく', romaji: 'Ōfuku', zh: '來回票', note: '購買去回程車票' },
+            { id: 'tr-v11', core: false, kana: 'にもつおきば', ja: '荷物置き場', tts: 'にもつおきば', romaji: 'Nimotsu-okiba', zh: '行李放置區', note: '新幹線車廂大行李區' },
+            { id: 'tr-v12', core: true, kana: 'コインロッカー', ja: 'コインロッカー', tts: 'こいんろっかー', romaji: 'Koin Rokkā', zh: '投幣式置物櫃', note: '車站與 Outlet 寄放行李' },
+            { id: 'tr-v13', core: false, kana: 'あき', ja: '空き', tts: 'あき', romaji: 'Aki', zh: '空位 / 空櫃', note: '看置物櫃或座位指示燈' },
+            { id: 'tr-v14', core: false, kana: 'たっきゅうびん・はいそう', ja: '宅急便・配送', tts: 'たっきゅうびん、はいそう', romaji: 'Takkyūbin / Haisō', zh: '宅配 / 寄送', note: '大行李從東京寄輕井澤' },
+            { id: 'tr-v15', core: false, kana: 'しゅうでん', ja: '終電', tts: 'しゅうでん', romaji: 'Shūden', zh: '末班車', note: '晚上逛街留意返程時間' },
+            { id: 'tr-v16', core: true, kana: 'きっぷ', ja: '切符', tts: 'きっぷ', romaji: 'Kippu', zh: '車票', note: '新幹線紙本車票' },
+            { id: 'tr-v17', core: true, kana: 'のりば', ja: '乗り場', tts: 'のりば', romaji: 'Noriba', zh: '搭乘處 / 月台', note: '新幹線或巴士乘車處' },
+            { id: 'tr-v18', core: true, kana: 'くうこう', ja: '空港', tts: 'くうこう', romaji: 'Kūkō', zh: '機場', note: '成田機場、羽田機場' },
+            { id: 'tr-v19', core: true, kana: 'ちかてつ', ja: '地下鉄', tts: 'ちかてつ', romaji: 'Chikatetsu', zh: '地鐵', note: '東京 Metro、都營地下鐵' },
+            { id: 'tr-v20', core: false, kana: 'バス', ja: 'バス', tts: 'ばす', romaji: 'Basu', zh: '巴士 / 公車', note: '輕井澤景點移動常搭' },
+            { id: 'tr-v21', core: true, kana: 'えき', ja: '駅', tts: 'えき', romaji: 'Eki', zh: '車站', note: '東京駅、軽井沢駅' },
+            { id: 'tr-v22', core: false, kana: 'ちかく', ja: '近く', tts: 'ちかく', romaji: 'Chikaku', zh: '附近', note: '問路確認周邊設施' },
+            { id: 'tr-v23', core: false, kana: 'まっすぐ', ja: 'まっすぐ', tts: 'まっすぐ', romaji: 'Massugu', zh: '直走', note: '聽懂方向指引必備' },
+            { id: 'tr-v24', core: false, kana: 'みぎ・ひだり', ja: '右・左', tts: 'みぎ、ひだり', romaji: 'Migi / Hidari', zh: '右邊 / 左邊', note: '轉彎方向辨識' }
+          ],
+          sentences: [
+            {
+              id: 'tr-s1', core: true,
+              situation: '在東京站詢問往輕井澤的新幹線月台',
+              kana: 'かるいざわ いき の しんかんせん は、なんばんせん ですか？',
+              ja: '軽井沢行きの新幹線は、何番線ですか？',
+              tts: 'かるいざわいきのしんかんせんは、なんばんせんですか？',
+              romaji: 'Karuizawa-iki no shinkansen wa, nan-bansen desu ka?',
+              zh: '請問往輕井澤的新幹線在第幾月台？',
+              tip: '「～行き (iki)」表示開往某地，「何番線」是第幾月台。'
+            },
+            {
+              id: 'tr-s2', core: true,
+              situation: '上車前快速確認這班電車有沒有到目的地',
+              kana: 'この でんしゃ は、しんじゅく に いきますか？',
+              ja: 'この電車は、新宿に行きますか？',
+              tts: 'このでんしゃは、しんじゅくにいきますか？',
+              romaji: 'Kono densha wa, Shinjuku ni ikimasu ka?',
+              zh: '這班電車有到新宿嗎？',
+              tip: '套用 N5「地點＋に行きますか」，可自由替換站名。'
+            },
+            {
+              id: 'tr-s3', core: true,
+              situation: '在人工櫃檯購買兩張往輕井澤對號座車票',
+              kana: 'かるいざわ まで、していせき を にまい おねがいします。',
+              ja: '軽井沢まで、指定席を二枚お願いします。',
+              tts: 'かるいざわまで、していせきをにまいおねがいします。',
+              romaji: 'Karuizawa made, shiteiseki wo ni-mai onegaishimasu.',
+              zh: '到輕井澤，請給我兩張對號座。',
+              tip: '車票量詞用「～枚 (mai)」，買來回票可加上「往復で」。'
+            },
+            {
+              id: 'tr-s4', core: true,
+              situation: '拉著大行李箱在車站或櫃檯詢問寄放',
+              kana: 'おおきい にもつ を あずけたいです。',
+              ja: '大きい荷物を預けたいです。',
+              tts: 'おおきいにもつをあずけたいです。',
+              romaji: 'Ōkii nimotsu wo azuketai desu.',
+              zh: '我想寄放大件行李。',
+              tip: '套用「動詞去ます＋たいです」表達需求，簡短明確。'
+            },
+            {
+              id: 'tr-s5', core: false,
+              situation: '在東京車站或輕井澤站尋找投幣式置物櫃',
+              kana: 'コインロッカー は どこ に ありますか？',
+              ja: 'コインロッカーはどこにありますか？',
+              tts: 'こいんろっかーはどこにありますか？',
+              romaji: 'Koin rokkā wa doko ni arimasu ka?',
+              zh: '請問投幣式置物櫃在哪裡？',
+              tip: '熱門時段容易客滿，可留意指示牌上的「空き (Aki)」。'
+            },
+            {
+              id: 'tr-s6', core: false,
+              situation: '在超商或人工窗口請店員替西瓜卡加值',
+              kana: 'スイカ に さんぜんえん チャージ おねがいします。',
+              ja: 'スイカに三千円チャージお願いします。',
+              tts: 'すいかにさんぜんえんちゃーじおねがいします。',
+              romaji: 'Suica ni sanzen-en chāji onegaishimasu.',
+              zh: '請幫西瓜卡儲值三千日圓。',
+              tip: '遞出卡片與現金說這句即可，金額可替換為千円、二千円。'
+            },
+            {
+              id: 'tr-s7', core: false,
+              situation: '在窗口購買單程車票返回東京站',
+              kana: 'とうきょうえき まで かたみち で おねがいします。',
+              ja: '東京駅まで片道でお願いします。',
+              tts: 'とうきょうえきまでかたみちでおねがいします。',
+              romaji: 'Tōkyō-eki made katamichi de onegaishimasu.',
+              zh: '到東京車站，請給我單程票。',
+              tip: '若要買來回票，把「片道」換成「往復 (Ōfuku)」。'
+            },
+            {
+              id: 'tr-s8', core: false,
+              situation: '確認下一班新幹線的發車時間',
+              kana: 'つぎ の しんかんせん は なんじ ですか？',
+              ja: '次の新幹線は何時ですか？',
+              tts: 'つぎのしんかんせんはなんじですか？',
+              romaji: 'Tsugi no shinkansen wa nanji desu ka?',
+              zh: '請問下一班新幹線是幾點？',
+              tip: '「次の (Tsugi no)」代表下一個、下一班，搭巴士也適用。'
+            }
+          ]
+        },
+        {
+          key: 'dining',
+          icon: '🍜',
+          name: '餐廳與點餐',
+          meta: '24 單字 ・ 9 句型',
+          subtitle: '東京餐廳、咖啡廳、居酒屋與冬季暖食必備，涵蓋內用外帶、去冰客製化（～抜き）與過敏提醒。',
+          color: '#9E6359',
+          bgTint: '#F8EFEF',
+          vocab: [
+            { id: 'dn-v1', core: true, kana: 'よやく', ja: '予約', tts: 'よやく', romaji: 'Yoyaku', zh: '預約 / 訂位', note: '入店報訂位姓名' },
+            { id: 'dn-v2', core: true, kana: 'きんえん・きつえん', ja: '禁煙・喫煙', tts: 'きんえん、きつえん', romaji: 'Kin-en / Kitsuen', zh: '禁菸 / 吸菸', note: '居酒屋常問座位偏好' },
+            { id: 'dn-v3', core: true, kana: 'あたたかい・つめたい', ja: '温かい・冷たい', tts: 'あたたかい、つめたい', romaji: 'Atatakai / Tsumetai', zh: '熱的 / 冰的', note: '餐廳茶飲、蕎麥麵冷熱' },
+            { id: 'dn-v4', core: true, kana: 'ホット・アイス', ja: 'ホット・アイス', tts: 'ほっと、あいす', romaji: 'Hotto / Aisu', zh: '熱飲 / 冰飲', note: '咖啡廳點飲料最常用' },
+            { id: 'dn-v5', core: true, kana: 'てんない・もちかえり', ja: '店内・持ち帰り', tts: 'てんない、もちかえり', romaji: 'Tennai / Mochikaeri', zh: '內用 / 外帶', note: '稅率不同（10% / 8%）必問' },
+            { id: 'dn-v6', core: true, kana: 'おひや・おゆ', ja: 'お冷・お湯', tts: 'おひや、おゆ', romaji: 'Ohiya / Oyu', zh: '冰開水 / 熱開水', note: '冬天想喝熱水直接要 お湯' },
+            { id: 'dn-v7', core: true, kana: 'とりざら', ja: '取り皿', tts: 'とりざら', romaji: 'Torizara', zh: '分食小盤', note: '大家一起分食時索取' },
+            { id: 'dn-v8', core: true, kana: 'ちゅうもん', ja: '注文', tts: 'ちゅうもん', romaji: 'Chūmon', zh: '點餐', note: '呼叫店員點菜用' },
+            { id: 'dn-v9', core: true, kana: 'おかいけい', ja: 'お会計', tts: 'おかいけい', romaji: 'Okaikei', zh: '結帳 / 買單', note: '最禮貌的結帳說法' },
+            { id: 'dn-v10', core: true, kana: 'べつべつ', ja: '別々', tts: 'べつべつ', romaji: 'Betsubetsu', zh: '分開（結帳）', note: '各自付自己的餐點' },
+            { id: 'dn-v11', core: false, kana: 'しょっけん', ja: '食券', tts: 'しょっけん', romaji: 'Shokken', zh: '餐券', note: '拉麵店自動點餐機購買' },
+            { id: 'dn-v12', core: false, kana: 'おとおし', ja: 'お通し', tts: 'おとおし', romaji: 'O-tōshi', zh: '居酒屋小菜（桌費）', note: '入座先上的付費小菜' },
+            { id: 'dn-v13', core: true, kana: 'アレルギー', ja: 'アレルギー', tts: 'あれるぎー', romaji: 'Arerugī', zh: '過敏', note: '點餐前確認過敏原' },
+            { id: 'dn-v14', core: true, kana: 'メニュー', ja: 'メニュー', tts: 'めにゅー', romaji: 'Menyū', zh: '菜單', note: '英語メニュー 英文菜單' },
+            { id: 'dn-v15', core: true, kana: 'おすすめ', ja: 'おすすめ', tts: 'おすすめ', romaji: 'Osusume', zh: '推薦 / 招牌', note: '請店員推薦必點料理' },
+            { id: 'dn-v16', core: true, kana: 'ひとり・ふたり・さんにん', ja: '一人・二人・三人', tts: 'ひとり、ふたり、さんにん', romaji: 'Hitori / Futari / San-nin', zh: '一位 / 兩位 / 三位', note: '進餐廳報人數必備' },
+            { id: 'dn-v17', core: false, kana: 'まんせき', ja: '満席', tts: 'まんせき', romaji: 'Manseki', zh: '客滿', note: '店門口無空位標示' },
+            { id: 'dn-v18', core: false, kana: 'なまビール', ja: '生ビール', tts: 'なまびーる', romaji: 'Nama-bīru', zh: '生啤酒', note: '居酒屋常簡說 生（なま）' },
+            { id: 'dn-v19', core: false, kana: 'おいしい', ja: '美味しい', tts: 'おいしい', romaji: 'Oishī', zh: '好吃', note: '稱讚料理讓老闆開心' },
+            { id: 'dn-v20', core: false, kana: 'からい', ja: '辛い', tts: 'からい', romaji: 'Karai', zh: '辣的', note: '確認餐點是否會辣' },
+            { id: 'dn-v21', core: true, kana: 'こおりぬき', ja: '氷抜き', tts: 'こおりぬき', romaji: 'Kōri-nuki', zh: '去冰', note: '用「抜き」比「なし」更道地' },
+            { id: 'dn-v22', core: false, kana: 'かえだま', ja: '替え玉', tts: 'かえだま', romaji: 'Kaedama', zh: '加麵', note: '拉麵店單點追加麵條' },
+            { id: 'dn-v23', core: false, kana: 'いただきます', ja: 'いただきます', tts: 'いただきます', romaji: 'Itadakimasu', zh: '我要開動了', note: '用餐前禮貌用語' },
+            { id: 'dn-v24', core: true, kana: 'ごちそうさまでした', ja: 'ごちそうさまでした', tts: 'ごちそうさまでした', romaji: 'Gochisōsama deshita', zh: '謝謝招待', note: '吃飽結帳離店時道謝' }
+          ],
+          sentences: [
+            {
+              id: 'dn-s1', core: true,
+              situation: '走進餐廳報人數並告知有事先訂位',
+              kana: 'すみません、さんにん です。よやく しています。',
+              ja: 'すみません、三人です。予約しています。',
+              tts: 'すみません、さんにんです。よやくしています。',
+              romaji: 'Sumimasen, san-nin desu. Yoyaku shite imasu.',
+              zh: '不好意思，我們三位，我有預約。',
+              tip: '若沒預約直接說「三人です」並比手勢即可。'
+            },
+            {
+              id: 'dn-s2', core: true,
+              situation: '一月天氣寒冷，向店員點熱茶或熱開水',
+              kana: 'あたたかい おちゃ を ください。／ おゆ を ください。',
+              ja: '温かいお茶をください。／お湯をください。',
+              tts: 'あたたかいおちゃをください。おゆをください。',
+              romaji: 'Atatakai ocha wo kudasai. / Oyu wo kudasai.',
+              zh: '請給我熱茶。／請給我熱開水。',
+              tip: '日本餐廳預設給冰開水（お冷），想要熱開水直接說「お湯」。'
+            },
+            {
+              id: 'dn-s3', core: true,
+              situation: '點餐時客製化要求去冰或不要加蔥',
+              kana: 'こおりぬき で おねがいします。（ねぎぬき で おねがいします）',
+              ja: '氷抜きでお願いします。（ネギ抜きでお願いします）',
+              tts: 'こおりぬきでおねがいします。ねぎぬきでおねがいします。',
+              romaji: 'Kōri-nuki de onegaishimasu. (Negi-nuki de onegaishimasu.)',
+              zh: '請幫我去冰。（請不要加蔥。）',
+              tip: '要求去除某配料，用「～抜きでお願いします」最自然道地。'
+            },
+            {
+              id: 'dn-s4', core: true,
+              situation: '多人分享料理時，索取三個分食小盤',
+              kana: 'すみません、とりざら を さんまい いただけますか？',
+              ja: 'すみません、取り皿を三枚いただけますか？',
+              tts: 'すみません、とりざらをさんまいいただけますか？',
+              romaji: 'Sumimasen, torizara wo san-mai itadakemasu ka?',
+              zh: '不好意思，可以給我三個分食盤嗎？',
+              tip: '「いただけますか」比「ください」語氣更柔和禮貌。'
+            },
+            {
+              id: 'dn-s5', core: true,
+              situation: '與同行旅伴需要分開結帳',
+              kana: 'おかいけい は べつべつ で おねがいします。',
+              ja: 'お会計は別々でお願いします。',
+              tts: 'おかいけいはべつべつでおねがいします。',
+              romaji: 'Okaikei wa betsubetsu de onegaishimasu.',
+              zh: '結帳請幫我們分開算。',
+              tip: '要一起算就說「一緒に (Issho ni) お願いします」。'
+            },
+            {
+              id: 'dn-s6', core: false,
+              situation: '不知道點什麼時，請店員推薦招牌菜',
+              kana: 'おすすめ は なん ですか？',
+              ja: 'おすすめは何ですか？',
+              tts: 'おすすめはなんですか？',
+              romaji: 'Osusume wa nan desu ka?',
+              zh: '請問有什麼推薦的嗎？',
+              tip: '在輕井澤特色小店或居酒屋點菜非常實用。'
+            },
+            {
+              id: 'dn-s7', core: false,
+              situation: '在咖啡廳點一杯熱咖啡並告知內用',
+              kana: 'ホットコーヒー を ひとつ、てんない で おねがいします。',
+              ja: 'ホットコーヒーを一つ、店内でお願いします。',
+              tts: 'ほっとこーひーをひとつ、てんないでおねがいします。',
+              romaji: 'Hotto kōhī wo hitotsu, tennai de onegaishimasu.',
+              zh: '請給我一杯熱咖啡，內用。',
+              tip: '主動說出「店内で」或「持ち帰りで」，結帳更順暢。'
+            },
+            {
+              id: 'dn-s8', core: true,
+              situation: '點餐前提醒店員自己對特定食材過敏',
+              kana: 'エビ の アレルギー が あります。',
+              ja: 'エビのアレルギーがあります。',
+              tts: 'えびのあれるぎーがあります。',
+              romaji: 'Ebi no arerugī ga arimasu.',
+              zh: '我對蝦子過敏。',
+              tip: '可替換為「ピーナッツ（花生）」「牛乳（牛奶）」「そば（蕎麥）」。'
+            },
+            {
+              id: 'dn-s9', core: false,
+              situation: '吃飽結帳離開時向店家道謝並稱讚',
+              kana: 'ごちそうさまでした！とても おいしかったです。',
+              ja: 'ごちそうさまでした！とても美味しかったです。',
+              tts: 'ごちそうさまでした！とてもおいしかったです。',
+              romaji: 'Gochisōsama deshita! Totemo oishikatta desu.',
+              zh: '謝謝招待！非常好吃。',
+              tip: '離店時微笑說這句，日本店家會非常開心。'
+            }
+          ]
+        },
+        {
+          key: 'shopping',
+          icon: '🛍️',
+          name: '購物與退稅',
+          meta: '24 單字 ・ 9 句型',
+          subtitle: '東京百貨、藥妝與輕井澤 Outlet 實戰，區分試穿衣服與試穿鞋子動詞、全新庫存、暖暖包與防滑配件。',
+          color: '#5E607A',
+          bgTint: '#F1F1F7',
+          vocab: [
+            { id: 'sh-v1', core: true, kana: 'しちゃくしつ', ja: '試着室', tts: 'しちゃくしつ', romaji: 'Shichakushitsu', zh: '試衣間', note: '進日本試衣間需脫鞋' },
+            { id: 'sh-v2', core: true, kana: 'ざいこ', ja: '在庫', tts: 'ざいこ', romaji: 'Zaiko', zh: '庫存', note: '問倉庫是否還有貨' },
+            { id: 'sh-v3', core: true, kana: 'めんぜい', ja: '免税', tts: 'めんぜい', romaji: 'Menzei', zh: '免稅', note: '未稅滿 5,000 日圓' },
+            { id: 'sh-v4', core: true, kana: 'パスポート', ja: 'パスポート', tts: 'ぱすぽーと', romaji: 'Pasupōto', zh: '護照', note: '退稅必備實體正本' },
+            { id: 'sh-v5', core: true, kana: 'ふくろ', ja: '袋', tts: 'ふくろ', romaji: 'Fukuro', zh: '袋子 / 購物袋', note: '大多需付費加購' },
+            { id: 'sh-v6', core: true, kana: 'ぜいこみ・ぜいぬき', ja: '税込み・税抜き', tts: 'ぜいこみ、ぜいぬき', romaji: 'Zeikomi / Zeinuki', zh: '含稅 / 未稅', note: '免稅門檻看未稅價' },
+            { id: 'sh-v7', core: true, kana: 'サイズ', ja: 'サイズ', tts: 'さいず', romaji: 'Saizu', zh: '尺寸 / 尺碼', note: '服飾、冬靴必備詞' },
+            { id: 'sh-v8', core: true, kana: 'おおきい・ちいさい', ja: '大きい・小さい', tts: 'おおきい、ちいさい', romaji: 'Ōkii / Chīsai', zh: '大的 / 小的', note: '詢問大一號或小一號' },
+            { id: 'sh-v9', core: true, kana: 'いろ（しろ・くろ）', ja: '色（白・黒）', tts: 'いろ、しろ、くろ', romaji: 'Iro (Shiro / Kuro)', zh: '顏色（白・黑）', note: '他の色（別的顏色）' },
+            { id: 'sh-v10', core: true, kana: 'あたらしいの', ja: '新しいの', tts: 'あたらしいの', romaji: 'Atarashī no', zh: '新的（非展示品）', note: '問架上以外全新庫存' },
+            { id: 'sh-v11', core: false, kana: 'わりびき・セール', ja: '割引・セール', tts: 'わりびき、せーる', romaji: 'Waribiki / Sēru', zh: '折扣 / 特價', note: '一月冬季折扣季常見' },
+            { id: 'sh-v12', core: false, kana: 'ラッピング', ja: 'ラッピング', tts: 'らっぴんぐ', romaji: 'Rappingu', zh: '禮物包裝', note: '伴手禮送人包裝服務' },
+            { id: 'sh-v13', core: true, kana: 'カイロ（はるカイロ）', ja: 'カイロ（貼るカイロ）', tts: 'かいろ、はるかいろ', romaji: 'Kairo (Haru Kairo)', zh: '暖暖包（貼式）', note: '超商藥妝冬季必買' },
+            { id: 'sh-v14', core: false, kana: 'てぶくろ・マフラー', ja: '手袋・マフラー', tts: 'てぶくろ、まふらー', romaji: 'Tebukuro / Mafurā', zh: '手套 / 圍巾', note: '輕井澤零下添購保暖' },
+            { id: 'sh-v15', core: true, kana: 'すべりどめ', ja: '滑り止め', tts: 'すべりどめ', romaji: 'Suberidome', zh: '防滑墊 / 鞋底防滑', note: '雪地結冰路面必備' },
+            { id: 'sh-v16', core: true, kana: 'レンタル', ja: 'レンタル', tts: 'れんたる', romaji: 'Rentaru', zh: '租借', note: '輕井澤租雪衣、雪具' },
+            { id: 'sh-v17', core: true, kana: 'いくら', ja: 'いくら', tts: 'いくら', romaji: 'Ikura', zh: '多少錢', note: '問價錢最萬用單字' },
+            { id: 'sh-v18', core: true, kana: 'クレジットカード', ja: 'クレジットカード', tts: 'くれじっとかーど', romaji: 'Kurejitto Kādo', zh: '信用卡', note: '口語常簡稱 カード' },
+            { id: 'sh-v19', core: false, kana: 'げんきん', ja: '現金', tts: 'げんきん', romaji: 'Genkin', zh: '現金', note: '老街或小店備用' },
+            { id: 'sh-v20', core: false, kana: 'レシート', ja: 'レシート', tts: 'れしーと', romaji: 'Reshīto', zh: '收據 / 明細', note: '百貨集中退稅務必留存' },
+            { id: 'sh-v21', core: true, kana: 'しちゃく', ja: '試着', tts: 'しちゃく', romaji: 'Shichaku', zh: '試穿（衣服）', note: '專指外套、上衣、褲子' },
+            { id: 'sh-v22', core: true, kana: 'はく', ja: '履く', tts: 'はく', romaji: 'Haku', zh: '穿（鞋子・褲子）', note: '試穿雪靴、球鞋用此動詞' },
+            { id: 'sh-v23', core: false, kana: 'カウンター', ja: 'カウンター', tts: 'かうんたー', romaji: 'Kauntā', zh: '櫃檯', note: '退稅櫃檯 免税カウンター' },
+            { id: 'sh-v24', core: false, kana: 'みているだけ', ja: '見ているだけ', tts: 'みているだけ', romaji: 'Mite iru dake', zh: '只是看看', note: '禮貌婉拒店員緊跟' }
+          ],
+          sentences: [
+            {
+              id: 'sh-s1', core: true,
+              situation: '拿著外套或毛衣詢問能否試穿（衣服專用）',
+              kana: 'これ を しちゃく してもいいですか？',
+              ja: 'これを試着してもいいですか？',
+              tts: 'これをしちゃくしてもいいですか？',
+              romaji: 'Kore wo shichaku shite mo ī desu ka?',
+              zh: '請問我可以試穿這件嗎？',
+              tip: '「試着」主要用於試穿衣服；套用「て形＋もいいですか」。'
+            },
+            {
+              id: 'sh-s2', core: true,
+              situation: '在 Outlet 試穿雪靴或運動鞋（鞋子專用）',
+              kana: 'はいてみてもいいですか？',
+              ja: '履いてみてもいいですか？',
+              tts: 'はいてみてもいいですか？',
+              romaji: 'Haite mite mo ī desu ka?',
+              zh: '請問可以試穿看看嗎？',
+              tip: '試穿鞋子用動詞「履く (はく)」，說這句店員會覺得非常道地！'
+            },
+            {
+              id: 'sh-s3', core: true,
+              situation: '在輕井澤 Outlet 詢問有沒有大一號的尺寸',
+              kana: 'これ の、もうすこし おおきい サイズ は ありますか？',
+              ja: 'これの、もう少し大きいサイズはありますか？',
+              tts: 'これの、もうすこしおおきいさいずはありますか？',
+              romaji: 'Kore no, mō sukoshi ōkii saizu wa arimasu ka?',
+              zh: '請問這個有再大一點的尺寸嗎？',
+              tip: '找小一號就把「大きい」換成「小さい (Chīsai)」。'
+            },
+            {
+              id: 'sh-s4', core: true,
+              situation: '詢問百貨或 Outlet 的免稅手續辦理地點',
+              kana: 'めんぜい の てつづき は どこ で できますか？',
+              ja: '免税の手続きはどこでできますか？',
+              tts: 'めんぜいのてつづきはどこでできますか？',
+              romaji: 'Menzei no tetsuzuki wa doko de dekimasu ka?',
+              zh: '請問免稅手續在哪裡辦理？',
+              tip: '部分百貨需帶護照正本與收據到專屬退稅櫃檯。'
+            },
+            {
+              id: 'sh-s5', core: true,
+              situation: '不想買架上展示品，詢問是否有全新未拆庫存',
+              kana: 'あたらしいの ありますか？',
+              ja: '新しいのありますか？',
+              tts: 'あたらしいのありますか？',
+              romaji: 'Atarashī no arimasu ka?',
+              zh: '請問有全新的嗎？',
+              tip: '買包包、衣服、鞋子時超好用，簡短自然又有禮貌。'
+            },
+            {
+              id: 'sh-s6', core: true,
+              situation: '結帳時禮貌告知要用刷卡或西瓜卡付款',
+              kana: 'カード で おねがいします。／ スイカ で おねがいします。',
+              ja: 'カードでお願いします。／スイカでお願いします。',
+              tts: 'かーどでおねがいします。すいかでおねがいします。',
+              romaji: 'Kādo de onegaishimasu. / Suica de onegaishimasu.',
+              zh: '請讓我刷卡。／請用西瓜卡結帳。',
+              tip: '加上「お願いします」比單說「カードで」更加得體有禮。'
+            },
+            {
+              id: 'sh-s7', core: false,
+              situation: '在超商或藥妝店尋找可貼在衣服上的暖暖包',
+              kana: 'はるカイロ は どこ に ありますか？',
+              ja: '貼るカイロはどこにありますか？',
+              tts: 'はるかいろはどこにありますか？',
+              romaji: 'Haru kairo wa doko ni arimasu ka?',
+              zh: '請問貼式暖暖包在哪裡？',
+              tip: '手握式叫「貼らないカイロ (Haranai kairo)」。'
+            },
+            {
+              id: 'sh-s8', core: false,
+              situation: '買伴手禮時詢問店家是否提供禮物包裝',
+              kana: 'プレゼントよう に ラッピング できますか？',
+              ja: 'プレゼント用にラッピングできますか？',
+              tts: 'ぷれぜんとようにらっぴんぐできますか？',
+              romaji: 'Purezento-yō ni rappingu dekimasu ka?',
+              zh: '請問可以做成禮物包裝嗎？',
+              tip: '部分店家包裝需加價，可留意標示「無料（免費）/ 有料（收費）」。'
+            },
+            {
+              id: 'sh-s9', core: false,
+              situation: '店員熱情介紹時，微笑表示先隨便逛逛',
+              kana: 'ちょっと みているだけ です。',
+              ja: 'ちょっと見ているだけです。',
+              tts: 'ちょっとみているだけです。',
+              romaji: 'Chotto mite iru dake desu.',
+              zh: '我只是先看看。',
+              tip: '語氣自然柔和，店員會貼心退後讓你安心慢慢挑。'
+            }
+          ]
+        },
+        {
+          key: 'accommodation',
+          icon: '🏨',
+          name: '住宿與超商應急',
+          meta: '16 單字 ・ 7 句型',
+          subtitle: '飯店入住退房、行李寄放與宅配到輕井澤、超商微波加熱與清楚婉拒袋子，以及冬季感冒應急。',
+          color: '#4E7363',
+          bgTint: '#EDF4F0',
+          vocab: [
+            { id: 'ac-v1', core: true, kana: 'チェックイン', ja: 'チェックイン', tts: 'ちぇっくいん', romaji: 'Chekku-in', zh: '辦理入住', note: '飯店櫃檯報到必備' },
+            { id: 'ac-v2', core: true, kana: 'チェックアウト', ja: 'チェックアウト', tts: 'ちぇっくあうと', romaji: 'Chekku-auto', zh: '辦理退房', note: '通常為上午 10–11 點' },
+            { id: 'ac-v3', core: false, kana: 'なまえ', ja: '名前', tts: 'なまえ', romaji: 'Namae', zh: '名字 / 姓名', note: '核對訂房護照姓名' },
+            { id: 'ac-v4', core: false, kana: 'へや', ja: '部屋', tts: 'へや', romaji: 'Heya', zh: '房間', note: '飯店客房' },
+            { id: 'ac-v5', core: true, kana: 'かぎ・カードキー', ja: '鍵・カードキー', tts: 'かぎ、かーどきー', romaji: 'Kagi / Kādokī', zh: '鑰匙 / 房卡', note: '進房感應或退房歸還' },
+            { id: 'ac-v6', core: true, kana: 'にもつ', ja: '荷物', tts: 'にもつ', romaji: 'Nimotsu', zh: '行李', note: '寄放或寄送行李用' },
+            { id: 'ac-v7', core: true, kana: 'ワイファイ', ja: 'Wi-Fi', tts: 'わいふぁい', romaji: 'Wai-fai', zh: 'Wi-Fi 網路', note: '密碼叫 パスワード' },
+            { id: 'ac-v8', core: false, kana: 'ちょうしょく', ja: '朝食', tts: 'ちょうしょく', romaji: 'Chōshoku', zh: '早餐', note: '確認飯店早餐時間地點' },
+            { id: 'ac-v9', core: false, kana: 'おんせん・だいよくじょう', ja: '温泉・大浴場', tts: 'おんせん、だいよくじょう', romaji: 'Onsen / Daiyokujō', zh: '溫泉 / 大浴場', note: '輕井澤冬季泡湯享受' },
+            { id: 'ac-v10', core: false, kana: 'おべんとう', ja: 'お弁当', tts: 'おべんとう', romaji: 'Obentō', zh: '便當', note: '超商或新幹線駅弁' },
+            { id: 'ac-v11', core: true, kana: 'はし', ja: '箸', tts: 'はし', romaji: 'Hashi', zh: '筷子', note: '超商或餐廳索取餐具' },
+            { id: 'ac-v12', core: true, kana: 'くすり', ja: '薬', tts: 'くすり', romaji: 'Kusuri', zh: '藥', note: '藥妝店尋找常備藥' },
+            { id: 'ac-v13', core: true, kana: 'かぜ', ja: '風邪', tts: 'かぜ', romaji: 'Kaze', zh: '感冒', note: '感冒藥叫 風邪薬' },
+            { id: 'ac-v14', core: true, kana: 'いたい', ja: '痛い', tts: 'いたい', romaji: 'Itai', zh: '痛', note: '頭痛 頭が痛い / 胃痛 胃が痛い' },
+            { id: 'ac-v15', core: false, kana: 'たすけて', ja: '助けて', tts: 'たすけて', romaji: 'Tasukete', zh: '救命 / 幫幫我', note: '緊急狀況求助用' },
+            { id: 'ac-v16', core: true, kana: 'けっこうです', ja: '結構です', tts: 'けっこうです', romaji: 'Kekkō desu', zh: '不用了（禮貌拒絕）', note: '比 大丈夫です 更不會誤會' }
+          ],
+          sentences: [
+            {
+              id: 'ac-s1', core: true,
+              situation: '抵達飯店櫃檯出示護照辦理入住',
+              kana: 'チェックイン おねがいします。よやく が あります。',
+              ja: 'チェックインお願いします。予約があります。',
+              tts: 'ちぇっくいんおねがいします。よやくがあります。',
+              romaji: 'Chekku-in onegaishimasu. Yoyaku ga arimasu.',
+              zh: '我要辦理入住，我有預約。',
+              tip: '說完雙手遞出護照即可快速核對訂房資料。'
+            },
+            {
+              id: 'ac-s2', core: true,
+              situation: '退房後還想逛街，請飯店暫時寄放行李',
+              kana: 'チェックアウトご に、にもつ を あずかってもらえますか？',
+              ja: 'チェックアウト後に、荷物を預かってもらえますか？',
+              tts: 'ちぇっくあうとごに、にもつをあずかってもらえますか？',
+              romaji: 'Chekku-auto-go ni, nimotsu wo azukatte moraemasu ka?',
+              zh: '請問退房後可以幫我寄放行李嗎？',
+              tip: '入住前寄放可說「チェックイン前 (mae) に…」。'
+            },
+            {
+              id: 'ac-s3', core: true,
+              situation: '在東京飯店櫃檯請人員協助將大行李宅配到輕井澤',
+              kana: 'この にもつ を かるいざわ の ホテル へ はいそう できますか？',
+              ja: 'この荷物を軽井沢のホテルへ配送できますか？',
+              tts: 'このにもつをかるいざわのほてるへはいそうできますか？',
+              romaji: 'Kono nimotsu wo Karuizawa no hoteru e haisō dekimasu ka?',
+              zh: '請問這件行李可以配送到輕井澤的飯店嗎？',
+              tip: '準備好輕井澤飯店的日文地址與訂房確認單給櫃檯看最省事。'
+            },
+            {
+              id: 'ac-s4', core: true,
+              situation: '在超商買便當或熱食時請店員微波加熱',
+              kana: 'あたためてください。',
+              ja: '温めてください。',
+              tts: 'あたためてください。',
+              romaji: 'Atatamete kudasai.',
+              zh: '請幫我加熱。',
+              tip: '套用「動詞て形＋ください」，在超商幾乎每天用到。'
+            },
+            {
+              id: 'ac-s5', core: true,
+              situation: '結帳時清楚表達不需要加購塑膠袋',
+              kana: 'ふくろ は いりません。／ けっこうです。',
+              ja: '袋はいりません。／結構です。',
+              tts: 'ふくろはいりません。けっこうです。',
+              romaji: 'Fukuro wa irimasen. / Kekkō desu.',
+              zh: '我不需要袋子。／不用了，謝謝。',
+              tip: '用「いりません」或「結構です」比「大丈夫です」更明確無歧義。'
+            },
+            {
+              id: 'ac-s6', core: false,
+              situation: '冬季受寒身體不適，在藥妝店尋找感冒藥',
+              kana: 'あたま が いたい です。かぜぐすり は どこ ですか？',
+              ja: '頭が痛いです。風邪薬はどこですか？',
+              tts: 'あたまがいたいです。かぜぐすりはどこですか？',
+              romaji: 'Atama ga itai desu. Kazegusuri wa doko desu ka?',
+              zh: '我頭痛，請問感冒藥在哪裡？',
+              tip: '肚子痛可說「お腹が痛いです (Onaka ga itai desu)」。'
+            },
+            {
+              id: 'ac-s7', core: false,
+              situation: '在飯店房間內無法連上網路，向櫃檯反映',
+              kana: 'へや の ワイファイ が つながりません。',
+              ja: '部屋のWi-Fiがつながりません。',
+              tts: 'へやのわいふぁいがつながりません。',
+              romaji: 'Heya no Wai-fai ga tsunagarimasen.',
+              zh: '房間的 Wi-Fi 連不上。',
+              tip: '「つながりません」是「連不上」之意，手機網路異常也適用。'
+            }
+          ]
+        },
+        {
+          key: 'listening',
+          icon: '👂',
+          name: '店員聽力防禦',
+          meta: '14 組高頻問答',
+          subtitle: '收錄東京超商、咖啡廳、餐廳與退稅最常聽到的 14 句店員提問與最道地零誤會回覆，左右皆可獨立發音。',
+          color: '#8F7343',
+          bgTint: '#F7F3EA',
+          qaList: [
+            {
+              id: 'ls-1', core: true, scene: '01・集點卡確認',
+              clerk: { kana: 'ポイントカード は おもち ですか？', ja: 'ポイントカードはお持ちですか？', tts: 'ぽいんとかーどはおもちですか？', romaji: 'Pointo kādo wa omochi desu ka?', zh: '請問您有集點卡嗎？' },
+              reply: { kana: 'いいえ、もっていません。', ja: 'いいえ、持っていません。', tts: 'いいえ、もっていません。', romaji: 'Īe, motte imasen.', zh: '沒有，我沒有集點卡。', note: '直接說「持っていません」比「大丈夫です」更明確不會被二次確認。' }
+            },
+            {
+              id: 'ls-2', core: true, scene: '02・加購塑膠袋',
+              clerk: { kana: 'ふくろ は ごいりよう ですか？', ja: '袋はご入り用ですか？', tts: 'ふくろはごいりようですか？', romaji: 'Fukuro wa go-iriyō desu ka?', zh: '請問需要袋子嗎？' },
+              reply: { kana: 'いちまい おねがいします。／ いいえ、けっこうです（いりません）。', ja: '一枚お願いします。／いいえ、結構です（いりません）。', tts: 'いちまいおねがいします。いいえ、けっこうです。いりません。', romaji: 'Ichi-mai onegaishimasu. / Īe, kekkō desu (irimasen).', zh: '請給我一個。／不用了（不需要）。', note: '不要袋子時用「結構です」或「いりません」最清楚。' }
+            },
+            {
+              id: 'ls-3', core: true, scene: '03・超商微波加熱',
+              clerk: { kana: 'おあたため しますか？', ja: 'お温めしますか？', tts: 'おあたためしますか？', romaji: 'O-atatame shimasu ka?', zh: '需要幫您加熱嗎？' },
+              reply: { kana: 'はい、おねがいします。／ いいえ、そのまま で けっこうです。', ja: 'はい、お願いします。／いいえ、そのままで結構です。', tts: 'はい、おねがいします。いいえ、そのままでけっこうです。', romaji: 'Hai, onegaishimasu. / Īe, sonomama de kekkō desu.', zh: '好的，麻煩加熱。／不用，維持原樣即可。', note: '「そのままで」代表「就這樣不用動」，超道地日語。' }
+            },
+            {
+              id: 'ls-4', core: true, scene: '04・付款方式確認',
+              clerk: { kana: 'おしはらい ほうほう は？', ja: 'お支払い方法は？', tts: 'おしはらいほうほうは？', romaji: 'O-shiharai hōhō wa?', zh: '請問您的付款方式是？' },
+              reply: { kana: 'カード で おねがいします。／ スイカ で おねがいします。', ja: 'カードでお願いします。／スイカでお願いします。', tts: 'かーどでおねがいします。すいかでおねがいします。', romaji: 'Kādo de onegaishimasu. / Suica de onegaishimasu.', zh: '請讓我刷卡。／請用西瓜卡。', note: '加上「お願いします」會比只說單字更禮貌自然。' }
+            },
+            {
+              id: 'ls-5', core: true, scene: '05・內用或外帶',
+              clerk: { kana: 'こちら で おめしあがり ですか？', ja: 'こちらでお召し上がりですか？', tts: 'こちらでおめしあがりですか？', romaji: 'Kochira de o-meshiagari desu ka?', zh: '請問您要在這裡（內用）嗎？' },
+              reply: { kana: 'はい、てんない で おねがいします。／ もちかえり で おねがいします。', ja: 'はい、店内でお願いします。／持ち帰りでお願いします。', tts: 'はい、てんないでおねがいします。もちかえりでおねがいします。', romaji: 'Hai, tennai de onegaishimasu. / Mochikaeri de onegaishimasu.', zh: '是的，內用。／請幫我外帶。', note: '咖啡廳與速食店因內用 10%、外帶 8% 稅率不同必問。' }
+            },
+            {
+              id: 'ls-6', core: true, scene: '06・冷熱食是否分袋',
+              clerk: { kana: 'ふくろ は わけますか？', ja: '袋は分けますか？', tts: 'ふくろはわけますか？', romaji: 'Fukuro wa wakemasu ka?', zh: '袋子要分開裝嗎？' },
+              reply: { kana: 'いっしょ で だいじょうぶ です。／ わけてください。', ja: '一緒で大丈夫です。／分けてください。', tts: 'いっしょでだいじょうぶです。わけてください。', romaji: 'Issho de daijōbu desu. / Wakete kudasai.', zh: '裝一起沒關係。／麻煩幫我分開裝。', note: '在超商同時買熱食和冰飲時幾乎必聽這句。' }
+            },
+            {
+              id: 'ls-7', core: true, scene: '07・收據確認',
+              clerk: { kana: 'レシート は ごいりよう ですか？', ja: 'レシートはご入り用ですか？', tts: 'れしーとはごいりようですか？', romaji: 'Reshīto wa go-iriyō desu ka?', zh: '請問需要收據嗎？' },
+              reply: { kana: 'はい、おねがいします。／ いりません。', ja: 'はい、お願いします。／いりません。', tts: 'はい、おねがいします。いりません。', romaji: 'Hai, onegaishimasu. / Irimasen.', zh: '是的，麻煩給我。／不需要。', note: '百貨集中退稅務必拿收據，超商不需要可直接說「いりません」。' }
+            },
+            {
+              id: 'ls-8', core: true, scene: '08・筷子雙數確認',
+              clerk: { kana: 'おはし は なんぜん おつけしますか？', ja: 'お箸は何膳おつけしますか？', tts: 'おはしはなんぜんおつけしますか？', romaji: 'Ohashi wa nanzen o-tsuke shimasu ka?', zh: '請問需要附幾雙筷子？' },
+              reply: { kana: 'にぜん（ふたつ） おねがいします。', ja: '二膳（ふたつ）お願いします。', tts: 'にぜんおねがいします。ふたつおねがいします。', romaji: 'Ni-zen (Futatsu) onegaishimasu.', zh: '請給我兩雙。', note: '筷子量詞是「膳 (ぜん)」，一時忘記直接說「ふたつ」加比手勢也完全通！' }
+            },
+            {
+              id: 'ls-9', core: true, scene: '09・餐廳入店人數',
+              clerk: { kana: 'なんめいさま ですか？', ja: '何名様ですか？', tts: 'なんめいさまですか？', romaji: 'Nan-mei sama desu ka?', zh: '請問幾位呢？' },
+              reply: { kana: 'ふたり です。／ さんにん です。', ja: '二人です。／三人です。', tts: 'ふたりです。さんにんです。', romaji: 'Futari desu. / San-nin desu.', zh: '兩位。／三位。', note: '回答同時比手勢，溝通零失誤。' }
+            },
+            {
+              id: 'ls-10', core: false, scene: '10・詢問決定餐點了嗎',
+              clerk: { kana: 'ごちゅうもん は おきまり ですか？', ja: 'ご注文はお決まりですか？', tts: 'ごちゅうもんはおきまりですか？', romaji: 'Go-chūmon wa o-kimari desu ka?', zh: '請問您決定好要點什麼了嗎？' },
+              reply: { kana: 'はい、これ を ください。／ もうすこし まってください。', ja: 'はい、これをください。／もう少し待ってください。', tts: 'はい、これをください。もうすこしまってください。', romaji: 'Hai, kore wo kudasai. / Mō sukoshi matte kudasai.', zh: '是的，請給我這個。／請再等我一下。', note: '還沒看懂菜單時，「もう少し待ってください」超救命。' }
+            },
+            {
+              id: 'ls-11', core: true, scene: '11・退稅或入住查驗護照',
+              clerk: { kana: 'パスポート を みせていただけますか？', ja: 'パスポートを見せていただけますか？', tts: 'ぱすぽーとをみせていただけますか？', romaji: 'Pasupōto wo misete itadakemasu ka?', zh: '請問可以出示您的護照嗎？' },
+              reply: { kana: 'はい、どうぞ。', ja: 'はい、どうぞ。', tts: 'はい、どうぞ。', romaji: 'Hai, dōzo.', zh: '好的，請看（給您）。', note: '辦理免稅或飯店 Check-in 時高頻聽見。' }
+            },
+            {
+              id: 'ls-12', core: false, scene: '12・試穿後詢問尺寸合適度',
+              clerk: { kana: 'サイズ は いかが ですか？', ja: 'サイズはいかがですか？', tts: 'さいずはいかがですか？', romaji: 'Saizu wa ikaga desu ka?', zh: '請問尺寸還合適嗎？' },
+              reply: { kana: 'ちょうどいい です。／ もうすこし おおきいの は ありますか？', ja: 'ちょうどいいです。／もう少し大きいのはありますか？', tts: 'ちょうどいいです。もうすこしおおきいのはありますか？', romaji: 'Chōdo ī desu. / Mō sukoshi ōkii no wa arimasu ka?', zh: '剛剛好。／請問有再大一點的嗎？', note: '輕井澤 Outlet 試穿大衣或雪靴時幾乎必聽。' }
+            },
+            {
+              id: 'ls-13', core: false, scene: '13・詢問禁菸或吸菸席',
+              clerk: { kana: 'きんえんせき と きつえんせき、どちら が よろしいですか？', ja: '禁煙席と喫煙席、どちらがよろしいですか？', tts: 'きんえんせきときつえんせき、どちらがよろしいですか？', romaji: 'Kin-enseki to kitsuenseki, dochira ga yoroshī desu ka?', zh: '請問禁菸席和吸菸席，您偏好哪一種？' },
+              reply: { kana: 'きんえん で おねがいします。', ja: '禁煙でお願いします。', tts: 'きんえんでおねがいします。', romaji: 'Kin-en de onegaishimasu.', zh: '請給我禁菸席。', note: '部分傳統喫茶店或居酒屋仍會區分座位。' }
+            },
+            {
+              id: 'ls-14', core: false, scene: '14・確認感應式刷卡支付',
+              clerk: { kana: 'タッチけっさい で よろしいですか？', ja: 'タッチ決済でよろしいですか？', tts: 'たっちけっさいでよろしいですか？', romaji: 'Tatchi kessai de yoroshī desu ka?', zh: '請問您要用感應式支付嗎？' },
+              reply: { kana: 'はい、おねがいします。', ja: 'はい、お願いします。', tts: 'はい、おねがいします。', romaji: 'Hai, onegaishimasu.', zh: '是的，麻煩您。', note: '日本現在非常普及感應刷卡與 Apple Pay，直接點頭說這句即可。' }
+            }
+          ]
+        },
+        {
+          key: 'grammar',
+          icon: '🧩',
+          name: '動詞公式與延伸文法',
+          meta: '8 大旅遊萬用公式',
+          subtitle: '專為 N5 70% 尚未學過動詞變化的程度設計：左側看公式與例句，右側提供白話延伸解說與易混淆對照。',
+          color: '#456E73',
+          bgTint: '#EDF4F5',
+          patterns: [
+            {
+              id: 'gr-1', core: true,
+              badge: '公式 01・想要做～',
+              title: '動詞ます形（去ます）＋ たいです',
+              meaning: '想要做某動作',
+              formulaHtml: '去掉 <span class="formula-del">ます</span> ＋ <span class="formula-hl">たいです</span>',
+              examples: [
+                {
+                  kana: 'あたたかい ラーメン が たべたいです。',
+                  ja: '温かいラーメンが食べたいです。',
+                  tts: 'あたたかいらーめんがたべたいです。',
+                  romaji: 'Atatakai rāmen ga tabetai desu.',
+                  zh: '我想吃熱騰騰的拉麵。'
+                },
+                {
+                  kana: 'かるいざわ の ゆき を みたいです。',
+                  ja: '軽井沢の雪を見たいです。',
+                  tts: 'かるいざわのゆきをみたいです。',
+                  romaji: 'Karuizawa no yuki wo mitai desu.',
+                  zh: '我想看輕井澤的雪。'
+                }
+              ],
+              notes: [
+                '<strong>完全不需背動詞分類：</strong>只要把學過的「ます」砍掉，直接接「たいです」就好（食べます ➔ 食べたいです、見ます ➔ 見たいです）。',
+                '<strong>助詞「を」常變「が」：</strong>接上「たい」後變成形容詞性質，前面的受詞助詞「を」常會換成「<strong>が</strong>」（口語用 を 對方也完全聽得懂）。'
+              ]
+            },
+            {
+              id: 'gr-2', core: true,
+              badge: '公式 02・請求許可',
+              title: '動詞て形 ＋ もいいですか',
+              meaning: '可以做～嗎？',
+              formulaHtml: '動詞 <span class="formula-hl-warm">て形</span> ＋ <span class="formula-hl">もいいですか</span>',
+              examples: [
+                {
+                  kana: 'しゃしん を とってもいいですか？',
+                  ja: '写真を撮ってもいいですか？',
+                  tts: 'しゃしんをとってもいいですか？',
+                  romaji: 'Shashin wo totte mo ī desu ka?',
+                  zh: '請問可以拍照嗎？'
+                },
+                {
+                  kana: 'しちゃく してもいいですか？／ はいてみてもいいですか？',
+                  ja: '試着してもいいですか？／履いてみてもいいですか？',
+                  tts: 'しちゃくしてもいいですか？はいてみてもいいですか？',
+                  romaji: 'Shichaku shite mo ī desu ka? / Haite mite mo ī desu ka?',
+                  zh: '可以試穿衣服嗎？／可以試穿鞋子嗎？'
+                }
+              ],
+              notes: [
+                '<strong>衣服與鞋子分開記更道地：</strong>試穿衣服用「試着して」、試穿雪靴或球鞋用「履いてみて」、拍照用「撮って」。',
+                '<strong>對方同意的回答：</strong>通常會微笑說「はい、どうぞ（請）」或「大丈夫ですよ（可以喔）」。'
+              ]
+            },
+            {
+              id: 'gr-3', core: true,
+              badge: '公式 03・禮貌請求',
+              title: '動詞て形 ＋ ください',
+              meaning: '請幫我做～',
+              formulaHtml: '動詞 <span class="formula-hl-warm">て形</span> ＋ <span class="formula-hl">ください</span>',
+              examples: [
+                {
+                  kana: 'あたためてください。／ わけてください。',
+                  ja: '温めてください。／分けてください。',
+                  tts: 'あたためてください。わけてください。',
+                  romaji: 'Atatamete kudasai. / Wakete kudasai.',
+                  zh: '請幫我加熱。／請幫我分開裝。'
+                },
+                {
+                  kana: 'ここ に かいてください。',
+                  ja: 'ここに書いてください。',
+                  tts: 'ここにかいてください。',
+                  romaji: 'Koko ni kaite kudasai.',
+                  zh: '請寫在這裡。'
+                }
+              ],
+              notes: [
+                '<strong>先記旅遊必備 5 個て形：</strong>温めて（加熱）、分けて（分開）、書いて（寫下來）、教えて（告訴我）、ゆっくり話して（說慢一點）。',
+                '<strong>區分要東西 vs. 做動作：</strong>要東西用「名詞＋をください」，請對方做動作則用「動詞て形＋ください」。'
+              ]
+            },
+            {
+              id: 'gr-4', core: true,
+              badge: '公式 04・更禮貌索取',
+              title: '名詞を ＋ いただけますか',
+              meaning: '請問可以給我～嗎？',
+              formulaHtml: '<span class="formula-hl-warm">名詞を</span> ＋ <span class="formula-hl">いただけますか</span>',
+              examples: [
+                {
+                  kana: 'とりざら を いただけますか？',
+                  ja: '取り皿をいただけますか？',
+                  tts: 'とりざらをいただけますか？',
+                  romaji: 'Torizara wo itadakemasu ka?',
+                  zh: '請問可以給我分食盤嗎？'
+                },
+                {
+                  kana: 'えいご の メニュー を いただけますか？',
+                  ja: '英語のメニューをいただけますか？',
+                  tts: 'えいごのめにゅーをいただけますか？',
+                  romaji: 'Eigo no menyū wo itadakemasu ka?',
+                  zh: '請問可以給我英文菜單嗎？'
+                }
+              ],
+              notes: [
+                '<strong>比「ください」更柔和有禮：</strong>「ください」帶有一點點命令語氣，換成疑問句「いただけますか（能承蒙您給我嗎？）」在中高檔餐廳與飯店聽起來特別優雅。',
+                '<strong>直接套用不需變化：</strong>只要在任何你想要的名詞後面加上「をいただけますか？」，完全不用動詞變化！'
+              ]
+            },
+            {
+              id: 'gr-5', core: true,
+              badge: '公式 05・客製化去除',
+              title: '名詞 ＋ 抜きでお願いします',
+              meaning: '請不要加～（去除～）',
+              formulaHtml: '<span class="formula-hl-warm">不想加的東西</span> ＋ <span class="formula-hl">抜きでお願いします</span>',
+              examples: [
+                {
+                  kana: 'こおりぬき で おねがいします。',
+                  ja: '氷抜きでお願いします。',
+                  tts: 'こおりぬきでおねがいします。',
+                  romaji: 'Kōri-nuki de onegaishimasu.',
+                  zh: '請幫我去冰。'
+                },
+                {
+                  kana: 'ネギぬき で おねがいします。',
+                  ja: 'ネギ抜きでお願いします。',
+                  tts: 'ねぎぬきでおねがいします。',
+                  romaji: 'Negi-nuki de onegaishimasu.',
+                  zh: '請不要加蔥。'
+                }
+              ],
+              notes: [
+                '<strong>比「なし」更道地自然：</strong>點餐去除某樣配料時，日本人習慣說「～抜き (nuki)」，例如 わさび抜き（不要芥末）、パクチー抜き（不要香菜）。',
+                '<strong>搭配過敏提醒更安全：</strong>若是不敢吃用「抜き」；若是嚴重食物過敏，務必補一句「〜のアレルギーがあります」。'
+              ]
+            },
+            {
+              id: 'gr-6', core: true,
+              badge: '公式 06・聽懂委婉拒絕',
+              title: 'ちょっと… ／ あいにく…',
+              meaning: '（不好意思，這有點不方便／真不巧沒有了）',
+              formulaHtml: '聽到 <span class="formula-hl-warm">ちょっと…</span> 或 <span class="formula-hl-warm">あいにく…</span> ＝ <span class="formula-hl">委婉說不</span>',
+              examples: [
+                {
+                  kana: 'すみません、しゃしん は ちょっと…',
+                  ja: 'すみません、写真はちょっと…',
+                  tts: 'すみません、しゃしんはちょっと',
+                  romaji: 'Sumimasen, shashin wa chotto...',
+                  zh: '不好意思，拍照可能不太方便…'
+                },
+                {
+                  kana: 'あいにく、いま うりきれ です。',
+                  ja: 'あいにく、今売り切れです。',
+                  tts: 'あいにく、いまうりきれです。',
+                  romaji: 'Ainiku, ima urikire desu.',
+                  zh: '真不巧，目前已經售完了。'
+                }
+              ],
+              notes: [
+                '<strong>日本人很少直接說「ダメ」：</strong>當店內禁止拍照、座位客滿或商品缺貨時，店員語尾拖長說「ちょっと…」，就是在委婉拒絕囉！',
+                '<strong>禮貌收尾：</strong>聽懂後只要點頭微笑回一句「わかりました、ありがとうございます（了解了，謝謝）」，互動就非常完美。'
+              ]
+            },
+            {
+              id: 'gr-7', core: true,
+              badge: '公式 07・存在動詞對照',
+              title: 'あります vs. います',
+              meaning: '有／在（無生命物品 vs. 有生命人與動物）',
+              formulaHtml: '物品・服務 ➔ <span class="formula-hl">あります</span> ／ 人・動物 ➔ <span class="formula-hl-warm">います</span>',
+              examples: [
+                {
+                  kana: 'めんぜい は ありますか？／ ざいこ は ありますか？',
+                  ja: '免税はありますか？／在庫はありますか？',
+                  tts: 'めんぜいはありますか？ざいこはありますか？',
+                  romaji: 'Menzei wa arimasu ka? / Zaiko wa arimasu ka?',
+                  zh: '請問有免稅嗎？／請問有庫存嗎？'
+                },
+                {
+                  kana: 'こども が います。／ ちゅうごくご が できる スタッフ は いますか？',
+                  ja: '子供がいます。／中国語ができるスタッフはいますか？',
+                  tts: 'こどもがいます。ちゅうごくごができるすたっふはいますか？',
+                  romaji: 'Kodomo ga imasu. / Chūgokugo ga dekiru sutaffu wa imasu ka?',
+                  zh: '我們有帶小孩。／請問有會說中文的店員嗎？'
+                }
+              ],
+              notes: [
+                '<strong>N5 最常混淆的兩組字：</strong>記住「不會自己動的（廁所、Wi-Fi、庫存、免稅服務）」全用 <strong>あります</strong>；「會自己動的人或動物（小孩、店員、朋友）」才用 <strong>います</strong>。',
+                '<strong>否定形對照：</strong>沒有東西是「ありません」，沒有人是「いません」。'
+              ]
+            },
+            {
+              id: 'gr-8', core: true,
+              badge: '公式 08・主詞限制與決定點餐',
+              title: '～たいです（限制）＆ 名詞 ＋ にします',
+              meaning: '我決定要點～ ／ 家人要點～',
+              formulaHtml: '點餐決定用 <span class="formula-hl-warm">名詞</span> ＋ <span class="formula-hl">にします</span>（所有主詞通用）',
+              examples: [
+                {
+                  kana: 'わたし は ラーメン に します。',
+                  ja: '私はラーメンにします。',
+                  tts: 'わたしはらーめんにします。',
+                  romaji: 'Watashi wa rāmen ni shimasu.',
+                  zh: '我決定要點拉麵。'
+                },
+                {
+                  kana: 'つま は ホットコーヒー に します。',
+                  ja: '妻はホットコーヒーにします。',
+                  tts: 'つまはほっとこーひーにします。',
+                  romaji: 'Tsuma wa hotto kōhī ni shimasu.',
+                  zh: '我太太要點熱咖啡。'
+                }
+              ],
+              notes: [
+                '<strong>「～たいです」的主詞限制：</strong>「たいです」只能用在<strong>「我想要」</strong>或疑問句問對方「你想要嗎？」，不能直接用來敘述第三人（例如不能直接說「妻はコーヒーを飲みたいです」）。',
+                '<strong>旅遊點餐神救星「～にします」：</strong>不管是幫自己決定餐點，還是替同行家人朋友點餐，只要說「（誰は）餐點＋にします」，自然、道地又完全不會犯文法錯！'
+              ]
+            }
+          ]
+        }
+      ];
+
+      // =========================================================================
+      // 2. 固定順序索引、狀態管理與本機儲存 (含跨裝置 Bitmask 編解碼)
+      // =========================================================================
+      const STORAGE_KEY = 'jp_winter_tokyo_karuizawa_v1';
+
+      // 建立固定順序的所有項目清單（用於 bitmask 同步編碼與進度統計）
+      const ALL_ITEMS = [];
+      CATEGORIES.forEach(function (cat) {
+        if (cat.vocab) cat.vocab.forEach(function (item) { ALL_ITEMS.push({ id: item.id, core: !!item.core, catKey: cat.key }); });
+        if (cat.sentences) cat.sentences.forEach(function (item) { ALL_ITEMS.push({ id: item.id, core: !!item.core, catKey: cat.key }); });
+        if (cat.qaList) cat.qaList.forEach(function (item) { ALL_ITEMS.push({ id: item.id, core: !!item.core, catKey: cat.key }); });
+        if (cat.patterns) cat.patterns.forEach(function (item) { ALL_ITEMS.push({ id: item.id, core: !!item.core, catKey: cat.key }); });
+      });
+
+      const ALL_IDS = ALL_ITEMS.map(function (item) { return item.id; });
+      const CORE_IDS = ALL_ITEMS.filter(function (item) { return item.core; }).map(function (item) { return item.id; });
+      const VALID_ID_SET = new Set(ALL_IDS);
+
+      const state = {
+        activeCategory: CATEGORIES[0].key,
+        filterScope: 'all',     // 'all' | 'core'
+        hideMastered: false,
+        maskJa: false,
+        maskRomaji: false,
+        maskZh: false,
+        speechRate: 1.0,
+        mastered: new Set(),
+        revealedKeys: new Set(), // 記錄遮罩狀態下被單獨點擊偷看的區塊
+        resetConfirmTimer: null
+      };
+
+      // DOM 元素參照
+      const els = {
+        btnFilterAll: document.getElementById('btnFilterAll'),
+        btnFilterCore: document.getElementById('btnFilterCore'),
+        totalAllChip: document.getElementById('totalAllChip'),
+        coreTotalChip: document.getElementById('coreTotalChip'),
+        btnHideMastered: document.getElementById('btnHideMastered'),
+        btnMaskJa: document.getElementById('btnMaskJa'),
+        btnMaskRomaji: document.getElementById('btnMaskRomaji'),
+        btnMaskZh: document.getElementById('btnMaskZh'),
+        btnRateNormal: document.getElementById('btnRateNormal'),
+        btnRateSlow: document.getElementById('btnRateSlow'),
+        btnSyncProgress: document.getElementById('btnSyncProgress'),
+        coreProgressFill: document.getElementById('coreProgressFill'),
+        coreProgressText: document.getElementById('coreProgressText'),
+        allProgressFill: document.getElementById('allProgressFill'),
+        allProgressText: document.getElementById('allProgressText'),
+        btnResetProgress: document.getElementById('btnResetProgress'),
+        sidebarNav: document.getElementById('sidebarNav'),
+        mainScrollArea: document.getElementById('mainScrollArea'),
+        contentContainer: document.getElementById('contentContainer'),
+        toastContainer: document.getElementById('toastContainer'),
+        syncModalBackdrop: document.getElementById('syncModalBackdrop'),
+        syncModalDesc: document.getElementById('syncModalDesc'),
+        syncModalInput: document.getElementById('syncModalInput'),
+        btnSyncModalCopy: document.getElementById('btnSyncModalCopy'),
+        btnSyncModalClose: document.getElementById('btnSyncModalClose')
+      };
+
+      // =========================================================================
+      // 3. 工具函式：安全存取 localStorage、HTML 轉義、Toast 浮動提示
+      // =========================================================================
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function loadProgressFromStorage() {
+        try {
+          const raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            state.mastered = new Set(parsed.filter(function (id) { return VALID_ID_SET.has(id); }));
+          }
+        } catch (err) {
+          // 忽略沙盒或無痕模式 localStorage 例外
+        }
+      }
+
+      function saveProgressToStorage() {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(state.mastered)));
+        } catch (err) {
+          // 忽略儲存例外
+        }
+      }
+
+      function showToast(message, durationMs) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-item';
+        toast.textContent = message;
+        els.toastContainer.appendChild(toast);
+
+        const stayTime = typeof durationMs === 'number' ? durationMs : 3000;
+        window.setTimeout(function () {
+          toast.classList.add('is-fading');
+          window.setTimeout(function () {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+          }, 260);
+        }, stayTime);
+      }
+
+      // =========================================================================
+      // 4. 跨裝置同步：Bitmask + Base64URL 編解碼與剪貼簿處理
+      // =========================================================================
+      function encodeMasteredToCode(masteredSet) {
+        const byteLen = Math.ceil(ALL_IDS.length / 8);
+        const bytes = new Uint8Array(byteLen);
+        for (let i = 0; i < ALL_IDS.length; i++) {
+          if (masteredSet.has(ALL_IDS[i])) {
+            bytes[i >> 3] |= (1 << (i & 7));
+          }
+        }
+        let binary = '';
+        for (let i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary)
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=+$/, '');
+      }
+
+      function decodeCodeToMastered(code) {
+        if (!code || typeof code !== 'string') return null;
+        try {
+          let b64 = code.replace(/-/g, '+').replace(/_/g, '/');
+          while (b64.length % 4 !== 0) {
+            b64 += '=';
+          }
+          const binary = atob(b64);
+          const expectedLen = Math.ceil(ALL_IDS.length / 8);
+          if (binary.length !== expectedLen) return null;
+
+          const restored = new Set();
+          for (let i = 0; i < ALL_IDS.length; i++) {
+            const byteVal = binary.charCodeAt(i >> 3);
+            if ((byteVal & (1 << (i & 7))) !== 0) {
+              restored.add(ALL_IDS[i]);
+            }
+          }
+          return restored;
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function buildSyncUrl(code) {
+        const proto = window.location.protocol;
+        if (proto === 'http:' || proto === 'https:') {
+          return {
+            url: window.location.origin + window.location.pathname + '#sync=' + code,
+            isHosted: true
+          };
+        }
+        if (proto === 'file:') {
+          return {
+            url: window.location.href.split('#')[0] + '#sync=' + code,
+            isHosted: true
+          };
+        }
+        // 預覽沙盒 (about:srcdoc / blob:) 環境提供可直接附加於網址尾端的短碼
+        return {
+          url: '#sync=' + code,
+          isHosted: false
+        };
+      }
+
+      function copyTextWithFallback(text) {
+        return new Promise(function (resolve) {
+          if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(text).then(function () {
+              resolve(true);
+            }).catch(function () {
+              resolve(copyViaExecCommand(text));
+            });
+          } else {
+            resolve(copyViaExecCommand(text));
+          }
+        });
+      }
+
+      function copyViaExecCommand(text) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.top = '-9999px';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return !!ok;
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function openSyncModal(urlText, isHosted) {
+        els.syncModalDesc.textContent = isHosted
+          ? '瀏覽器限制自動複製，請複製下方專屬同步網址並貼到其他裝置開啟：'
+          : '目前為離線預覽環境，請複製下方同步短碼並加在您 GitHub 網頁網址後方：';
+        els.syncModalInput.value = urlText;
+        els.syncModalBackdrop.classList.add('is-open');
+        window.setTimeout(function () {
+          els.syncModalInput.focus();
+          els.syncModalInput.select();
+        }, 30);
+      }
+
+      function closeSyncModal() {
+        els.syncModalBackdrop.classList.remove('is-open');
+      }
+
+      function handleExportSync() {
+        const code = encodeMasteredToCode(state.mastered);
+        const result = buildSyncUrl(code);
+        const count = state.mastered.size;
+
+        copyTextWithFallback(result.url).then(function (copied) {
+          if (copied) {
+            if (result.isHosted) {
+              showToast('✅ 已複製同步網址（共 ' + count + ' 項已熟記），在其他裝置貼上開啟即可同步', 3600);
+            } else {
+              showToast('✅ 已複製同步短碼 ' + result.url + '（共 ' + count + ' 項已熟記），貼在您的網頁網址後方即可同步', 4000);
+            }
+          } else {
+            openSyncModal(result.url, result.isHosted);
+          }
+        });
+      }
+
+      function checkAndApplySyncFromHash() {
+        const hash = window.location.hash || '';
+        const match = hash.match(/sync=([A-Za-z0-9_-]+)/);
+        if (!match) return false;
+
+        const code = match[1];
+        const decodedSet = decodeCodeToMastered(code);
+        if (!decodedSet) {
+          showToast('⚠️ 同步短碼格式無效，未變更現有進度', 3200);
+          return false;
+        }
+
+        state.mastered = decodedSet;
+        saveProgressToStorage();
+
+        // 清除網址列中的 #sync=... 保持網址整潔
+        try {
+          if (window.history && typeof window.history.replaceState === 'function') {
+            const cleanUrl = window.location.pathname + window.location.search;
+            window.history.replaceState(null, '', cleanUrl);
+          }
+        } catch (err) {
+          // 忽略受限環境 replaceState 例外
+        }
+
+        updateAllUI();
+        showToast('✅ 已從同步網址載入 ' + decodedSet.size + ' 項熟記進度！', 3600);
+        return true;
+      }
+
+      // =========================================================================
+      // 5. 純日語真人發音引擎 (Web Speech API, ja-JP)
+      // =========================================================================
+      let preferredJaVoice = null;
+      let activeSpeakBtn = null;
+
+      function refreshJapaneseVoice() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices() || [];
+        const jaVoices = voices.filter(function (v) {
+          return v.lang && v.lang.toLowerCase().indexOf('ja') === 0;
+        });
+        if (!jaVoices.length) return;
+
+        // 優先選擇自然度高的日語語音
+        const priorityKeywords = ['google', 'kyoko', 'o-ren', 'otoya', 'nanami', 'haruka', 'ayumi'];
+        for (let i = 0; i < priorityKeywords.length; i++) {
+          const kw = priorityKeywords[i];
+          const found = jaVoices.find(function (v) {
+            return v.name && v.name.toLowerCase().indexOf(kw) !== -1;
+          });
+          if (found) {
+            preferredJaVoice = found;
+            return;
+          }
+        }
+        preferredJaVoice = jaVoices[0];
+      }
+
+      if ('speechSynthesis' in window) {
+        refreshJapaneseVoice();
+        if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+          window.speechSynthesis.onvoiceschanged = refreshJapaneseVoice;
+        }
+      }
+
+      function speakJapanese(text, btnEl) {
+        if (!('speechSynthesis' in window)) {
+          showToast('⚠️ 此瀏覽器不支援日語語音朗讀功能', 2600);
+          return;
+        }
+        try {
+          window.speechSynthesis.cancel();
+          if (activeSpeakBtn) {
+            activeSpeakBtn.classList.remove('is-speaking');
+            activeSpeakBtn = null;
+          }
+
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'ja-JP';
+          utter.rate = state.speechRate;
+          if (preferredJaVoice) {
+            utter.voice = preferredJaVoice;
+          }
+
+          if (btnEl) {
+            btnEl.classList.add('is-speaking');
+            activeSpeakBtn = btnEl;
+          }
+
+          const clearSpeakingState = function () {
+            if (btnEl) btnEl.classList.remove('is-speaking');
+            if (activeSpeakBtn === btnEl) activeSpeakBtn = null;
+          };
+          utter.onend = clearSpeakingState;
+          utter.onerror = clearSpeakingState;
+
+          window.speechSynthesis.speak(utter);
+        } catch (err) {
+          showToast('⚠️ 語音播放暫時無法啟動，請再試一次', 2400);
+        }
+      }
+
+      // =========================================================================
+      // 6. 遮罩渲染輔助函式 (支援點擊單獨偷看)
+      // =========================================================================
+      function renderMaskedField(text, fieldType, revealKey, hintLabel) {
+        const isMasked =
+          (fieldType === 'ja' && state.maskJa) ||
+          (fieldType === 'romaji' && state.maskRomaji) ||
+          (fieldType === 'zh' && state.maskZh);
+
+        const safeText = escapeHtml(text);
+        if (!isMasked || state.revealedKeys.has(revealKey)) {
+          return safeText;
+        }
+
+        return (
+          '<button type="button" class="mask-btn" data-action="peek" data-reveal-key="' + escapeHtml(revealKey) + '" title="點擊偷看答案">' +
+            '<span class="mask-blur">' + safeText + '</span>' +
+            '<span class="mask-hint">' + escapeHtml(hintLabel) + '</span>' +
+          '</button>'
+        );
+      }
+
+      // =========================================================================
+      // 7. 介面渲染：頂部進度、左側分類卡片、右側內容卡片
+      // =========================================================================
+      function getCategoryItems(cat) {
+        const list = [];
+        if (cat.vocab) cat.vocab.forEach(function (x) { list.push(x); });
+        if (cat.sentences) cat.sentences.forEach(function (x) { list.push(x); });
+        if (cat.qaList) cat.qaList.forEach(function (x) { list.push(x); });
+        if (cat.patterns) cat.patterns.forEach(function (x) { list.push(x); });
+        return list;
+      }
+
+      function filterItems(list) {
+        if (!list) return [];
+        return list.filter(function (item) {
+          if (state.filterScope === 'core' && !item.core) return false;
+          if (state.hideMastered && state.mastered.has(item.id)) return false;
+          return true;
+        });
+      }
+
+      function updateHeaderAndProgress() {
+        // 數量晶片
+        els.totalAllChip.textContent = String(ALL_IDS.length);
+        els.coreTotalChip.textContent = String(CORE_IDS.length);
+
+        // 篩選按鈕樣式
+        els.btnFilterAll.classList.toggle('is-active', state.filterScope === 'all');
+        els.btnFilterCore.classList.toggle('is-core-active', state.filterScope === 'core');
+        els.btnHideMastered.classList.toggle('is-hide-active', state.hideMastered);
+
+        // 三向遮罩按鈕樣式
+        els.btnMaskJa.classList.toggle('is-active', state.maskJa);
+        els.btnMaskRomaji.classList.toggle('is-active', state.maskRomaji);
+        els.btnMaskZh.classList.toggle('is-active', state.maskZh);
+
+        // 語速按鈕樣式
+        els.btnRateNormal.classList.toggle('is-rate-active', state.speechRate === 1.0);
+        els.btnRateSlow.classList.toggle('is-rate-active', state.speechRate === 0.75);
+
+        // 雙進度條計算
+        let coreDone = 0;
+        for (let i = 0; i < CORE_IDS.length; i++) {
+          if (state.mastered.has(CORE_IDS[i])) coreDone++;
+        }
+        const allDone = state.mastered.size;
+
+        const corePct = CORE_IDS.length ? Math.round((coreDone / CORE_IDS.length) * 100) : 0;
+        const allPct = ALL_IDS.length ? Math.round((allDone / ALL_IDS.length) * 100) : 0;
+
+        els.coreProgressFill.style.width = corePct + '%';
+        els.coreProgressText.textContent = coreDone + '/' + CORE_IDS.length + ' (' + corePct + '%)';
+
+        els.allProgressFill.style.width = allPct + '%';
+        els.allProgressText.textContent = allDone + '/' + ALL_IDS.length + ' (' + allPct + '%)';
+      }
+
+      function renderSidebar() {
+        const html = CATEGORIES.map(function (cat) {
+          const allCatItems = getCategoryItems(cat);
+          const visibleCount = filterItems(allCatItems).length;
+          const isActive = cat.key === state.activeCategory;
+          const activeStyle = isActive
+            ? 'border-color:' + cat.color + ';background-color:' + cat.bgTint + ';box-shadow:inset 4px 0 0 ' + cat.color + ';'
+            : '';
+
+          return (
+            '<button type="button" class="cat-card-btn" data-cat-key="' + escapeHtml(cat.key) + '" style="' + activeStyle + '">' +
+              '<div class="cat-card-top">' +
+                '<span class="cat-card-title" style="' + (isActive ? 'color:' + cat.color + ';' : '') + '">' +
+                  '<span>' + cat.icon + '</span>' +
+                  '<span>' + escapeHtml(cat.name) + '</span>' +
+                '</span>' +
+                '<span class="cat-card-count">' + visibleCount + '</span>' +
+              '</div>' +
+              '<span class="cat-card-meta">' + escapeHtml(cat.meta) + '</span>' +
+            '</button>'
+          );
+        }).join('');
+
+        els.sidebarNav.innerHTML = html;
+      }
+
+      function renderVocabCard(item) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base vocab-card' + (item.core ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="vocab-left">' +
+              '<div class="vocab-kana">' + renderMaskedField(item.kana, 'ja', item.id + ':kana', '假名') + '</div>' +
+              '<div class="vocab-ja">' + renderMaskedField(item.ja, 'ja', item.id + ':ja', '顯示日文') + '</div>' +
+              '<div class="vocab-romaji">' + renderMaskedField(item.romaji, 'romaji', item.id + ':romaji', '顯示拼音') + '</div>' +
+            '</div>' +
+            '<div class="vocab-right">' +
+              '<div>' +
+                '<div class="vocab-zh">' + renderMaskedField(item.zh, 'zh', item.id + ':zh', '顯示中文') + '</div>' +
+                (item.note ? '<p class="vocab-note">' + escapeHtml(item.note) + '</p>' : '') +
+              '</div>' +
+              '<div class="vocab-actions">' +
+                '<div class="action-btns">' +
+                  '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.tts) + '" title="朗讀純日語發音" aria-label="朗讀日語">🔊</button>' +
+                  '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderSentenceCard(item, catColor) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base sentence-card' + (item.core ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="sentence-left">' +
+              '<div class="sentence-scene" style="color:' + catColor + ';">' + escapeHtml(item.situation) + '</div>' +
+              '<div class="sentence-kana">' + renderMaskedField(item.kana, 'ja', item.id + ':kana', '顯示假名') + '</div>' +
+              '<div class="sentence-ja">' + renderMaskedField(item.ja, 'ja', item.id + ':ja', '顯示日文句型') + '</div>' +
+              '<div class="sentence-romaji">' + renderMaskedField(item.romaji, 'romaji', item.id + ':romaji', '顯示羅馬拼音') + '</div>' +
+            '</div>' +
+            '<div class="sentence-right">' +
+              '<div style="min-width:0;">' +
+                '<div class="sentence-zh">' + renderMaskedField(item.zh, 'zh', item.id + ':zh', '顯示中文翻譯') + '</div>' +
+                (item.tip ? '<p class="sentence-tip">💡 ' + escapeHtml(item.tip) + '</p>' : '') +
+              '</div>' +
+              '<div class="action-btns">' +
+                '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.tts) + '" title="朗讀純日語句型" aria-label="朗讀日語">🔊</button>' +
+                '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderListeningCard(item) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base listening-card' + (item.core ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="listening-col clerk-col">' +
+              '<div class="listening-body">' +
+                '<div class="badge-row">' +
+                  '<span class="role-badge role-clerk">店員提問</span>' +
+                  '<span class="scene-tag">' + escapeHtml(item.scene) + '</span>' +
+                '</div>' +
+                '<div class="sentence-kana">' + renderMaskedField(item.clerk.kana, 'ja', item.id + ':ckana', '顯示假名') + '</div>' +
+                '<div class="qa-ja">' + renderMaskedField(item.clerk.ja, 'ja', item.id + ':cja', '顯示店員日文') + '</div>' +
+                '<div class="sentence-romaji">' + renderMaskedField(item.clerk.romaji, 'romaji', item.id + ':cromaji', '顯示拼音') + '</div>' +
+                '<div class="qa-zh">' + renderMaskedField(item.clerk.zh, 'zh', item.id + ':czh', '顯示中文') + '</div>' +
+              '</div>' +
+              '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.clerk.tts) + '" title="聽店員怎麼說" aria-label="朗讀店員提問">🔊</button>' +
+            '</div>' +
+            '<div class="listening-col">' +
+              '<div class="listening-body">' +
+                '<div class="badge-row">' +
+                  '<span class="role-badge role-reply">你的道地回答</span>' +
+                '</div>' +
+                '<div class="sentence-kana">' + renderMaskedField(item.reply.kana, 'ja', item.id + ':rkana', '顯示假名') + '</div>' +
+                '<div class="qa-ja">' + renderMaskedField(item.reply.ja, 'ja', item.id + ':rja', '顯示回答日文') + '</div>' +
+                '<div class="sentence-romaji">' + renderMaskedField(item.reply.romaji, 'romaji', item.id + ':rromaji', '顯示拼音') + '</div>' +
+                '<div class="qa-zh">' + renderMaskedField(item.reply.zh, 'zh', item.id + ':rzh', '顯示中文') + '</div>' +
+                (item.reply.note ? '<p class="sentence-tip">💡 ' + escapeHtml(item.reply.note) + '</p>' : '') +
+              '</div>' +
+              '<div class="action-btns">' +
+                '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.reply.tts) + '" title="朗讀建議回答" aria-label="朗讀回答">🔊</button>' +
+                '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderGrammarCard(item) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base grammar-card' + (item.core ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        const examplesHtml = item.examples.map(function (ex, idx) {
+          const prefix = item.id + ':ex' + idx;
+          return (
+            '<div class="example-item">' +
+              '<div style="min-width:0;display:flex;flex-direction:column;gap:2px;">' +
+                '<div class="sentence-kana">' + renderMaskedField(ex.kana, 'ja', prefix + ':kana', '假名') + '</div>' +
+                '<div class="sentence-ja" style="font-size:17.5px;">' + renderMaskedField(ex.ja, 'ja', prefix + ':ja', '顯示例句日文') + '</div>' +
+                '<div class="sentence-romaji">' + renderMaskedField(ex.romaji, 'romaji', prefix + ':romaji', '顯示拼音') + '</div>' +
+                '<div class="qa-zh" style="font-size:15px;">' + renderMaskedField(ex.zh, 'zh', prefix + ':zh', '顯示中文') + '</div>' +
+              '</div>' +
+              '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(ex.tts) + '" title="朗讀例句" aria-label="朗讀例句">🔊</button>' +
+            '</div>'
+          );
+        }).join('');
+
+        const notesHtml = item.notes.map(function (note) {
+          return '<li>' + note + '</li>';
+        }).join('');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="grammar-left">' +
+              '<div class="grammar-title-row">' +
+                '<span class="grammar-badge">' + escapeHtml(item.badge) + '</span>' +
+                '<h3 class="grammar-title">' + escapeHtml(item.title) + '</h3>' +
+                '<span class="grammar-meaning">（' + escapeHtml(item.meaning) + '）</span>' +
+              '</div>' +
+              '<div class="formula-box">公式：' + item.formulaHtml + '</div>' +
+              '<div class="example-list">' + examplesHtml + '</div>' +
+            '</div>' +
+            '<div class="grammar-right">' +
+              '<div class="grammar-right-top">' +
+                '<span class="grammar-note-title">📌 延伸文法與實戰解說</span>' +
+                '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+              '</div>' +
+              '<ul class="grammar-notes">' + notesHtml + '</ul>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderMainContent() {
+        const cat = CATEGORIES.find(function (c) { return c.key === state.activeCategory; }) || CATEGORIES[0];
+        const parts = [];
+
+        // 分類標題區（無底色，僅底部分隔細線）
+        parts.push(
+          '<header class="section-header">' +
+            '<h2><span>' + cat.icon + '</span><span>' + escapeHtml(cat.name) + '</span></h2>' +
+            '<p>' + escapeHtml(cat.subtitle) + '</p>' +
+          '</header>'
+        );
+
+        let visibleTotal = 0;
+
+        if (cat.vocab) {
+          const filteredVocab = filterItems(cat.vocab);
+          visibleTotal += filteredVocab.length;
+          if (filteredVocab.length) {
+            parts.push(
+              '<section>' +
+                '<h3 class="sub-heading">核心單字（' + filteredVocab.length + '）</h3>' +
+                '<div class="vocab-grid">' + filteredVocab.map(renderVocabCard).join('') + '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (cat.sentences) {
+          const filteredSentences = filterItems(cat.sentences);
+          visibleTotal += filteredSentences.length;
+          if (filteredSentences.length) {
+            parts.push(
+              '<section>' +
+                '<h3 class="sub-heading">實戰句型（' + filteredSentences.length + '）</h3>' +
+                '<div class="stack-list">' +
+                  filteredSentences.map(function (s) { return renderSentenceCard(s, cat.color); }).join('') +
+                '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (cat.qaList) {
+          const filteredQa = filterItems(cat.qaList);
+          visibleTotal += filteredQa.length;
+          if (filteredQa.length) {
+            parts.push(
+              '<section>' +
+                '<div class="stack-list">' + filteredQa.map(renderListeningCard).join('') + '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (cat.patterns) {
+          const filteredPatterns = filterItems(cat.patterns);
+          visibleTotal += filteredPatterns.length;
+          if (filteredPatterns.length) {
+            parts.push(
+              '<section>' +
+                '<div class="stack-list">' + filteredPatterns.map(renderGrammarCard).join('') + '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (visibleTotal === 0) {
+          parts.push(
+            '<div class="empty-state">' +
+              '<h3>這個分類在目前篩選條件下已全部完成！</h3>' +
+              '<p>您可以切換左側其他分類，或取消「隱藏已熟記／必背」篩選檢視完整內容。</p>' +
+              '<button type="button" class="empty-btn" data-action="clear-filters">顯示本分類全部卡片</button>' +
+            '</div>'
+          );
+        }
+
+        els.contentContainer.innerHTML = parts.join('');
+      }
+
+      function updateAllUI() {
+        updateHeaderAndProgress();
+        renderSidebar();
+        renderMainContent();
+      }
+
+      // =========================================================================
+      // 8. 事件綁定與事件委派
+      // =========================================================================
+      els.btnFilterAll.addEventListener('click', function () {
+        state.filterScope = 'all';
+        updateAllUI();
+      });
+
+      els.btnFilterCore.addEventListener('click', function () {
+        state.filterScope = 'core';
+        updateAllUI();
+      });
+
+      els.btnHideMastered.addEventListener('click', function () {
+        state.hideMastered = !state.hideMastered;
+        updateAllUI();
+      });
+
+      els.btnMaskJa.addEventListener('click', function () {
+        state.maskJa = !state.maskJa;
+        state.revealedKeys.clear();
+        updateAllUI();
+      });
+
+      els.btnMaskRomaji.addEventListener('click', function () {
+        state.maskRomaji = !state.maskRomaji;
+        state.revealedKeys.clear();
+        updateAllUI();
+      });
+
+      els.btnMaskZh.addEventListener('click', function () {
+        state.maskZh = !state.maskZh;
+        state.revealedKeys.clear();
+        updateAllUI();
+      });
+
+      els.btnRateNormal.addEventListener('click', function () {
+        state.speechRate = 1.0;
+        updateHeaderAndProgress();
+      });
+
+      els.btnRateSlow.addEventListener('click', function () {
+        state.speechRate = 0.75;
+        updateHeaderAndProgress();
+      });
+
+      els.btnSyncProgress.addEventListener('click', handleExportSync);
+
+      // 兩段式安全重置（不使用原生 confirm）
+      els.btnResetProgress.addEventListener('click', function () {
+        if (!els.btnResetProgress.classList.contains('is-confirm')) {
+          els.btnResetProgress.classList.add('is-confirm');
+          els.btnResetProgress.textContent = '確定重置？';
+          state.resetConfirmTimer = window.setTimeout(function () {
+            els.btnResetProgress.classList.remove('is-confirm');
+            els.btnResetProgress.textContent = '重置';
+          }, 3000);
+          return;
+        }
+
+        if (state.resetConfirmTimer) {
+          window.clearTimeout(state.resetConfirmTimer);
+          state.resetConfirmTimer = null;
+        }
+        els.btnResetProgress.classList.remove('is-confirm');
+        els.btnResetProgress.textContent = '重置';
+        state.mastered.clear();
+        saveProgressToStorage();
+        updateAllUI();
+        showToast('已清空所有熟記進度紀錄', 2600);
+      });
+
+      // 左側大分類切換（事件委派）
+      els.sidebarNav.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-cat-key]');
+        if (!btn) return;
+        const nextKey = btn.getAttribute('data-cat-key');
+        if (nextKey && nextKey !== state.activeCategory) {
+          state.activeCategory = nextKey;
+          state.revealedKeys.clear();
+          updateAllUI();
+          els.mainScrollArea.scrollTop = 0;
+        }
+      });
+
+      // 右側主內容區互動（發音 / 熟記切換 / 遮罩偷看 / 清除篩選）
+      els.contentContainer.addEventListener('click', function (e) {
+        const target = e.target.closest('[data-action]');
+        if (!target) return;
+
+        const action = target.getAttribute('data-action');
+        if (action === 'speak') {
+          const ttsText = target.getAttribute('data-tts');
+          if (ttsText) speakJapanese(ttsText, target);
+          return;
+        }
+
+        if (action === 'toggle-mastered') {
+          const id = target.getAttribute('data-id');
+          if (!id) return;
+          if (state.mastered.has(id)) {
+            state.mastered.delete(id);
+          } else {
+            state.mastered.add(id);
+          }
+          saveProgressToStorage();
+          updateAllUI();
+          return;
+        }
+
+        if (action === 'peek') {
+          const key = target.getAttribute('data-reveal-key');
+          if (key) {
+            state.revealedKeys.add(key);
+            renderMainContent();
+          }
+          return;
+        }
+
+        if (action === 'clear-filters') {
+          state.filterScope = 'all';
+          state.hideMastered = false;
+          updateAllUI();
+        }
+      });
+
+      // 手動複製備援視窗事件
+      els.btnSyncModalCopy.addEventListener('click', function () {
+        els.syncModalInput.focus();
+        els.syncModalInput.select();
+        const ok = copyViaExecCommand(els.syncModalInput.value);
+        if (ok) {
+          closeSyncModal();
+          showToast('✅ 已複製同步網址，在其他裝置貼上開啟即可同步', 3200);
+        }
+      });
+
+      els.btnSyncModalClose.addEventListener('click', closeSyncModal);
+      els.syncModalBackdrop.addEventListener('click', function (e) {
+        if (e.target === els.syncModalBackdrop) closeSyncModal();
+      });
+
+      // 監聽網址 hash 變化（方便使用者直接貼上 #sync=... 切換進度）
+      window.addEventListener('hashchange', checkAndApplySyncFromHash);
+
+      // =========================================================================
+      // 9. 初始化啟動
+      // =========================================================================
+      function init() {
+        loadProgressFromStorage();
+        const loadedFromSync = checkAndApplySyncFromHash();
+        if (!loadedFromSync) {
+          updateAllUI();
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>

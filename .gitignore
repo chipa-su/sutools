@@ -1,0 +1,30 @@
+# 🔒 資安機密與本地設定檔（絕對不可上版控）
+.env
+.env.*
+*.key
+*.pem
+*secret*
+*credentials*
+config.local.js
+data/*.private.json
+
+# 🗄️ SQLite 本地資料庫檔案（未來擴充資料庫分支時保護實例資料）
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# 🖥️ 本地開發伺服器執行期暫存檔
+.server.pid
+.server.log
+.server.log.err
+
+# 💻 作業系統與編輯器暫存檔
+.DS_Store
+Thumbs.db
+Desktop.ini
+~$*.xlsx
+~$*.docx
+.vscode/
+.idea/

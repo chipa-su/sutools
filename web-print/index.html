@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>純淨文章閱讀與編輯器 v2.2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mozilla/readability@0.5.0/Readability.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <style>
+        :root {
+            --doc-font-size: 17px;
+            --doc-line-height: 1.7;
+            --a4-width: 210mm;
+            --a4-height: 297mm;
+            --a4-margin: 20mm;
+            --a4-content-width: 170mm;
+            --a4-content-height: 257mm;
+        }
+
+        /* ==========================================
+           ★ A4 紙張精準模擬 (螢幕 170mm === 列印 170mm)
+           ========================================== */
+        #paper-stage {
+            position: relative;
+            width: var(--a4-width);
+            min-width: var(--a4-width);
+            max-width: var(--a4-width);
+            min-height: var(--a4-height);
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        #article-container {
+            width: var(--a4-width);
+            min-width: var(--a4-width);
+            max-width: var(--a4-width);
+            min-height: calc(var(--a4-height) - 16mm);
+            padding: var(--a4-margin) var(--a4-margin) 10mm var(--a4-margin) !important;
+            margin: 0;
+            background-color: transparent;
+            outline: none;
+            font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+            font-size: var(--doc-font-size);
+            line-height: var(--doc-line-height);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        #article-container > :first-child { margin-top: 0 !important; }
+
+        #article-container *:not(span[style*="background-color"]):not(img):not([data-keep-style="true"]) {
+            max-width: 100% !important;
+            background-color: transparent !important;
+            color: inherit !important;
+            font-family: inherit !important;
+            line-height: inherit !important;
+            box-sizing: border-box;
+        }
+
+        #article-container span[style*="background-color"] { border-radius: 4px; padding: 0 2px; }
+        #article-container p { margin-bottom: 1em; }
+        #article-container img {
+            max-width: 100% !important;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 1.5rem auto;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+            display: block;
+        }
+        #article-container img:hover { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5); }
+        #article-container h1, #article-container h2, #article-container h3 {
+            font-weight: bold;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        #article-container h1 { font-size: 1.55em; line-height: 1.35 !important; }
+        #article-container h2 { font-size: 1.3em; line-height: 1.4 !important; }
+        #article-container h3 { font-size: 1.12em; line-height: 1.45 !important; }
+        #article-container ul, #article-container ol { padding-left: 2em; margin-bottom: 1em; }
+        #article-container ul { list-style-type: disc; }
+        #article-container ol { list-style-type: decimal; }
+        #article-container blockquote {
+            border-left: 4px solid #cbd5e1;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #475569 !important;
+        }
+        #article-container table {
+            width: 100%;
+            max-width: 100% !important;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92em;
+            word-break: break-word;
+        }
+        #article-container th, #article-container td {
+            border: 1px solid #cbd5e1;
+            padding: 0.45rem 0.65rem;
+            text-align: left;
+            word-break: break-word;
+        }
+        #article-container pre, #article-container code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+            font-size: 0.9em;
+        }
+        #article-container pre {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-x: hidden;
+            margin: 1rem 0;
+        }
+
+        /* 隱藏所有圖片模式 (省墨水列印) */
+        #article-container.hide-all-images img,
+        #article-container.hide-all-images figure {
+            display: none !important;
+        }
+
+        /* 來源頁尾 (螢幕與列印同步呈現，避免列印時意外多出一頁) */
+        #source-footer {
+            width: 100%;
+            padding: 6px var(--a4-margin) 14mm var(--a4-margin);
+            font-size: 12px;
+            line-height: 1.4;
+            color: #6b7280;
+            word-break: break-all;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* ==========================================
+           ★ 分頁格線覆蓋層 (A4 257mm 可印高度)
+           ========================================== */
+        #page-guides-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 20;
+            overflow: hidden;
+        }
+        #page-guides-layer.guides-hidden {
+            display: none !important;
+        }
+        .page-break-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            border-top: 2px dashed rgba(239, 68, 68, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-break-label {
+            transform: translateY(-50%);
+            background-color: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 1px 10px;
+            border-radius: 9999px;
+            letter-spacing: 0.02em;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        /* 左右 20mm 邊界淡參考線 */
+        .margin-guide-left,
+        .margin-guide-right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            border-left: 1px dotted rgba(148, 163, 184, 0.35);
+        }
+        .margin-guide-left { left: var(--a4-margin); }
+        .margin-guide-right { right: var(--a4-margin); }
+
+        /* ==========================================
+           ★ Icon 按鈕與即時浮動提示 (Tooltip)
+           ========================================== */
+        .icon-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            transition: all 0.16s ease;
+            flex-shrink: 0;
+        }
+        .icon-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        .icon-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .has-tip {
+            position: relative;
+        }
+        .has-tip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-4px);
+            background-color: #1e293b;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.25;
+            padding: 5px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.22);
+            z-index: 100;
+        }
+        .has-tip:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .has-tip.tip-right::after {
+            left: auto;
+            right: 0;
+            transform: translateY(-4px);
+        }
+        .has-tip.tip-right:hover::after {
+            transform: translateY(0);
+        }
+
+        /* 螢光筆與開關啟動樣式 */
+        .highlighter-active-yellow {
+            box-shadow: 0 0 0 2px #eab308 inset !important;
+            background-color: #fef08a !important;
+            color: #854d0e !important;
+        }
+        .highlighter-active-blue {
+            box-shadow: 0 0 0 2px #3b82f6 inset !important;
+            background-color: #bfdbfe !important;
+            color: #1e40af !important;
+        }
+        .toggle-active {
+            background-color: #eff6ff !important;
+            border-color: #3b82f6 !important;
+            color: #1d4ed8 !important;
+            box-shadow: 0 0 0 1px #3b82f6 inset;
+        }
+        .guides-active {
+            background-color: #fef2f2 !important;
+            border-color: #f87171 !important;
+            color: #dc2626 !important;
+            box-shadow: 0 0 0 1px #f87171 inset;
+        }
+
+        /* ==========================================
+           ★ 列印專用樣式 (徹底修正跑版與縮放問題)
+           ========================================== */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 20mm;
+            }
+            html, body {
+                width: 100% !important;
+                height: auto !important;
+                background-color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+            .print-hidden { display: none !important; }
+
+            /* 解除外層 Flexbox，避免 Chromium 列印跨頁跑版或異常縮放 */
+            #layout-wrapper {
+                display: block !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            #main-stage {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+            /* 鎖定 170mm 內容寬度，與螢幕 210mm - 20mm*2 完全一致 */
+            #paper-stage {
+                width: var(--a4-content-width) !important;
+                min-width: var(--a4-content-width) !important;
+                max-width: var(--a4-content-width) !important;
+                min-height: auto !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
+            #article-container {
+                width: var(--a4-content-width) !important;
+                min-width: var(--a4-content-width) !important;
+                max-width: var(--a4-content-width) !important;
+                min-height: auto !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                overflow: visible !important;
+                font-size: var(--doc-font-size) !important;
+                line-height: var(--doc-line-height) !important;
+            }
+            #article-container img {
+                max-width: 100% !important;
+                height: auto !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            h1, h2, h3 {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            #source-footer {
+                display: block !important;
+                padding: 6mm 0 0 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
+
+    <!-- 隱藏的 100mm 單位校正尺，用來精準換算當前瀏覽器的 px/mm 比例 -->
+    <div id="mm-calibrator" class="print-hidden" style="position: fixed; left: -9999px; top: 0; width: 100mm; height: 100mm; pointer-events: none; visibility: hidden;"></div>
+
+    <!-- 頂部控制列 (純 Icon 化設計) -->
+    <div class="print-hidden sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200 shadow-sm px-4 py-2.5 flex flex-col lg:flex-row gap-3 items-center justify-between">
+        
+        <!-- 左側：網址輸入與擷取控制 -->
+        <div class="flex w-full lg:w-auto flex-1 max-w-2xl items-center gap-2">
+            <div class="relative flex-1">
+                <input type="url" id="url-input" placeholder="請在此貼上文章網址 (按 Enter 即可擷取)..." class="w-full h-10 pl-3.5 pr-9 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm bg-gray-50/50 focus:bg-white">
+                <button id="clear-url-btn" type="button" class="has-tip hidden absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100" data-tooltip="清除網址" aria-label="清除網址">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <!-- 擷取文章 (重要功能：藍色實心底) -->
+            <button id="fetch-btn" type="button" class="icon-btn has-tip bg-blue-600 hover:bg-blue-700 text-white shadow-sm" data-tooltip="擷取文章" aria-label="擷取文章">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+            </button>
+
+            <!-- 開啟原始網址 -->
+            <button id="open-url-btn" type="button" disabled class="icon-btn has-tip bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200" data-tooltip="尚未輸入有效網址" aria-label="開啟原始網址">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+            </button>
+
+            <!-- 通道測試 -->
+            <button id="open-test-btn" type="button" class="icon-btn has-tip bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200" data-tooltip="5 大網站通道測試" aria-label="通道測試">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </button>
+
+            <!-- 操作說明 (guide.html) 與改版紀錄 (history.html) 與返回工具箱 -->
+            <a href="./guide.html" class="icon-btn has-tip bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200" data-tooltip="互動操作說明手冊" aria-label="操作說明">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </a>
+            <a href="./history.html" class="icon-btn has-tip bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200" data-tooltip="版本演進日誌 (v2.2)" aria-label="改版紀錄">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </a>
+            <a href="../" class="icon-btn has-tip bg-slate-800 hover:bg-slate-900 text-white border border-slate-700" data-tooltip="返回蘇的工具箱首頁" aria-label="返回工具箱">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+            </a>
+        </div>
+
+        <!-- 右側：編輯、排版與輸出工具 -->
+        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
+            
+            <!-- 編輯工具群組 -->
+            <div class="flex items-center gap-1.5 pr-2 border-r border-gray-200">
+                <button id="btn-undo" type="button" class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200" data-tooltip="復原 (Ctrl+Z)" aria-label="復原">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                    </svg>
+                </button>
+                <button id="btn-reset" type="button" class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200" data-tooltip="還原初始狀態" aria-label="還原初始狀態">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+
+                <!-- 黃色螢光筆 -->
+                <button id="btn-highlight-yellow" type="button" class="icon-btn has-tip bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200" data-tooltip="黃色螢光筆模式" aria-label="黃色螢光筆">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </button>
+
+                <!-- 藍色螢光筆 -->
+                <button id="btn-highlight-blue" type="button" class="icon-btn has-tip bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200" data-tooltip="藍色螢光筆模式" aria-label="藍色螢光筆">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </button>
+
+                <!-- 隱藏／顯示所有圖片 -->
+                <button id="btn-toggle-images" type="button" class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200" data-tooltip="隱藏所有圖片（省墨水列印）" aria-label="切換隱藏圖片">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </button>
+
+                <!-- 分頁格線開關 (預設開啟) -->
+                <button id="btn-toggle-guides" type="button" class="icon-btn has-tip guides-active bg-white hover:bg-red-50 text-red-600 border border-red-200" data-tooltip="隱藏 A4 分頁格線（目前開啟）" aria-label="切換分頁格線">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2m-8 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M4 12h3m4 0h2m4 0h3" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 字體與行距滑桿 (改用 Icon + Tooltip) -->
+            <div class="flex items-center gap-2 px-1">
+                <div id="font-size-wrap" class="has-tip flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 h-10" data-tooltip="字體大小：17px">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7V5h16v2M9 20h6M12 5v15" />
+                    </svg>
+                    <input type="range" id="font-size-slider" min="12" max="28" value="17" class="w-14 sm:w-16 cursor-pointer accent-blue-600" aria-label="調整字體大小">
+                </div>
+                <div id="line-height-wrap" class="has-tip flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 h-10" data-tooltip="文章行距：1.7">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <input type="range" id="line-height-slider" min="1.3" max="2.2" step="0.1" value="1.7" class="w-12 sm:w-14 cursor-pointer accent-blue-600" aria-label="調整行距">
+                </div>
+            </div>
+
+            <!-- 輸出工具群組 -->
+            <div class="flex items-center gap-1.5 pl-2 border-l border-gray-200">
+                <!-- 匯出存檔 -->
+                <button id="btn-export-html" type="button" class="icon-btn has-tip tip-right bg-teal-50 hover:bg-teal-100 text-teal-600 border border-teal-200" data-tooltip="匯出獨立 HTML 存檔" aria-label="匯出存檔">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                </button>
+
+                <!-- 直接列印 (重要功能：綠色實心底 + 頁數即時提示) -->
+                <button id="btn-print" type="button" onclick="window.print()" class="icon-btn has-tip tip-right bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm" data-tooltip="直接列印（預估 1 頁）" aria-label="直接列印">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 載入中動畫 -->
+    <div id="loading-spinner" class="hidden fixed inset-0 bg-white/85 backdrop-blur-xs z-50 flex flex-col items-center justify-center px-4">
+        <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-blue-600 mb-4"></div>
+        <p id="loading-status" class="text-base font-semibold text-gray-800">正在擷取文章，請稍候...</p>
+        <p id="loading-substatus" class="text-xs text-gray-500 mt-1">自動依序嘗試多個高可用通道</p>
+    </div>
+
+    <!-- 通道診斷測試面板 Modal -->
+    <div id="test-modal" class="print-hidden hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[88vh] flex flex-col overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-slate-50">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        多通道相容性實測工具 (5 組指定網站)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">直接於您的瀏覽器環境實測 5 個目標網站，確認實際擷取成功率、耗時與圖片數量。</p>
+                </div>
+                <button id="close-test-btn" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-xl hover:bg-gray-200" title="關閉">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="text-xs text-slate-600">
+                        通道順序：<span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">1. Jina Reader</span> →
+                        <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">2. Imread</span> →
+                        <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">3. cors.lol</span> →
+                        <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">4. AllOrigins</span>
+                    </div>
+                    <button id="run-all-tests-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5">
+                        ▶ 開始實測這 5 個網站
+                    </button>
+                </div>
+                <div class="overflow-x-auto border border-gray-200 rounded-xl">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 text-xs uppercase border-b">
+                            <tr>
+                                <th class="px-4 py-3">網站</th>
+                                <th class="px-4 py-3">狀態 / 勝出通道</th>
+                                <th class="px-4 py-3">擷取標題與統計</th>
+                                <th class="px-4 py-3 text-right">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="test-results-body" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 圖片控制浮動工具列 -->
+    <div id="image-toolbar" class="print-hidden hidden absolute z-50 bg-white border border-gray-200 shadow-xl rounded-xl p-1.5 flex gap-1 transform -translate-x-1/2 -translate-y-full mt-[-10px]">
+        <button id="img-enlarge" type="button" class="has-tip p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors" data-tooltip="放大圖片" aria-label="放大圖片">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+        </button>
+        <button id="img-shrink" type="button" class="has-tip p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors" data-tooltip="縮小圖片" aria-label="縮小圖片">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" /></svg>
+        </button>
+        <div class="w-px bg-gray-200 my-1"></div>
+        <button id="img-delete" type="button" class="has-tip p-2 hover:bg-red-50 rounded-lg text-red-600 transition-colors" data-tooltip="刪除圖片" aria-label="刪除圖片">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+        </button>
+    </div>
+
+    <!-- 主要內容區 -->
+    <div id="layout-wrapper" class="flex flex-col xl:flex-row gap-6 w-full max-w-7xl mx-auto my-8 px-4 justify-center">
+
+        <!-- 側邊目錄 (TOC) 與列印狀態面板 -->
+        <aside class="w-full xl:w-64 shrink-0 print-hidden hidden xl:block">
+            <div class="sticky top-24 space-y-4">
+                <!-- 列印頁數即時預估卡 -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">A4 列印預估</span>
+                        <span id="page-count-badge" class="text-xs font-bold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full">約 1 頁</span>
+                    </div>
+                    <div id="layout-metrics" class="text-xs text-gray-500 space-y-1">
+                        <div>字級：<span id="metric-font" class="font-mono font-semibold text-gray-700">17px</span> ｜ 行距：<span id="metric-line" class="font-mono font-semibold text-gray-700">1.7</span></div>
+                        <div class="text-[11px] text-gray-400">可印區 170×257mm（四邊 20mm）</div>
+                    </div>
+                    <div id="channel-badge" class="hidden mt-2.5 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-lg font-medium"></div>
+                </div>
+
+                <!-- 文章大綱 -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 max-h-[65vh] overflow-y-auto">
+                    <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2 border-b pb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>文章大綱
+                    </h3>
+                    <ul id="toc-list" class="space-y-2 text-gray-600"><li class="text-sm text-gray-400 italic">尚未載入文章內容...</li></ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- A4 模擬紙張與分頁格線 (窄螢幕支援水平捲動，絕不擠壓 A4 寬度) -->
+        <main id="main-stage" class="flex-1 flex flex-col items-center min-w-0 overflow-x-auto relative pb-16">
+            <div id="paper-stage">
+                <!-- 分頁格線與邊界參考線層 -->
+                <div id="page-guides-layer" class="print-hidden"></div>
+
+                <!-- 編輯內容區 -->
+                <div id="article-container" contenteditable="true">
+                    <div id="placeholder-text" class="text-center text-gray-400 mt-28 print-hidden pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <p class="font-bold text-gray-500 mb-2">A4 精準所見即所得模式 (v2.2)</p>
+                        <p>請在上方輸入網址並點擊藍色擷取圖示</p>
+                        <p class="mt-4 text-blue-500 font-medium bg-blue-50 py-2 px-4 rounded-full inline-block">💡 或是直接前往目標網頁全選複製，在這裡直接貼上 (Ctrl+V)</p>
+                        <p class="text-sm mt-4">紅色虛線即為實際 A4 列印分頁位置（每頁可印高度 257mm）</p>
+                    </div>
+                </div>
+
+                <!-- 來源頁尾 (螢幕與列印同步顯示) -->
+                <div id="source-footer">
+                    來源網址：<span id="source-url-display">無 (手動貼上)</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 擷取失敗 HTML 模板 -->
+    <template id="error-template">
+        <div class="text-red-600 mt-8 p-6 md:p-8 bg-red-50 rounded-xl border border-red-100 text-left max-w-2xl mx-auto" contenteditable="false" data-keep-style="true">
+            <div class="flex items-center gap-3 mb-4 justify-center sm:justify-start">
+                <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <h2 class="text-xl font-bold">所有自動通道皆擷取失敗</h2>
+            </div>
+            <div class="mb-4 text-xs font-mono bg-white/80 p-3 rounded-lg border border-red-200 text-red-700 whitespace-pre-wrap error-msg"></div>
+            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                <p class="font-bold text-gray-800 mb-2">💡 常見失敗原因：</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1 mb-4">
+                    <li>目標網站啟用高強度<strong>防爬蟲 / Cloudflare 驗證</strong>或需要<strong>會員登入</strong>。</li>
+                    <li>免費公共通道暫時限流（每分鐘請求次數達上限），可稍候片刻重試。</li>
+                </ul>
+                <hr class="my-4 border-gray-200">
+                <p class="font-bold text-blue-600 mb-2 text-base">✅ 100% 成功的替代方案（手動複製貼上）：</p>
+                <ol class="list-decimal list-inside text-sm text-gray-700 space-y-1.5">
+                    <li>前往目標網頁，按 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">A</kbd> 全選並 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">C</kbd> 複製。</li>
+                    <li>回到本頁點擊下方編輯區，按 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">V</kbd> 貼上即可自動淨化排版列印。</li>
+                </ol>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // DOM 元素參考
+        const els = {
+            mmCalibrator: document.getElementById('mm-calibrator'),
+            paperStage: document.getElementById('paper-stage'),
+            pageGuidesLayer: document.getElementById('page-guides-layer'),
+            pageCountBadge: document.getElementById('page-count-badge'),
+            metricFont: document.getElementById('metric-font'),
+            metricLine: document.getElementById('metric-line'),
+            urlInput: document.getElementById('url-input'),
+            clearUrlBtn: document.getElementById('clear-url-btn'),
+            fetchBtn: document.getElementById('fetch-btn'),
+            openUrlBtn: document.getElementById('open-url-btn'),
+            container: document.getElementById('article-container'),
+            fontSlider: document.getElementById('font-size-slider'),
+            fontSizeWrap: document.getElementById('font-size-wrap'),
+            lineSlider: document.getElementById('line-height-slider'),
+            lineHeightWrap: document.getElementById('line-height-wrap'),
+            spinner: document.getElementById('loading-spinner'),
+            loadingStatus: document.getElementById('loading-status'),
+            loadingSubstatus: document.getElementById('loading-substatus'),
+            sourceDisplay: document.getElementById('source-url-display'),
+            channelBadge: document.getElementById('channel-badge'),
+            btnUndo: document.getElementById('btn-undo'),
+            btnReset: document.getElementById('btn-reset'),
+            btnHL_Y: document.getElementById('btn-highlight-yellow'),
+            btnHL_B: document.getElementById('btn-highlight-blue'),
+            btnToggleImages: document.getElementById('btn-toggle-images'),
+            btnToggleGuides: document.getElementById('btn-toggle-guides'),
+            btnExportHtml: document.getElementById('btn-export-html'),
+            btnPrint: document.getElementById('btn-print'),
+            tocList: document.getElementById('toc-list'),
+            imgToolbar: document.getElementById('image-toolbar'),
+            testModal: document.getElementById('test-modal'),
+            openTestBtn: document.getElementById('open-test-btn'),
+            closeTestBtn: document.getElementById('close-test-btn'),
+            runAllTestsBtn: document.getElementById('run-all-tests-btn'),
+            testResultsBody: document.getElementById('test-results-body')
+        };
+
+        let selectedImage = null, originalArticleState = null, activeHighlighter = null;
+        let showPageGuides = true;
+
+        // 預設 5 組實測網站
+        const TEST_SITES = [
+            { name: '聯合新聞網 (UDN)', url: 'https://udn.com/news/story/7252/9897961?from=udn_ch2_menu_v2_main_index' },
+            { name: 'Yahoo 奇摩新聞', url: 'https://tw.news.yahoo.com/nvidia%E5%92%8C%E9%BB%83%E4%BB%81%E5%8B%B3%E5%B0%8D%E7%BE%8E%E5%9C%8B%E7%B6%93%E6%BF%9F%E6%9C%89%E5%A4%9A%E9%87%8D%E8%A6%81-002506073.html' },
+            { name: '鉅亨網 (m.cnyes)', url: 'https://m.cnyes.com/news/id/6670656' },
+            { name: 'ArchDaily', url: 'https://www.archdaily.com/1188784/student-dining-block-at-s-r-university-sjk-architects?ad_content=1188784&ad_medium=widget&ad_name=featured_loop_main' },
+            { name: 'Designboom', url: 'https://www.designboom.com/architecture/green-metal-facade-plant-walls-municipal-kitchen-austria-central-kitchen-graz-superfuture-group/' }
+        ];
+
+        // ================== 分頁格線計算與重繪 (精準 mm 換算) ==================
+        function getPxPerMm() {
+            const h = els.mmCalibrator.getBoundingClientRect().height;
+            return h > 0 ? h / 100 : 3.7795275591;
+        }
+
+        function updatePageGuides() {
+            const pxPerMm = getPxPerMm();
+            const topMarginPx = 20 * pxPerMm;      // 螢幕頂部留白 20mm
+            const contentPagePx = 257 * pxPerMm;   // A4 297mm - 上下各 20mm = 257mm 可印區
+
+            // 計算實際內文＋頁尾的內容高度（扣除頂部 20mm padding）
+            const totalStageHeight = els.paperStage.scrollHeight;
+            const effectiveContentHeight = Math.max(1, totalStageHeight - topMarginPx - (14 * pxPerMm));
+            const totalPages = Math.max(1, Math.ceil(effectiveContentHeight / contentPagePx));
+
+            // 更新頁數提示
+            els.pageCountBadge.textContent = `約 ${totalPages} 頁`;
+            els.btnPrint.setAttribute('data-tooltip', `直接列印（預估 ${totalPages} 頁）`);
+
+            // 重繪左右邊界淡線與各分頁虛線
+            const frag = document.createDocumentFragment();
+
+            const leftLine = document.createElement('div');
+            leftLine.className = 'margin-guide-left';
+            const rightLine = document.createElement('div');
+            rightLine.className = 'margin-guide-right';
+            frag.appendChild(leftLine);
+            frag.appendChild(rightLine);
+
+            for (let p = 1; p < totalPages; p++) {
+                const yPos = topMarginPx + p * contentPagePx;
+                const line = document.createElement('div');
+                line.className = 'page-break-line';
+                line.style.top = `${yPos}px`;
+                line.innerHTML = `<span class="page-break-label">第 ${p} 頁結束 ✂ 第 ${p + 1} 頁開始</span>`;
+                frag.appendChild(line);
+            }
+
+            els.pageGuidesLayer.innerHTML = '';
+            els.pageGuidesLayer.appendChild(frag);
+        }
+
+        let guideTimer = null;
+        const schedulePageGuidesUpdate = () => {
+            clearTimeout(guideTimer);
+            guideTimer = setTimeout(updatePageGuides, 80);
+        };
+
+        // 監聽紙張高度變化（含圖片載入完成、增刪文字、調整字體行距）
+        if (window.ResizeObserver) {
+            new ResizeObserver(schedulePageGuidesUpdate).observe(els.paperStage);
+        }
+
+        // ================== 列印頁尾與初始儲存 ==================
+        const syncSourceFooter = () => {
+            els.sourceDisplay.textContent = els.urlInput.value.trim() || '無 (手動貼上)';
+        };
+        window.addEventListener('beforeprint', () => {
+            syncSourceFooter();
+            hideImageToolbar();
+        });
+
+        const saveOriginalState = () => setTimeout(() => { originalArticleState = els.container.innerHTML; }, 120);
+
+        // ================== 目錄產生器 ==================
+        const generateTOC = () => {
+            els.tocList.innerHTML = '';
+            const headers = els.container.querySelectorAll('h1, h2, h3');
+            if (!headers.length) {
+                els.tocList.innerHTML = '<li class="text-sm text-gray-400 italic">無標題階層</li>';
+                return;
+            }
+            headers.forEach((h, i) => {
+                if (!h.id) h.id = `header-${Date.now()}-${i}`;
+                const li = document.createElement('li');
+                li.className = `cursor-pointer hover:text-blue-600 truncate text-sm ${h.tagName === 'H1' ? 'font-bold text-gray-800' : (h.tagName === 'H2' ? 'ml-3 text-gray-700' : 'ml-6 text-xs text-gray-500')}`;
+                li.textContent = li.title = h.textContent.trim();
+                li.onclick = () => window.scrollTo({ top: h.getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' });
+                els.tocList.appendChild(li);
+            });
+        };
+        new MutationObserver((_, obs) => {
+            clearTimeout(obs.timeout);
+            obs.timeout = setTimeout(() => {
+                generateTOC();
+                updatePageGuides();
+            }, 350);
+        }).observe(els.container, { childList: true, subtree: true, characterData: true });
+
+        // ================== 網址列與開啟原始網址互動 ==================
+        const isValidHttpUrl = (str) => /^https?:\/\/.+/i.test((str || '').trim());
+        const syncUrlActions = () => {
+            const val = els.urlInput.value.trim();
+            els.clearUrlBtn.classList.toggle('hidden', !val);
+            const valid = isValidHttpUrl(val);
+            els.openUrlBtn.disabled = !valid;
+            els.openUrlBtn.setAttribute('data-tooltip', valid ? '開啟原始網址（新分頁）' : '尚未輸入有效網址');
+            syncSourceFooter();
+        };
+        els.urlInput.addEventListener('input', syncUrlActions);
+        els.urlInput.addEventListener('focus', (e) => { e.target.select(); syncUrlActions(); });
+        els.urlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') els.fetchBtn.click(); });
+        els.clearUrlBtn.onclick = () => { els.urlInput.value = ''; syncUrlActions(); els.urlInput.focus(); };
+        els.openUrlBtn.onclick = () => {
+            const url = els.urlInput.value.trim();
+            if (isValidHttpUrl(url)) window.open(url, '_blank', 'noopener,noreferrer');
+        };
+        syncUrlActions();
+
+        // ================== 字體、行距、分頁格線與基本操作 ==================
+        function applyTypography(fontPx, lineHeight) {
+            document.documentElement.style.setProperty('--doc-font-size', `${fontPx}px`);
+            document.documentElement.style.setProperty('--doc-line-height', `${lineHeight}`);
+            els.fontSizeWrap.setAttribute('data-tooltip', `字體大小：${fontPx}px`);
+            els.lineHeightWrap.setAttribute('data-tooltip', `文章行距：${lineHeight}`);
+            els.metricFont.textContent = `${fontPx}px`;
+            els.metricLine.textContent = `${lineHeight}`;
+            updateToolbarPosition();
+            schedulePageGuidesUpdate();
+        }
+
+        els.fontSlider.oninput = (e) => applyTypography(e.target.value, els.lineSlider.value);
+        els.lineSlider.oninput = (e) => applyTypography(els.fontSlider.value, e.target.value);
+
+        els.btnUndo.onclick = () => { document.execCommand('undo'); hideImageToolbar(); schedulePageGuidesUpdate(); };
+        els.btnReset.onclick = () => {
+            if (originalArticleState && confirm('確定放棄修改，還原初始狀態嗎？')) {
+                els.container.innerHTML = originalArticleState;
+                hideImageToolbar();
+                generateTOC();
+                schedulePageGuidesUpdate();
+            }
+        };
+        els.container.onfocus = () => { const p = document.getElementById('placeholder-text'); if (p) p.remove(); };
+
+        els.btnToggleImages.onclick = () => {
+            const hidden = els.container.classList.toggle('hide-all-images');
+            els.btnToggleImages.classList.toggle('toggle-active', hidden);
+            els.btnToggleImages.setAttribute('data-tooltip', hidden ? '恢復顯示所有圖片' : '隱藏所有圖片（省墨水列印）');
+            hideImageToolbar();
+            schedulePageGuidesUpdate();
+        };
+
+        els.btnToggleGuides.onclick = () => {
+            showPageGuides = !showPageGuides;
+            els.pageGuidesLayer.classList.toggle('guides-hidden', !showPageGuides);
+            els.btnToggleGuides.classList.toggle('guides-active', showPageGuides);
+            els.btnToggleGuides.setAttribute('data-tooltip', showPageGuides ? '隱藏 A4 分頁格線（目前開啟）' : '顯示 A4 分頁格線（目前關閉）');
+            if (showPageGuides) updatePageGuides();
+        };
+
+        els.btnExportHtml.onclick = () => {
+            const titleEl = els.container.querySelector('h1');
+            const docTitle = (titleEl ? titleEl.textContent.trim() : '純淨文章存檔').replace(/[\\/:*?"<>|]/g, '_').slice(0, 60);
+            const sourceUrl = els.urlInput.value.trim() || '手動貼上';
+            const hideImgClass = els.container.classList.contains('hide-all-images') ? 'hide-all-images' : '';
+            const exportHtml = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(docTitle)}</title>
+<style>
+  body { font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif; background: #f3f4f6; color: #1f2937; margin: 0; padding: 24px 12px; }
+  .paper { width: 210mm; margin: 0 auto; background: #fff; padding: 20mm; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.08); font-size: ${els.fontSlider.value}px; line-height: ${els.lineSlider.value}; word-wrap: break-word; }
+  .paper img { max-width: 100% !important; height: auto; display: block; margin: 1.5rem auto; border-radius: 6px; page-break-inside: avoid; break-inside: avoid; }
+  .paper.hide-all-images img, .paper.hide-all-images figure { display: none !important; }
+  .paper h1, .paper h2, .paper h3 { font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; page-break-after: avoid; break-after: avoid; }
+  .paper p { margin-bottom: 1em; }
+  .paper blockquote { border-left: 4px solid #cbd5e1; padding-left: 1rem; color: #475569; margin: 1rem 0; }
+  .footer { text-align: center; font-size: 12px; color: #6b7280; margin-top: 16px; word-break: break-all; }
+  @media print {
+    @page { size: A4 portrait; margin: 20mm; }
+    body { background: #fff; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .paper { box-shadow: none; width: 170mm; padding: 0; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+  <article class="paper ${hideImgClass}">${els.container.innerHTML}<div class="footer">來源網址：${escapeHtml(sourceUrl)}</div></article>
+</body>
+</html>`;
+            const blob = new Blob([exportHtml], { type: 'text/html;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${docTitle}.html`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        };
+
+        // ================== 螢光筆切換與標記 ==================
+        const toggleHighlighter = (color) => {
+            activeHighlighter = activeHighlighter === color ? null : color;
+            els.btnHL_Y.classList.toggle('highlighter-active-yellow', activeHighlighter === 'yellow');
+            els.btnHL_B.classList.toggle('highlighter-active-blue', activeHighlighter === 'blue');
+            els.container.style.cursor = activeHighlighter ? 'cell' : 'text';
+        };
+        els.btnHL_Y.onclick = () => toggleHighlighter('yellow');
+        els.btnHL_B.onclick = () => toggleHighlighter('blue');
+        els.container.onmouseup = () => {
+            if (!activeHighlighter) return;
+            const sel = window.getSelection();
+            if (sel.toString().trim()) {
+                const hex = activeHighlighter === 'yellow' ? '#fef08a' : '#bfdbfe';
+                if (!document.execCommand('hiliteColor', false, hex)) document.execCommand('backColor', false, hex);
+                sel.removeAllRanges();
+            }
+        };
+
+        // ================== 工具函式與內容淨化 ==================
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+
+        function isPlaceholderImg(src) {
+            if (!src) return true;
+            const s = src.trim().toLowerCase();
+            return s.startsWith('data:image/gif') || s.startsWith('data:image/svg+xml') || s.includes('blank.gif') || s.includes('placeholder') || s.includes('1x1');
+        }
+
+        function pickBestImageSrc(img, baseUrl) {
+            const candidates = [
+                img.getAttribute('data-original'),
+                img.getAttribute('data-lazy-src'),
+                img.getAttribute('data-actualsrc'),
+                img.getAttribute('data-src'),
+                img.getAttribute('src')
+            ];
+            let chosen = candidates.find(c => c && !isPlaceholderImg(c));
+            if (!chosen) {
+                const srcset = img.getAttribute('data-srcset') || img.getAttribute('srcset');
+                if (srcset) {
+                    const parts = srcset.split(',').map(s => s.trim().split(/\s+/)[0]).filter(Boolean);
+                    if (parts.length) chosen = parts[parts.length - 1];
+                }
+            }
+            if (!chosen) return null;
+            try { return new URL(chosen, baseUrl).href; } catch { return chosen; }
+        }
+
+        function enhanceImages(rootEl, baseUrl) {
+            rootEl.querySelectorAll('img').forEach(img => {
+                if (baseUrl) {
+                    const best = pickBestImageSrc(img, baseUrl);
+                    if (best) img.setAttribute('src', best);
+                }
+                img.setAttribute('referrerpolicy', 'no-referrer');
+                img.setAttribute('loading', 'eager');
+                img.removeAttribute('srcset');
+                img.removeAttribute('sizes');
+                img.removeAttribute('width');
+                img.removeAttribute('height');
+                img.onload = schedulePageGuidesUpdate;
+                img.onerror = function() {
+                    this.style.border = '1px dashed #cbd5e1';
+                    this.style.padding = '8px';
+                    this.style.background = '#f8fafc';
+                    this.alt = this.alt || '（圖片無法載入，可能受來源網站防盜連限制）';
+                    schedulePageGuidesUpdate();
+                };
+            });
+        }
+
+        const cleanUpContent = (el) => {
+            // 資安防護：清除所有危險標籤與 on* 事件屬性 / javascript: 偽協定 (防範擷取內容觸發 DOM XSS)
+            el.querySelectorAll('script, style, noscript, iframe, object, embed, form, meta, link').forEach(n => n.remove());
+            el.querySelectorAll('*').forEach(n => {
+                [...n.attributes].forEach(attr => {
+                    const name = attr.name.toLowerCase();
+                    const val = (attr.value || '').replace(/[\x00-\x20]+/g, '').toLowerCase();
+                    if (name.startsWith('on') || name === 'srcdoc') {
+                        n.removeAttribute(attr.name);
+                    } else if ((name === 'href' || name === 'src' || name === 'xlink:href') && (val.startsWith('javascript:') || val.startsWith('vbscript:') || val.startsWith('data:text/html'))) {
+                        n.removeAttribute(attr.name);
+                    }
+                });
+            });
+            el.querySelectorAll('br').forEach(br => {
+                let next = br.nextSibling;
+                while (next && next.nodeType === 3 && !next.textContent.trim()) next = next.nextSibling;
+                if (next && next.nodeName === 'BR') br.remove();
+            });
+            el.querySelectorAll('p, div, span').forEach(n => {
+                if (n.getAttribute('data-keep-style') === 'true') return;
+                if (!n.textContent.trim() && !n.querySelector('img, video, audio, svg')) n.remove();
+            });
+            el.querySelectorAll('*:not(img)').forEach(n => {
+                if (n.getAttribute('data-keep-style') === 'true') return;
+                const isHighlight = n.tagName === 'SPAN' && (n.getAttribute('style') || '').includes('background-color');
+                n.removeAttribute('class');
+                if (!['H1', 'H2', 'H3'].includes(n.tagName) && !isHighlight) n.removeAttribute('style');
+            });
+        };
+
+        els.container.onpaste = (e) => {
+            e.preventDefault();
+            const pasteHtml = (e.clipboardData || window.clipboardData).getData('text/html');
+            if (pasteHtml) {
+                const doc = new DOMParser().parseFromString(pasteHtml, 'text/html');
+                doc.body.querySelectorAll('*').forEach(n => {
+                    if (['SCRIPT', 'STYLE', 'META', 'LINK', 'IFRAME', 'OBJECT', 'EMBED'].includes(n.tagName)) return n.remove();
+                    [...n.attributes].forEach(attr => {
+                        if (!['src', 'href', 'alt', 'title'].includes(attr.name)) n.removeAttribute(attr.name);
+                    });
+                });
+                enhanceImages(doc.body, null);
+                document.execCommand('insertHTML', false, doc.body.innerHTML);
+                cleanUpContent(els.container);
+            } else {
+                document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain'));
+            }
+            els.channelBadge.classList.add('hidden');
+            saveOriginalState();
+            schedulePageGuidesUpdate();
+        };
+
+        // ================== 圖片控制邏輯 (上限鎖定在 170mm 內，防止觸發列印整頁縮放) ==================
+        const hideImageToolbar = () => { els.imgToolbar.classList.add('hidden'); selectedImage = null; };
+        const updateToolbarPosition = () => {
+            if (!selectedImage) return;
+            const rect = selectedImage.getBoundingClientRect();
+            els.imgToolbar.style.left = `${rect.left + window.scrollX + (rect.width / 2)}px`;
+            els.imgToolbar.style.top = `${rect.top + window.scrollY}px`;
+        };
+        const deleteSelectedImage = () => {
+            if (!selectedImage) return;
+            const sel = window.getSelection(), range = document.createRange();
+            range.selectNode(selectedImage); sel.removeAllRanges(); sel.addRange(range);
+            document.execCommand('delete');
+            hideImageToolbar();
+            schedulePageGuidesUpdate();
+        };
+
+        els.container.onclick = (e) => {
+            if (e.target.tagName === 'IMG') { selectedImage = e.target; updateToolbarPosition(); els.imgToolbar.classList.remove('hidden'); }
+            else hideImageToolbar();
+        };
+        els.container.oninput = () => { hideImageToolbar(); schedulePageGuidesUpdate(); };
+        window.onresize = () => { if (selectedImage) updateToolbarPosition(); schedulePageGuidesUpdate(); };
+
+        document.getElementById('img-enlarge').onclick = () => {
+            if (!selectedImage) return;
+            const maxContentW = els.container.clientWidth - (40 * getPxPerMm());
+            const nextW = Math.min(Math.round(selectedImage.clientWidth * 1.15), Math.floor(maxContentW));
+            selectedImage.style.setProperty('width', `${nextW}px`, 'important');
+            selectedImage.style.setProperty('max-width', '100%', 'important');
+            setTimeout(() => { updateToolbarPosition(); updatePageGuides(); }, 50);
+        };
+        document.getElementById('img-shrink').onclick = () => {
+            if (!selectedImage) return;
+            const nextW = Math.max(80, Math.round(selectedImage.clientWidth * 0.85));
+            selectedImage.style.setProperty('width', `${nextW}px`, 'important');
+            selectedImage.style.setProperty('max-width', '100%', 'important');
+            setTimeout(() => { updateToolbarPosition(); updatePageGuides(); }, 50);
+        };
+        document.getElementById('img-delete').onclick = deleteSelectedImage;
+        els.container.onkeydown = (e) => { if (['Backspace', 'Delete'].includes(e.key) && selectedImage) { e.preventDefault(); deleteSelectedImage(); } };
+
+        // ================== 新一代多通道擷取核心 (含逾時與防護頁偵測) ==================
+        async function fetchWithTimeout(resource, timeoutMs = 10000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(resource, { signal: controller.signal });
+                return res;
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        function isBlockedPage(text) {
+            if (!text || text.trim().length < 80) return true;
+            const sample = text.slice(0, 3500).toLowerCase();
+            const blockPatterns = [
+                'just a moment...',
+                'enable javascript and cookies to continue',
+                'attention required! | cloudflare',
+                'verify you are human',
+                'checking your browser before accessing',
+                'access denied',
+                'cf-browser-verification',
+                '403 forbidden',
+                'target url returned error 403',
+                'target url returned error 401'
+            ];
+            return blockPatterns.some(p => sample.includes(p)) && text.length < 12000;
+        }
+
+        function parseReaderMarkdownResponse(rawText, url) {
+            if (isBlockedPage(rawText)) throw new Error('命中反爬蟲或內容過短');
+            let title = '';
+            let publishedTime = '';
+            let markdown = rawText;
+
+            const titleMatch = rawText.match(/^Title:\s*(.+)$/m);
+            if (titleMatch) title = titleMatch[1].trim();
+            const timeMatch = rawText.match(/^Published Time:\s*(.+)$/m);
+            if (timeMatch) publishedTime = timeMatch[1].trim();
+
+            const markerIdx = rawText.indexOf('Markdown Content:');
+            if (markerIdx !== -1) {
+                markdown = rawText.slice(markerIdx + 'Markdown Content:'.length).trim();
+            }
+
+            if (!markdown || markdown.length < 80) throw new Error('提取正文過短');
+
+            marked.setOptions({ gfm: true, breaks: true });
+            const parsedHtml = marked.parse(markdown);
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = parsedHtml;
+
+            const firstH1 = tempDiv.querySelector('h1');
+            if (firstH1 && title && firstH1.textContent.trim().toLowerCase() === title.toLowerCase()) {
+                firstH1.remove();
+            }
+
+            cleanUpContent(tempDiv);
+            enhanceImages(tempDiv, url);
+            const textLen = (tempDiv.textContent || '').trim().length;
+            if (textLen < 80) throw new Error('正文文字過少');
+
+            return {
+                title: title || '無標題',
+                byline: publishedTime ? `發布時間：${publishedTime}` : '',
+                content: tempDiv.innerHTML,
+                textLength: textLen,
+                imageCount: tempDiv.querySelectorAll('img').length
+            };
+        }
+
+        function parseHtmlWithReadability(htmlText, url) {
+            if (!htmlText || !htmlText.toLowerCase().includes('<html') || isBlockedPage(htmlText)) {
+                throw new Error('回傳非正常網頁或遭到阻擋');
+            }
+            const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+            doc.querySelectorAll('img').forEach(img => {
+                const best = pickBestImageSrc(img, url);
+                if (best) img.setAttribute('src', best);
+            });
+            doc.querySelectorAll('script, style, noscript').forEach(n => n.remove());
+
+            const article = new Readability(doc).parse();
+            if (!article || !article.content) throw new Error('Readability 無法提取正文');
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = article.content;
+            cleanUpContent(tempDiv);
+            enhanceImages(tempDiv, url);
+
+            const textLen = (tempDiv.textContent || '').trim().length;
+            if (textLen < 80) throw new Error('提取正文文字過少');
+
+            return {
+                title: article.title || '無標題',
+                byline: article.byline || '',
+                content: tempDiv.innerHTML,
+                textLength: textLen,
+                imageCount: tempDiv.querySelectorAll('img').length
+            };
+        }
+
+        const CHANNELS = [
+            {
+                name: 'Jina Reader',
+                timeout: 14000,
+                fetchArticle: async (url) => {
+                    const res = await fetchWithTimeout(`https://r.jina.ai/${url}`, 14000);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const text = await res.text();
+                    return parseReaderMarkdownResponse(text, url);
+                }
+            },
+            {
+                name: 'Imread Reader',
+                timeout: 12000,
+                fetchArticle: async (url) => {
+                    const res = await fetchWithTimeout(`https://imread.org/${url}`, 12000);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const text = await res.text();
+                    return parseReaderMarkdownResponse(text, url);
+                }
+            },
+            {
+                name: 'cors.lol + Readability',
+                timeout: 10000,
+                fetchArticle: async (url) => {
+                    const res = await fetchWithTimeout(`https://api.cors.lol/?url=${encodeURIComponent(url)}`, 10000);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const htmlText = await res.text();
+                    return parseHtmlWithReadability(htmlText, url);
+                }
+            },
+            {
+                name: 'AllOrigins Raw + Readability',
+                timeout: 10000,
+                fetchArticle: async (url) => {
+                    const res = await fetchWithTimeout(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, 10000);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const htmlText = await res.text();
+                    return parseHtmlWithReadability(htmlText, url);
+                }
+            },
+            {
+                name: 'AllOrigins JSON + Readability',
+                timeout: 10000,
+                fetchArticle: async (url) => {
+                    const res = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, 10000);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const json = await res.json();
+                    return parseHtmlWithReadability(json.contents || '', url);
+                }
+            }
+        ];
+
+        async function fetchArticleMultiChannel(url, onProgress) {
+            const errors = [];
+            for (let i = 0; i < CHANNELS.length; i++) {
+                const ch = CHANNELS[i];
+                if (onProgress) onProgress(ch.name, i + 1, CHANNELS.length);
+                const start = performance.now();
+                try {
+                    const article = await ch.fetchArticle(url);
+                    return {
+                        ok: true,
+                        channel: ch.name,
+                        elapsedMs: Math.round(performance.now() - start),
+                        article,
+                        errors
+                    };
+                } catch (err) {
+                    const msg = err.name === 'AbortError' ? `逾時 (${ch.timeout / 1000}s)` : err.message;
+                    errors.push(`${ch.name}: ${msg}`);
+                }
+            }
+            return { ok: false, errors };
+        }
+
+        function renderArticleToEditor(article, channelName, url) {
+            const bylineHtml = article.byline
+                ? `<p data-keep-style="true" style="color: #64748b; font-style: italic; font-size: 0.9em; margin-bottom: 1.5em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75em;">${escapeHtml(article.byline)}</p>`
+                : '';
+
+            els.container.innerHTML = `<h1 style="font-size: 1.85em; margin-bottom: 0.5em;">${escapeHtml(article.title)}</h1>${bylineHtml}${article.content}`;
+            cleanUpContent(els.container);
+            enhanceImages(els.container, url);
+
+            els.channelBadge.textContent = `✓ 通道：${channelName}`;
+            els.channelBadge.classList.remove('hidden');
+            syncSourceFooter();
+            saveOriginalState();
+            generateTOC();
+            schedulePageGuidesUpdate();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        els.fetchBtn.onclick = async () => {
+            const url = els.urlInput.value.trim();
+            if (!url) return alert('請先輸入有效的網址！');
+            if (!/^https?:\/\//i.test(url)) return alert('網址須以 http:// 或 https:// 開頭');
+
+            els.spinner.classList.remove('hidden');
+            hideImageToolbar();
+
+            try {
+                const result = await fetchArticleMultiChannel(url, (name, idx, total) => {
+                    els.loadingStatus.textContent = `正在透過 ${name} 擷取文章...`;
+                    els.loadingSubstatus.textContent = `嘗試通道 ${idx} / ${total}`;
+                });
+
+                if (!result.ok) {
+                    const template = document.getElementById('error-template');
+                    els.container.innerHTML = template.innerHTML;
+                    els.container.querySelector('.error-msg').textContent = result.errors.join('\n');
+                    els.channelBadge.classList.add('hidden');
+                    schedulePageGuidesUpdate();
+                    return;
+                }
+
+                renderArticleToEditor(result.article, result.channel, url);
+            } finally {
+                els.spinner.classList.add('hidden');
+            }
+        };
+
+        // ================== 5 大網站通道測試面板 ==================
+        const cachedTestArticles = {};
+
+        function renderTestTableSkeleton() {
+            els.testResultsBody.innerHTML = TEST_SITES.map((site, idx) => `
+                <tr id="test-row-${idx}">
+                    <td class="px-4 py-3 align-top">
+                        <div class="font-semibold text-gray-800">${escapeHtml(site.name)}</div>
+                        <a href="${escapeHtml(site.url)}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 hover:underline break-all line-clamp-1">${escapeHtml(site.url)}</a>
+                    </td>
+                    <td class="px-4 py-3 align-top test-status text-xs text-gray-400">尚未測試</td>
+                    <td class="px-4 py-3 align-top test-meta text-xs text-gray-500">—</td>
+                    <td class="px-4 py-3 align-top text-right whitespace-nowrap">
+                        <button onclick="runSingleSiteTest(${idx})" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-300">單獨測試</button>
+                        <button id="load-test-${idx}" onclick="loadTestedArticle(${idx})" class="hidden text-xs bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded-lg ml-1">載入編輯</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.runSingleSiteTest = async (idx) => {
+            const site = TEST_SITES[idx];
+            const row = document.getElementById(`test-row-${idx}`);
+            const statusCell = row.querySelector('.test-status');
+            const metaCell = row.querySelector('.test-meta');
+            const loadBtn = document.getElementById(`load-test-${idx}`);
+
+            loadBtn.classList.add('hidden');
+            statusCell.innerHTML = `<span class="text-blue-600 font-medium">測試中...</span>`;
+            metaCell.textContent = '依序嘗試通道...';
+
+            const res = await fetchArticleMultiChannel(site.url, (chName) => {
+                statusCell.innerHTML = `<span class="text-blue-600">嘗試 ${escapeHtml(chName)}...</span>`;
+            });
+
+            if (res.ok) {
+                cachedTestArticles[idx] = res;
+                statusCell.innerHTML = `
+                    <span class="inline-block bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">✓ 成功</span>
+                    <div class="text-xs text-gray-600 mt-1">${escapeHtml(res.channel)} (${(res.elapsedMs / 1000).toFixed(1)}s)</div>
+                `;
+                metaCell.innerHTML = `
+                    <div class="font-medium text-gray-800 line-clamp-2">${escapeHtml(res.article.title)}</div>
+                    <div class="text-gray-500 mt-0.5">字數：${res.article.textLength.toLocaleString()} ｜ 圖片：${res.article.imageCount} 張</div>
+                `;
+                loadBtn.classList.remove('hidden');
+            } else {
+                statusCell.innerHTML = `<span class="inline-block bg-red-100 text-red-700 font-semibold px-2 py-0.5 rounded">✕ 全部失敗</span>`;
+                metaCell.innerHTML = `<div class="text-red-600 whitespace-pre-wrap text-[11px]">${escapeHtml(res.errors.join('\n'))}</div>`;
+            }
+        };
+
+        window.loadTestedArticle = (idx) => {
+            const res = cachedTestArticles[idx];
+            if (!res) return;
+            els.urlInput.value = TEST_SITES[idx].url;
+            syncUrlActions();
+            renderArticleToEditor(res.article, res.channel, TEST_SITES[idx].url);
+            els.testModal.classList.add('hidden');
+        };
+
+        els.openTestBtn.onclick = () => {
+            if (!els.testResultsBody.children.length) renderTestTableSkeleton();
+            els.testModal.classList.remove('hidden');
+        };
+        els.closeTestBtn.onclick = () => els.testModal.classList.add('hidden');
+        els.testModal.onclick = (e) => { if (e.target === els.testModal) els.testModal.classList.add('hidden'); };
+
+        els.runAllTestsBtn.onclick = async () => {
+            els.runAllTestsBtn.disabled = true;
+            els.runAllTestsBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            renderTestTableSkeleton();
+            for (let i = 0; i < TEST_SITES.length; i++) {
+                await window.runSingleSiteTest(i);
+                await new Promise(r => setTimeout(r, 400));
+            }
+            els.runAllTestsBtn.disabled = false;
+            els.runAllTestsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        };
+
+        // 初始化分頁格線
+        window.addEventListener('load', updatePageGuides);
+        updatePageGuides();
+    </script>
+</body>
+</html>

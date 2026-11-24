@@ -1,0 +1,2627 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>美東旅遊英文實戰手冊</title>
+  <style>
+    /* =========================================================================
+       1. 設計系統變數與基礎重置 (低明度日系清爽風・老花眼友善高對比)
+       ========================================================================= */
+    :root {
+      --bg-page: #F7F8FA;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F1F4F8;
+      --bg-mastered: #D6F0E0;
+      --border-default: #DDE2E8;
+      --border-strong: #D5DCE4;
+      --border-core: #C94A4A;
+      --border-mastered: #7CC49B;
+      --accent-mastered: #2A7B56;
+      --text-primary: #1F2937;
+      --text-strong: #111827;
+      --text-secondary: #4B5563;
+      --text-muted: #5C6773;
+      --sidebar-width: 240px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+      --font-sans: "Inter", "PingFang TC", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* =========================================================================
+       2. 全視窗雙區固定骨架 (桌機鎖定 100vh，僅右側卡片區獨立捲動)
+       ========================================================================= */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .app-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+      background-color: var(--bg-card);
+      border-bottom: 1.5px solid var(--border-default);
+      z-index: 30;
+    }
+
+    .header-brand {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px 12px;
+      border-right: 1.5px solid var(--border-default);
+    }
+
+    .header-brand h1 {
+      margin: 0;
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .header-controls-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px 11px;
+      padding: 8px 14px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .seg-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background-color: var(--bg-subtle);
+      border: 1.5px solid var(--border-default);
+      border-radius: 9px;
+      padding: 3px;
+    }
+
+    .ctrl-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .ctrl-btn:hover {
+      background-color: #E2E8F0;
+      color: var(--text-strong);
+    }
+
+    .ctrl-btn.is-active {
+      background-color: #334155;
+      color: #FFFFFF;
+    }
+
+    .ctrl-btn.is-core-active {
+      background-color: #FFFFFF;
+      color: var(--border-core);
+      box-shadow: inset 0 0 0 1.5px var(--border-core);
+    }
+
+    .ctrl-btn.is-rate-active {
+      background-color: #5B768A;
+      color: #FFFFFF;
+    }
+
+    .outline-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 6px 11px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      background-color: #FFFFFF;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border-strong);
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .outline-btn:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-strong);
+    }
+
+    .outline-btn.is-active {
+      background-color: #334155;
+      border-color: #334155;
+      color: #FFFFFF;
+    }
+
+    .outline-btn.is-hide-active {
+      background-color: var(--accent-mastered);
+      border-color: var(--accent-mastered);
+      color: #FFFFFF;
+    }
+
+    .outline-btn.is-sync-btn {
+      color: #3D5B70;
+      border-color: #BAC9D6;
+      background-color: #F4F7FA;
+    }
+
+    .outline-btn.is-sync-btn:hover {
+      background-color: #E7EFF5;
+      border-color: #5B768A;
+      color: #1E3A4C;
+    }
+
+    .core-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--border-core);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .chip-num {
+      font-size: 12.5px;
+      opacity: 0.85;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .divider-v {
+      width: 1.5px;
+      height: 22px;
+      background-color: var(--border-default);
+      flex-shrink: 0;
+    }
+
+    /* 雙進度條區 */
+    .progress-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .progress-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      width: 72px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .progress-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .progress-track {
+      width: 195px;
+      height: 9px;
+      background-color: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .progress-stat {
+      font-weight: 700;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      min-width: 96px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .reset-btn {
+      padding: 6px 9px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border: 1.5px solid transparent;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .reset-btn:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-strong);
+      border-color: var(--border-default);
+    }
+
+    .reset-btn.is-confirm {
+      background-color: var(--border-core);
+      color: #FFFFFF;
+      border-color: var(--border-core);
+    }
+
+    /* =========================================================================
+       3. 下方左右主體 (左側 240px 固定分類欄 + 右側獨立捲動內容區)
+       ========================================================================= */
+    .app-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background-color: var(--bg-card);
+      border-right: 1.5px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 10px 10px 12px;
+      gap: 10px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cat-card-btn {
+      width: 100%;
+      min-height: 66px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      background-color: #FFFFFF;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      text-align: left;
+      transition: all 0.16s ease;
+    }
+
+    .cat-card-btn:hover {
+      background-color: #F8FAFC;
+      border-color: #9CA9B8;
+    }
+
+    .cat-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .cat-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.25;
+    }
+
+    .cat-card-count {
+      font-size: 12.5px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-secondary);
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-default);
+      padding: 2px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .cat-card-meta {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+
+    .sidebar-legend {
+      margin-top: auto;
+      padding: 10px 8px 2px;
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-box {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .legend-tip {
+      margin: 2px 0 0;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .main-scroll {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 16px 20px 40px;
+    }
+
+    .content-inner {
+      max-width: 1460px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* 分類標題區：透明底色 + 細底線 */
+    .section-header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-default);
+      background: transparent;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.3;
+    }
+
+    .section-header p {
+      margin: 4px 0 0;
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .sub-heading {
+      margin: 0 0 10px;
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    /* =========================================================================
+       4. 卡片共用樣式 (必背粗紅框 / 已熟記柔綠底 / 遮罩點擊偷看)
+       ========================================================================= */
+    .card-base {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      transition: background-color 0.16s ease, border-color 0.16s ease;
+    }
+
+    .card-base:hover {
+      border-color: #B9C4D0;
+    }
+
+    .card-base.is-mastered {
+      background-color: var(--bg-mastered);
+      border-color: var(--border-mastered);
+    }
+
+    .card-base.is-core {
+      border: 2.5px solid var(--border-core);
+    }
+
+    .card-base.is-core.is-mastered {
+      background-color: var(--bg-mastered);
+      border: 2.5px solid var(--border-core);
+    }
+
+    .action-btns {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border-strong);
+      background-color: #FFFFFF;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-strong);
+      border-color: #94A3B8;
+    }
+
+    .icon-btn.is-checked {
+      background-color: var(--accent-mastered);
+      border-color: var(--accent-mastered);
+      color: #FFFFFF;
+    }
+
+    .icon-btn.is-speaking {
+      background-color: #5B768A;
+      border-color: #5B768A;
+      color: #FFFFFF;
+      transform: scale(1.06);
+    }
+
+    /* 遮罩模糊與點擊偷看 (.revealed 還原) */
+    .mask-wrap {
+      display: inline-block;
+      position: relative;
+      border-radius: 6px;
+      max-width: 100%;
+    }
+
+    .mask-wrap.is-masked {
+      cursor: pointer;
+      background-color: #E2E8F0;
+      padding: 1px 7px;
+      user-select: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .mask-wrap.is-masked:hover {
+      background-color: #CBD5E1;
+    }
+
+    .mask-wrap.is-masked .mask-content {
+      filter: blur(6px);
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .mask-wrap.is-masked::after {
+      content: attr(data-hint);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .mask-wrap.is-masked.revealed {
+      background-color: transparent;
+      padding: 0;
+      user-select: text;
+    }
+
+    .mask-wrap.is-masked.revealed .mask-content {
+      filter: none;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mask-wrap.is-masked.revealed::after {
+      display: none;
+    }
+
+    /* =========================================================================
+       5. 單字卡網格：桌機 3 欄、平板 2 欄、手機 1 欄 (左右對分・三行嚴格對齊)
+       ========================================================================= */
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .vocab-card {
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .vocab-left {
+      width: 56%;
+      min-width: 0;
+      padding-right: 10px;
+      border-right: 1px solid rgba(148, 163, 184, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .vocab-ipa {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .vocab-en {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-strong);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .vocab-colloc {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .vocab-right {
+      width: 44%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .vocab-zh {
+      font-size: 17.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.28;
+      word-break: break-word;
+    }
+
+    .vocab-note {
+      margin: 4px 0 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .vocab-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* =========================================================================
+       6. 句型卡、聽力防禦卡、語氣公式卡 (桌機 2 欄，內部左右對分)
+       ========================================================================= */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .phrase-card {
+      padding: 13px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .phrase-left {
+      width: 58%;
+      min-width: 0;
+      padding-right: 12px;
+      border-right: 1px solid rgba(148, 163, 184, 0.35);
+      display: flex;
+      align-items: center;
+    }
+
+    .phrase-en {
+      font-size: 17.5px;
+      font-weight: 700;
+      color: var(--text-strong);
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .phrase-en strong {
+      color: #9A3434;
+      font-weight: 800;
+      text-decoration: underline;
+      text-decoration-color: rgba(201, 74, 74, 0.45);
+      text-underline-offset: 3px;
+    }
+
+    .phrase-right {
+      width: 42%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .phrase-zh {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .phrase-note {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.38;
+    }
+
+    /* 聽力防禦 Q&A 卡片 */
+    .qa-card {
+      padding: 13px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .qa-left {
+      width: 58%;
+      min-width: 0;
+      padding-right: 12px;
+      border-right: 1px solid rgba(148, 163, 184, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .qa-line {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .qa-line-body {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .role-badge {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 5px;
+    }
+
+    .role-q {
+      background-color: #E2E8F0;
+      color: #334155;
+    }
+
+    .role-a {
+      background-color: rgba(42, 123, 86, 0.14);
+      color: #1E4E3D;
+    }
+
+    .qa-en-q {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-strong);
+      line-height: 1.35;
+    }
+
+    .qa-en-a {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1E4E3D;
+      line-height: 1.35;
+    }
+
+    .qa-right {
+      width: 42%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .qa-zh-block {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+
+    /* 語氣公式卡片 */
+    .tone-card {
+      padding: 13px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .tone-left {
+      width: 56%;
+      min-width: 0;
+      padding-right: 12px;
+      border-right: 1px solid rgba(148, 163, 184, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tone-formula {
+      font-size: 18px;
+      font-weight: 800;
+      color: #5D4966;
+      line-height: 1.35;
+    }
+
+    .tone-example-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      background-color: rgba(247, 248, 250, 0.9);
+      border: 1px solid var(--border-default);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .tone-example {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--text-strong);
+      line-height: 1.4;
+    }
+
+    .tone-right {
+      width: 44%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tone-zh {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* 空狀態 */
+    .empty-state {
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .empty-state h3 {
+      margin: 0;
+      font-size: 17.5px;
+      color: var(--text-primary);
+    }
+
+    .empty-state p {
+      margin: 6px 0 14px;
+      font-size: 14.5px;
+      color: var(--text-muted);
+    }
+
+    .empty-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background-color: #334155;
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .empty-btn:hover {
+      background-color: #1E293B;
+    }
+
+    /* 底部中央 Toast 提示 */
+    .toast-container {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+      width: min(92vw, 560px);
+    }
+
+    .toast-item {
+      background-color: #1F2937;
+      color: #FFFFFF;
+      font-size: 14.5px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.24);
+      text-align: center;
+      line-height: 1.45;
+      opacity: 1;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .toast-item.is-fading {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    /* 手動複製同步網址備援視窗 */
+    .sync-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 80;
+    }
+
+    .sync-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .sync-modal {
+      width: min(520px, 100%);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sync-modal h3 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .sync-modal p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .sync-modal-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border-strong);
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      font-size: 13.5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .sync-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* =========================================================================
+       7. 響應式斷點 (桌機 3 欄 -> 平板 2 欄 -> 手機 1 欄與響應式堆疊)
+       ========================================================================= */
+    @media (max-width: 1279px) {
+      .two-col-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1199px) {
+      .vocab-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 767px) {
+      html, body {
+        overflow: auto;
+        height: auto;
+      }
+      .app-shell {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+      }
+      .app-header {
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+      }
+      .header-brand {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-default);
+        padding: 8px 14px;
+      }
+      .header-controls-wrap {
+        padding: 8px 10px;
+        gap: 6px 8px;
+      }
+      .divider-v {
+        display: none;
+      }
+      .app-body {
+        flex-direction: column;
+        overflow: visible;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1.5px solid var(--border-default);
+        padding: 8px 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+      .sidebar-nav {
+        flex-direction: row;
+        gap: 8px;
+      }
+      .cat-card-btn {
+        width: auto;
+        min-width: 168px;
+        min-height: 58px;
+        padding: 8px 11px;
+        flex-shrink: 0;
+      }
+      .sidebar-legend {
+        display: none;
+      }
+      .main-scroll {
+        overflow: visible;
+        padding: 12px 10px 36px;
+      }
+      .vocab-grid {
+        grid-template-columns: 1fr;
+      }
+      .phrase-card,
+      .qa-card,
+      .tone-card {
+        flex-direction: column;
+      }
+      .phrase-left,
+      .phrase-right,
+      .qa-left,
+      .qa-right,
+      .tone-left,
+      .tone-right {
+        width: 100%;
+        padding-right: 0;
+        border-right: none;
+      }
+      .phrase-left,
+      .qa-left,
+      .tone-left {
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+      }
+      .progress-track {
+        width: 135px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- ==================== 頂部固定整合列 ==================== -->
+    <header class="app-header">
+      <div class="header-brand">
+        <h1>美東旅遊英文實戰手冊</h1>
+      </div>
+
+      <div class="header-controls-wrap">
+        <!-- 範圍篩選：全部 / 必背 (紅點標示，無星號) -->
+        <div class="seg-group" role="group" aria-label="學習範圍篩選">
+          <button id="btnFilterAll" type="button" class="ctrl-btn is-active" title="顯示全部項目">
+            <span>全部</span>
+            <span id="totalAllChip" class="chip-num">171</span>
+          </button>
+          <button id="btnFilterCore" type="button" class="ctrl-btn" title="只顯示粗紅框必背項目">
+            <span class="core-dot"></span>
+            <span>必背</span>
+            <span id="coreTotalChip" class="chip-num">0</span>
+          </button>
+        </div>
+
+        <!-- 獨立切換：隱藏已熟記 -->
+        <button id="btnHideMastered" type="button" class="outline-btn" title="隱藏所有已標記熟記的卡片">
+          隱藏已熟記
+        </button>
+
+        <span class="divider-v" aria-hidden="true"></span>
+
+        <!-- 三向遮罩自我測驗 -->
+        <div class="control-group" role="group" aria-label="遮罩測驗模式">
+          <button id="btnMaskEn" type="button" class="outline-btn" title="隱藏英文單字與句子">隱英文</button>
+          <button id="btnMaskHint" type="button" class="outline-btn" title="隱藏 IPA 音標與搭配詞">隱提示</button>
+          <button id="btnMaskZh" type="button" class="outline-btn" title="隱藏中文翻譯與備註">隱中文</button>
+        </div>
+
+        <span class="divider-v" aria-hidden="true"></span>
+
+        <!-- 美式英語語速切換 -->
+        <div class="seg-group" role="group" aria-label="英語朗讀語速">
+          <button id="btnRateNormal" type="button" class="ctrl-btn is-rate-active" title="正常語速 1.0x">語速 1.0x</button>
+          <button id="btnRateSlow" type="button" class="ctrl-btn" title="慢速跟讀 0.75x">0.75x</button>
+        </div>
+
+        <!-- 跨裝置 URL 同步按鈕 -->
+        <button id="btnSyncProgress" type="button" class="outline-btn is-sync-btn" title="複製專屬同步網址，在其他裝置開啟即可還原進度">
+          🔗 同步進度
+        </button>
+
+        <span class="divider-v" aria-hidden="true"></span>
+
+        <!-- 加長版上下雙進度條 + 兩段式重置 -->
+        <div class="progress-cluster">
+          <div class="progress-stack">
+            <div class="progress-row">
+              <span class="progress-label">
+                <span class="progress-dot" style="background-color: #C94A4A;"></span>
+                必背進度
+              </span>
+              <div class="progress-track">
+                <div id="coreProgressFill" class="progress-fill" style="background-color: #C94A4A;"></div>
+              </div>
+              <span id="coreProgressText" class="progress-stat">0/0 (0%)</span>
+            </div>
+            <div class="progress-row">
+              <span class="progress-label">
+                <span class="progress-dot" style="background-color: #2A7B56;"></span>
+                全部進度
+              </span>
+              <div class="progress-track">
+                <div id="allProgressFill" class="progress-fill" style="background-color: #2A7B56;"></div>
+              </div>
+              <span id="allProgressText" class="progress-stat">0/171 (0%)</span>
+            </div>
+          </div>
+
+          <button id="btnResetProgress" type="button" class="reset-btn" title="清空所有已熟記紀錄">重置</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================== 下方主體：左側固定側欄 + 右側獨立捲動 ==================== -->
+    <div class="app-body">
+      <aside class="sidebar" aria-label="七大分類導覽">
+        <nav id="sidebarNav" class="sidebar-nav"></nav>
+
+        <div class="sidebar-legend">
+          <div class="legend-row">
+            <span class="legend-box" style="border: 2.5px solid #C94A4A; background: #FFFFFF;"></span>
+            <span>粗紅框：優先必背</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-box" style="border: 1.5px solid #7CC49B; background: #D6F0E0;"></span>
+            <span>柔綠底：已熟記卡片</span>
+          </div>
+          <p class="legend-tip">開啟遮罩後，點擊任意模糊色塊可單獨偷看答案。</p>
+        </div>
+      </aside>
+
+      <main id="mainScrollArea" class="main-scroll">
+        <div id="contentContainer" class="content-inner"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部中央浮動提示容器 -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- 剪貼簿受限時的手動複製備援視窗 -->
+  <div id="syncModalBackdrop" class="sync-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
+    <div class="sync-modal">
+      <h3 id="syncModalTitle">🔗 複製跨裝置同步網址</h3>
+      <p id="syncModalDesc">請複製下方專屬同步網址，傳送到手機或平板開啟即可還原進度：</p>
+      <input id="syncModalInput" class="sync-modal-input" type="text" readonly />
+      <div class="sync-modal-actions">
+        <button id="btnSyncModalCopy" type="button" class="outline-btn is-sync-btn">全選並複製</button>
+        <button id="btnSyncModalClose" type="button" class="outline-btn">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. 完整 7 大分類・171 項美東旅遊英文實戰資料庫 (B2 / TOEFL 570)
+      //    (26 + 27 + 28 + 28 + 23 + 21 + 18 = 171 項)
+      // =========================================================================
+      const CATEGORIES = [
+        {
+          key: 'driving',
+          icon: '🚗',
+          name: '租車自駕與交通',
+          meta: '20 單字 ・ 6 句型',
+          subtitle: '涵蓋取還車保險、美東 E-ZPass 過路費、紐澤西專人加油與大城市停車。',
+          color: '#5B768A',
+          bgTint: '#EEF3F7',
+          vocab: [
+            { id: 'dr-v1', must: true, ipa: '/ɪnˈʃʊrəns/', en: 'insurance', colloc: 'full insurance', zh: '保險', note: '租車櫃檯必確認' },
+            { id: 'dr-v2', must: true, ipa: '/ˈiːzi pæs/', en: 'E-ZPass', colloc: 'toll pass', zh: '美東電子收費感應器', note: 'PA/NJ/NY/CT 跨州必備' },
+            { id: 'dr-v3', must: true, ipa: '/toʊl/', en: 'toll', colloc: 'toll road / toll fee', zh: '過路費', note: '美東橋梁隧道常見' },
+            { id: 'dr-v4', must: true, ipa: 'full-service gas', en: 'fill it up', colloc: 'fill it up, regular', zh: '加滿（一般無鉛）', note: '紐澤西依法禁止自助加油' },
+            { id: 'dr-v5', must: true, ipa: '/ˌpriːˈpeɪ/', en: 'prepay', colloc: 'prepay inside', zh: '進店預付油資', note: '外國卡油槍刷不過時用' },
+            { id: 'dr-v6', must: true, ipa: '/pʌmp/', en: 'pump', colloc: 'pump number 4', zh: '油槍編號', note: '進店預付時報油槍號碼' },
+            { id: 'dr-v7', must: true, ipa: '/ˈpɑːrkɪŋ ɡəˈrɑːʒ/', en: 'parking garage', colloc: 'self-park / hourly rate', zh: '立體停車場', note: '大城市停車主力' },
+            { id: 'dr-v8', must: true, ipa: '/ˌvælɪˈdeɪʃn/', en: 'validation', colloc: 'parking validation', zh: '停車折抵蓋章／掃碼', note: '商場或博物館折抵停車費' },
+            { id: 'dr-v9', must: true, ipa: '/skrætʃ/', en: 'scratch', colloc: 'existing scratches', zh: '刮痕', note: '取車繞車檢查必拍照' },
+            { id: 'dr-v10', must: true, ipa: '/fʊl tæŋk/', en: 'full tank', colloc: 'return with a full tank', zh: '滿油', note: '滿油還車規定' },
+            { id: 'dr-v11', must: false, ipa: '/ˈdraɪvərz ˈlaɪsns/', en: "driver's license", colloc: 'international driving permit', zh: '駕照／國際駕照', note: '取車必備正本' },
+            { id: 'dr-v12', must: false, ipa: '/dɪˈdʌktəbl/', en: 'deductible', colloc: 'zero deductible', zh: '保險自負額', note: '事故自付上限' },
+            { id: 'dr-v13', must: false, ipa: '/ɡæs ˈsteɪʃn/', en: 'gas station', colloc: 'regular / unleaded', zh: '加油站', note: '加 87 Regular 即可' },
+            { id: 'dr-v14', must: false, ipa: '/trʌŋk/', en: 'trunk', colloc: 'fits two suitcases', zh: '後車廂', note: '確認行李箱空間' },
+            { id: 'dr-v15', must: false, ipa: '/ˈeksɪt/', en: 'exit', colloc: 'take exit 14', zh: '交流道出口', note: '高速公路看出口編號' },
+            { id: 'dr-v16', must: false, ipa: '/ˈhaɪweɪ/', en: 'highway', colloc: 'interstate highway', zh: '高速公路', note: 'I-95 貫穿美東' },
+            { id: 'dr-v17', must: false, ipa: '/ˈtaɪər/', en: 'tire', colloc: 'flat tire', zh: '輪胎／爆胎', note: '道路救援常用字' },
+            { id: 'dr-v18', must: false, ipa: '/ˌnævɪˈɡeɪʃn/', en: 'navigation', colloc: 'GPS / Apple CarPlay', zh: '導航系統', note: '確認車機是否支援手機連線' },
+            { id: 'dr-v19', must: false, ipa: '/væˈleɪ ˈpɑːrkɪŋ/', en: 'valet parking', colloc: 'tip $3–5 on pickup', zh: '代客泊車', note: '紐約與費城飯店常見' },
+            { id: 'dr-v20', must: false, ipa: 'traffic rule', en: 'no turn on red', colloc: 'No Turn on Red', zh: '禁止紅燈右轉', note: '紐約市區全面禁止' }
+          ],
+          phrases: [
+            {
+              id: 'dr-p1', must: true,
+              enHtml: 'Does this car have an <strong>E-ZPass</strong>, and how are the <strong>tolls</strong> billed?',
+              tts: 'Does this car have an E-ZPass, and how are the tolls billed?',
+              zh: '這台車有裝 E-ZPass 嗎？過路費怎麼計費？',
+              note: '確認每日手續費'
+            },
+            {
+              id: 'dr-p2', must: true,
+              enHtml: "I don't need extra <strong>insurance</strong> — my credit card already covers it.",
+              tts: "I don't need extra insurance — my credit card already covers it.",
+              zh: '我不需要額外保險，我的信用卡已經有涵蓋了。',
+              note: '婉拒租車櫃檯推銷'
+            },
+            {
+              id: 'dr-p3', must: true,
+              enHtml: '<strong>Fill it up</strong> with regular, please.',
+              tts: 'Fill it up with regular, please.',
+              zh: '請幫我加滿一般汽油。',
+              note: '紐澤西加油站直接對員工說'
+            },
+            {
+              id: 'dr-p4', must: true,
+              enHtml: "My card won't work at the <strong>pump</strong>. Can I <strong>prepay</strong> $50 on <strong>pump</strong> 4?",
+              tts: "My card won't work at the pump. Can I prepay 50 dollars on pump 4?",
+              zh: '我的卡在油槍刷不過，可以在 4 號油槍預付 50 美元嗎？',
+              note: '解決外國卡 ZIP Code 驗證問題'
+            },
+            {
+              id: 'dr-p5', must: true,
+              enHtml: "There's a small <strong>scratch</strong> on the door. Should I return it with a <strong>full tank</strong>?",
+              tts: "There's a small scratch on the door. Should I return it with a full tank?",
+              zh: '車門上有個小刮痕。還車時要加滿油嗎？',
+              note: '取車確認車況與油量'
+            },
+            {
+              id: 'dr-p6', must: true,
+              enHtml: 'Is there a <strong>parking garage</strong> nearby, and do you offer <strong>validation</strong>?',
+              tts: 'Is there a parking garage nearby, and do you offer validation?',
+              zh: '附近有停車場嗎？你們有提供停車折抵嗎？',
+              note: '詢問停車與折抵'
+            }
+          ]
+        },
+        {
+          key: 'banking',
+          icon: '🏦',
+          name: '銀行業務與解凍',
+          meta: '20 單字 ・ 7 句型',
+          subtitle: '處理學生時期久未動用而被凍結的銀行帳戶：恢復使用、全額提領或結清關戶。',
+          color: '#A65E5E',
+          bgTint: '#F8EFEF',
+          vocab: [
+            { id: 'bk-v1', must: true, ipa: '/ˈfroʊzn/', en: 'frozen / locked', colloc: 'account is frozen', zh: '凍結的／鎖定的', note: '久未動用常見狀態' },
+            { id: 'bk-v2', must: true, ipa: '/ɪnˈæktɪv/', en: 'inactive / dormant', colloc: 'inactive account', zh: '久未使用的／靜止戶', note: '銀行專用語詞' },
+            { id: 'bk-v3', must: true, ipa: '/riːˈæktɪveɪt/', en: 'reactivate', colloc: 'reactivate my account', zh: '重新啟用／恢復使用', note: '想繼續保留帳戶時用' },
+            { id: 'bk-v4', must: true, ipa: '/kloʊz/', en: 'close an account', colloc: 'close it completely', zh: '結清並關閉帳戶', note: '不打算保留時用' },
+            { id: 'bk-v5', must: true, ipa: '/wɪðˈdrɔː/', en: 'withdraw', colloc: 'withdraw in cash', zh: '提款／領錢', note: '領出剩餘現金' },
+            { id: 'bk-v6', must: true, ipa: '/ˈbæləns/', en: 'balance', colloc: 'remaining balance', zh: '帳戶餘額', note: '確認還剩多少錢' },
+            { id: 'bk-v7', must: true, ipa: '/ˈbæŋkər/', en: 'banker', colloc: 'speak with a banker', zh: '銀行業務員', note: '解凍與關戶要找 banker' },
+            { id: 'bk-v8', must: true, ipa: '/ˈfoʊtoʊ aɪˈdiː/', en: 'photo ID', colloc: 'passport / two forms of ID', zh: '附照片證件', note: '建議帶護照＋信用卡或國際駕照' },
+            { id: 'bk-v9', must: true, ipa: '/ˈtʃekɪŋ/', en: 'checking / savings', colloc: 'checking account', zh: '支票帳戶／儲蓄帳戶', note: '美國最常見兩類帳戶' },
+            { id: 'bk-v10', must: true, ipa: '/kæˈʃɪrz tʃek/', en: "cashier's check", colloc: "issue a cashier's check", zh: '銀行本票', note: '餘額大不便全領現時的替代方案' },
+            { id: 'bk-v11', must: true, ipa: '/ˈverɪfaɪ/', en: 'verify', colloc: 'verify my identity', zh: '核對／驗證身分', note: '核對舊地址、生日或電話' },
+            { id: 'bk-v12', must: false, ipa: '/ʌnˈkleɪmd ˈprɑːpərti/', en: 'unclaimed property', colloc: 'turned over to the state', zh: '無人認領財產', note: '多年未動銀行可能依法移交州政府' },
+            { id: 'bk-v13', must: false, ipa: '/əˈkaʊnt ˈnʌmbər/', en: 'account number', colloc: 'routing number', zh: '帳號／銀行代碼', note: '若忘記可用護照與姓名查' },
+            { id: 'bk-v14', must: false, ipa: '/ˈtelər/', en: 'teller', colloc: 'teller window', zh: '一般櫃檯行員', note: '單純存提現金找 teller' },
+            { id: 'bk-v15', must: false, ipa: '/ˈdebɪt kɑːrd/', en: 'debit card', colloc: 'expired card', zh: '金融卡／提款卡', note: '舊卡通常已過期需重發' },
+            { id: 'bk-v16', must: false, ipa: '/pɪn/', en: 'PIN', colloc: 'reset my PIN', zh: '提款密碼', note: '4 位數密碼' },
+            { id: 'bk-v17', must: false, ipa: '/ˈmʌnθli fiː/', en: 'monthly fee', colloc: 'maintenance fee', zh: '帳戶月費／管理費', note: '確認是否因低於最低餘額被扣費' },
+            { id: 'bk-v18', must: false, ipa: '/ˈædres/', en: 'address', colloc: 'old mailing address', zh: '聯絡住址', note: '核對學生時期舊住址用' },
+            { id: 'bk-v19', must: false, ipa: '/ˈsɪɡnətʃər/', en: 'signature', colloc: 'sign here', zh: '簽名', note: '結清文件需簽名確認' },
+            { id: 'bk-v20', must: false, ipa: '/rɪˈsiːt/', en: 'receipt', colloc: 'written confirmation', zh: '收據／結清證明', note: '關戶務必索取紙本證明' }
+          ],
+          phrases: [
+            {
+              id: 'bk-p1', must: true,
+              enHtml: "I have an old <strong>checking</strong> account from my student days, and it's <strong>frozen</strong> because it was <strong>inactive</strong>.",
+              tts: "I have an old checking account from my student days, and it's frozen because it was inactive.",
+              zh: '我有一個學生時期的支票帳戶，因為太久沒用被凍結了。',
+              note: '一進銀行清楚說明來意'
+            },
+            {
+              id: 'bk-p2', must: true,
+              enHtml: "I'd like to speak with a <strong>banker</strong> to see if I can <strong>reactivate</strong> my account.",
+              tts: "I'd like to speak with a banker to see if I can reactivate my account.",
+              zh: '我想找銀行業務員，確認能不能恢復使用這個帳戶。',
+              note: '櫃檯接待處使用'
+            },
+            {
+              id: 'bk-p3', must: true,
+              enHtml: "If I can't <strong>reactivate</strong> it, I'd like to <strong>withdraw</strong> the remaining <strong>balance</strong> and <strong>close the account</strong>.",
+              tts: "If I can't reactivate it, I'd like to withdraw the remaining balance and close the account.",
+              zh: '如果無法恢復，我想把剩下的餘額領出來並關閉這個帳戶。',
+              note: '同時提出備案做法'
+            },
+            {
+              id: 'bk-p4', must: true,
+              enHtml: 'Here is my passport as <strong>photo ID</strong>. I can also <strong>verify</strong> my old address and date of birth.',
+              tts: 'Here is my passport as photo ID. I can also verify my old address and date of birth.',
+              zh: '這是我的護照作為證件，我也可以核對我以前的住址和生日。',
+              note: '主動配合身分核對'
+            },
+            {
+              id: 'bk-p5', must: true,
+              enHtml: "Can I <strong>withdraw</strong> the full <strong>balance</strong> in cash, or do I need a <strong>cashier's check</strong>?",
+              tts: "Can I withdraw the full balance in cash, or do I need a cashier's check?",
+              zh: '我可以全額領取現金嗎？還是需要開銀行本票？',
+              note: '確認提領方式'
+            },
+            {
+              id: 'bk-p6', must: false,
+              enHtml: 'Has the money been sent to the state as <strong>unclaimed property</strong>?',
+              tts: 'Has the money been sent to the state as unclaimed property?',
+              zh: '這筆錢有因為太久沒用，被移交給州政府列為無人認領財產嗎？',
+              note: '帳戶太久未動必問'
+            },
+            {
+              id: 'bk-p7', must: false,
+              enHtml: 'Could I get a printed <strong>receipt</strong> showing that the account is <strong>closed</strong> with a zero <strong>balance</strong>?',
+              tts: 'Could I get a printed receipt showing that the account is closed with a zero balance?',
+              zh: '可以給我一份紙本收據，證明帳戶已關閉且餘額歸零嗎？',
+              note: '避免日後產生額外帳務問題'
+            }
+          ]
+        },
+        {
+          key: 'dining',
+          icon: '☕',
+          name: '餐廳咖啡與點餐',
+          meta: '22 單字 ・ 6 句型',
+          subtitle: '涵蓋日常餐廳入座、點餐客製化、精品咖啡點單、打包與小費確認。',
+          color: '#638475',
+          bgTint: '#EDF4F0',
+          vocab: [
+            { id: 'dn-v1', must: true, ipa: '/ˈteɪbl fər tuː/', en: 'table for two', colloc: 'party of two', zh: '兩位用餐', note: '進餐廳報人數' },
+            { id: 'dn-v2', must: true, ipa: '/tæp ˈwɔːtər/', en: 'tap water', colloc: 'still or sparkling', zh: '免費開水', note: '拒絕付費瓶裝水時用' },
+            { id: 'dn-v3', must: true, ipa: '/ɑːn ðə saɪd/', en: 'on the side', colloc: 'sauce on the side', zh: '醬料另外放', note: '美式點餐超高頻客製化' },
+            { id: 'dn-v4', must: true, ipa: '/ˌrekəˈmend/', en: 'recommend', colloc: 'house special', zh: '推薦', note: '請服務生推薦招牌菜' },
+            { id: 'dn-v5', must: true, ipa: '/ˈælərdʒi/', en: 'allergy', colloc: 'food allergy', zh: '過敏', note: '告知飲食禁忌' },
+            { id: 'dn-v6', must: true, ipa: '/tʃek/', en: 'check / bill', colloc: 'get the check', zh: '帳單', note: '美式口語多用 check' },
+            { id: 'dn-v7', must: true, ipa: '/ɡrəˈtuːəti/', en: 'gratuity / tip', colloc: 'gratuity included', zh: '服務費／小費', note: '結帳確認是否已自動計入' },
+            { id: 'dn-v8', must: true, ipa: '/ˈseprət tʃeks/', en: 'separate checks', colloc: 'split the bill', zh: '分開結帳／拆帳', note: '與朋友同行好用' },
+            { id: 'dn-v9', must: true, ipa: '/təˈɡoʊ bɑːks/', en: 'to-go box', colloc: 'box this up', zh: '打包盒', note: '吃不完請服務生拿盒子' },
+            { id: 'dn-v10', must: true, ipa: '/fər hɪr/', en: 'for here / to go', colloc: 'dine in / takeout', zh: '內用／外帶', note: '咖啡廳與快餐店必答' },
+            { id: 'dn-v11', must: true, ipa: '/ɔːl set/', en: 'all set', colloc: "we're all set, thanks", zh: '好了／這樣就夠了', note: '點完餐或不用加點萬用詞' },
+            { id: 'dn-v12', must: false, ipa: '/ˈmenjuː/', en: 'menu', colloc: 'drink menu', zh: '菜單', note: '索取紙本菜單' },
+            { id: 'dn-v13', must: false, ipa: '/ˈweɪtlɪst/', en: 'waitlist', colloc: 'put my name on the waitlist', zh: '候位名單', note: '熱門餐廳登記用' },
+            { id: 'dn-v14', must: false, ipa: '/ˈmiːdiəm rer/', en: 'medium rare', colloc: 'how would you like it cooked?', zh: '三到五分熟', note: '美國牛排最推薦熟度' },
+            { id: 'dn-v15', must: false, ipa: '/ˈriːfɪl/', en: 'refill', colloc: 'free refill', zh: '續杯', note: '美式咖啡與汽水常見' },
+            { id: 'dn-v16', must: false, ipa: '/hɑːt/ · /aɪst/', en: 'hot / iced', colloc: 'light ice / no ice', zh: '熱的／冰的', note: '可加少冰或去冰' },
+            { id: 'dn-v17', must: false, ipa: '/oʊt mɪlk/', en: 'oat milk / decaf', colloc: 'non-dairy milk', zh: '燕麥奶／低咖啡因', note: '咖啡廳常見客製選項' },
+            { id: 'dn-v18', must: false, ipa: '/ˈpɔːr oʊvər/', en: 'pour-over', colloc: 'single-origin coffee', zh: '手沖咖啡', note: '紐約精品咖啡館常見' },
+            { id: 'dn-v19', must: false, ipa: '/ˈnæpkɪn/', en: 'napkin', colloc: 'extra napkins', zh: '餐巾紙', note: '索取紙巾' },
+            { id: 'dn-v20', must: false, ipa: '/juːˈtenslz/', en: 'utensils', colloc: 'fork and knife', zh: '餐具', note: '刀叉湯匙統稱' },
+            { id: 'dn-v21', must: false, ipa: '/ˈrestruːm/', en: 'restroom', colloc: 'washroom', zh: '洗手間', note: '美國比 toilet 更常用' },
+            { id: 'dn-v22', must: false, ipa: '/dɪˈlɪʃəs/', en: 'delicious', colloc: 'everything was great', zh: '美味的／很好吃', note: '稱讚餐點用' }
+          ],
+          phrases: [
+            {
+              id: 'dn-p1', must: true,
+              enHtml: 'Hi, <strong>table for two</strong>, please. Just <strong>tap water</strong> for both of us.',
+              tts: 'Hi, table for two, please. Just tap water for both of us.',
+              zh: '你好，兩位用餐。我們兩位喝一般開水就好。',
+              note: '入座與點水一次搞定'
+            },
+            {
+              id: 'dn-p2', must: true,
+              enHtml: 'What would you <strong>recommend</strong>? I have a nut <strong>allergy</strong>.',
+              tts: 'What would you recommend? I have a nut allergy.',
+              zh: '請問你推薦哪一道？我對堅果過敏。',
+              note: '詢問推薦並說明禁忌'
+            },
+            {
+              id: 'dn-p3', must: true,
+              enHtml: 'Could I get the salad with the dressing <strong>on the side</strong>, please?',
+              tts: 'Could I get the salad with the dressing on the side, please?',
+              zh: '沙拉的醬料可以幫我另外放嗎？',
+              note: '客製化點餐模板'
+            },
+            {
+              id: 'dn-p4', must: true,
+              enHtml: "Could we get the <strong>check</strong> and a <strong>to-go box</strong> for this? We're <strong>all set</strong>, thanks.",
+              tts: "Could we get the check and a to-go box for this? We're all set, thanks.",
+              zh: '可以幫我們結帳，順便拿一個打包盒嗎？我們這樣就好了，謝謝。',
+              note: '結帳與打包一次完成'
+            },
+            {
+              id: 'dn-p5', must: true,
+              enHtml: 'Could we do <strong>separate checks</strong>? Also, is <strong>gratuity</strong> already included?',
+              tts: 'Could we do separate checks? Also, is gratuity already included?',
+              zh: '我們可以分開結帳嗎？另外小費已經包含在裡面了嗎？',
+              note: '拆帳與避免重複給小費'
+            },
+            {
+              id: 'dn-p6', must: false,
+              enHtml: "I'll have an iced latte with oat milk, <strong>for here</strong>, please.",
+              tts: "I'll have an iced latte with oat milk, for here, please.",
+              zh: '我要一杯冰燕麥奶拿鐵，內用謝謝。',
+              note: '精品咖啡館標準點單'
+            }
+          ]
+        },
+        {
+          key: 'shopping',
+          icon: '🛍️',
+          name: '購物退換與飯店',
+          meta: '22 單字 ・ 6 句型',
+          subtitle: '涵蓋飯店入住押金寄物、商場試穿找尺寸、費城服飾免稅與退換貨規則。',
+          color: '#6B6F99',
+          bgTint: '#F1F2F8',
+          vocab: [
+            { id: 'sh-v1', must: true, ipa: '/ˌrezərˈveɪʃn/', en: 'reservation', colloc: 'under my name', zh: '訂房／預約', note: '報到起手式' },
+            { id: 'sh-v2', must: true, ipa: '/dɪˈpɑːzɪt/', en: 'deposit / hold', colloc: 'incidental hold', zh: '押金／信用卡預授權', note: '退房後數日自動解除' },
+            { id: 'sh-v3', must: true, ipa: '/ˈlʌɡɪdʒ/', en: 'luggage', colloc: 'store luggage', zh: '行李', note: '寄放行李用' },
+            { id: 'sh-v4', must: true, ipa: '/leɪt ˈtʃekaʊt/', en: 'late checkout', colloc: 'complimentary until 1 PM', zh: '延遲退房', note: '退房當天彈性爭取' },
+            { id: 'sh-v5', must: true, ipa: '/traɪ ɑːn/', en: 'try on', colloc: 'try this on', zh: '試穿', note: '衣服與鞋子皆通用' },
+            { id: 'sh-v6', must: true, ipa: '/ˈfɪtɪŋ ruːm/', en: 'fitting room', colloc: 'where is the fitting room?', zh: '試衣間', note: '美式比 changing room 常用' },
+            { id: 'sh-v7', must: true, ipa: '/saɪz/', en: 'size', colloc: 'larger / smaller size', zh: '尺寸', note: '詢問尺碼' },
+            { id: 'sh-v8', must: true, ipa: '/ɪn stɑːk/', en: 'in stock', colloc: 'in the back', zh: '有庫存／倉庫有貨', note: '詢問架上沒有的新品' },
+            { id: 'sh-v9', must: true, ipa: '/ˈfaɪnl seɪl/', en: 'final sale', colloc: 'non-returnable', zh: '售出不退', note: '特價品結帳前必確認' },
+            { id: 'sh-v10', must: true, ipa: '/ˈriːfʌnd/', en: 'return / refund', colloc: 'full refund with receipt', zh: '退貨／退款', note: '美國退貨政策通常友善' },
+            { id: 'sh-v11', must: false, ipa: '/ˈtʃek ɪn/', en: 'check-in / check-out', colloc: 'early check-in', zh: '辦理入住／退房', note: '飯店基本流程' },
+            { id: 'sh-v12', must: false, ipa: '/kiː kɑːrd/', en: 'key card', colloc: 'extra key card', zh: '房卡', note: '補發或消磁時用' },
+            { id: 'sh-v13', must: false, ipa: '/ˈelɪveɪtər/', en: 'elevator', colloc: 'take the elevator', zh: '電梯', note: '美式用法（英式用 lift）' },
+            { id: 'sh-v14', must: false, ipa: '/ˈtaʊəl/', en: 'towel', colloc: 'fresh towels', zh: '毛巾', note: '請房務補充' },
+            { id: 'sh-v15', must: false, ipa: '/ˈhaʊskiːpɪŋ/', en: 'housekeeping', colloc: 'Do Not Disturb', zh: '房務清潔', note: '掛牌或聯絡清潔' },
+            { id: 'sh-v16', must: false, ipa: '/bel desk/', en: 'bell desk', colloc: 'luggage storage', zh: '行李寄放處', note: '大型飯店專屬櫃檯' },
+            { id: 'sh-v17', must: false, ipa: '/ˈdɪskaʊnt/', en: 'discount / sale', colloc: '20% off', zh: '折扣／特價', note: '確認結帳折扣' },
+            { id: 'sh-v18', must: false, ipa: '/seɪlz tæks/', en: 'sales tax', colloc: 'tax-free in Pennsylvania', zh: '消費稅', note: '費城／賓州服飾鞋類免稅' },
+            { id: 'sh-v19', must: false, ipa: '/ɪksˈtʃeɪndʒ/', en: 'exchange', colloc: 'exchange for another size', zh: '換貨', note: '更換尺寸或顏色' },
+            { id: 'sh-v20', must: false, ipa: '/ɡɪft rɪˈsiːt/', en: 'gift receipt', colloc: 'hide the price', zh: '禮物收據', note: '不顯示金額方便送禮' },
+            { id: 'sh-v21', must: false, ipa: '/kæʃ/', en: 'cash / credit card', colloc: 'Apple Pay / tap to pay', zh: '現金／信用卡', note: '付款方式' },
+            { id: 'sh-v22', must: false, ipa: '/bæɡ/', en: 'bag', colloc: 'shopping bag', zh: '購物袋', note: '紐約紙袋多須付費' }
+          ],
+          phrases: [
+            {
+              id: 'sh-p1', must: true,
+              enHtml: 'Hi, I have a <strong>reservation</strong> under [Last Name]. How much is the <strong>deposit</strong> per night?',
+              tts: 'Hi, I have a reservation under [Last Name]. How much is the deposit per night?',
+              zh: '你好，我有訂房，姓氏是 [姓氏]。請問每晚押金是多少？',
+              note: '飯店辦理入住'
+            },
+            {
+              id: 'sh-p2', must: true,
+              enHtml: 'Is it possible to get a <strong>late checkout</strong>, or can we leave our <strong>luggage</strong> here after checkout?',
+              tts: 'Is it possible to get a late checkout, or can we leave our luggage here after checkout?',
+              zh: '可以延遲退房嗎？或者退房後可以把行李寄放在這裡嗎？',
+              note: '爭取退房彈性與寄物'
+            },
+            {
+              id: 'sh-p3', must: true,
+              enHtml: 'Can I <strong>try this on</strong>? Where is the <strong>fitting room</strong>?',
+              tts: 'Can I try this on? Where is the fitting room?',
+              zh: '我可以試穿這件嗎？請問試衣間在哪裡？',
+              note: '服飾店最常用問句'
+            },
+            {
+              id: 'sh-p4', must: true,
+              enHtml: 'Do you have this in a larger <strong>size</strong> <strong>in stock</strong>, or a new one in the back?',
+              tts: 'Do you have this in a larger size in stock, or a new one in the back?',
+              zh: '這件還有大一號的庫存嗎？或者倉庫裡有全新的嗎？',
+              note: '詢問尺碼與全新庫存'
+            },
+            {
+              id: 'sh-p5', must: true,
+              enHtml: 'Is this item <strong>final sale</strong>, or can I <strong>return</strong> it for a full <strong>refund</strong>?',
+              tts: 'Is this item final sale, or can I return it for a full refund?',
+              zh: '這件是售出不退嗎？還是可以退貨並全額退款？',
+              note: '折扣季購物必問'
+            },
+            {
+              id: 'sh-p6', must: false,
+              enHtml: 'Could I get a <strong>gift receipt</strong> for this, and is clothing tax-free here?',
+              tts: 'Could I get a gift receipt for this, and is clothing tax-free here?',
+              zh: '這件可以開禮物收據嗎？另外這裡買衣服免稅嗎？',
+              note: '確認禮物收據與免稅'
+            }
+          ]
+        },
+        {
+          key: 'architecture',
+          icon: '🏛️',
+          name: '建築參訪與展覽',
+          meta: '18 單字 ・ 5 句型',
+          subtitle: '參觀費城、紐約、康州經典建築與美術館時的預約入場、拍照規定與導覽交流。',
+          color: '#A68952',
+          bgTint: '#F8F4EA',
+          vocab: [
+            { id: 'ar-v1', must: true, ipa: '/ˈɡaɪdɪd tʊr/', en: 'guided tour', colloc: 'architecture tour', zh: '專人導覽', note: '深入理解建築必參加' },
+            { id: 'ar-v2', must: true, ipa: '/taɪmd ˈentri/', en: 'timed entry', colloc: 'reserve a time slot', zh: '指定時段入場', note: '熱門建築與展覽常需預約' },
+            { id: 'ar-v3', must: true, ipa: '/flæʃ/', en: 'flash', colloc: 'no flash photography', zh: '閃光燈', note: '展館拍照核心規定' },
+            { id: 'ar-v4', must: true, ipa: '/əˈlaʊd/', en: 'allowed', colloc: 'photography allowed', zh: '允許的', note: '確認是否開放攝影' },
+            { id: 'ar-v5', must: true, ipa: '/ˈoʊpn tə ðə ˈpʌblɪk/', en: 'open to the public', colloc: 'closed for a private event', zh: '對外開放', note: '參觀校園或私人建築必問' },
+            { id: 'ar-v6', must: true, ipa: '/ˈkɔːrtjɑːrd/', en: 'courtyard', colloc: 'inner courtyard', zh: '中庭／庭院', note: '詢問是否可進入參觀' },
+            { id: 'ar-v7', must: true, ipa: '/ˈnætʃrəl laɪt/', en: 'natural light', colloc: 'daylighting / skylight', zh: '自然採光', note: '與導覽員聊空間光影必用' },
+            { id: 'ar-v8', must: true, ipa: '/ˈkɑːnkriːt/', en: 'concrete', colloc: 'exposed concrete', zh: '混凝土／清水模', note: '大師作品常見材質' },
+            { id: 'ar-v9', must: true, ipa: '/ˌrenəˈveɪʃn/', en: 'renovation', colloc: 'restored / renovated', zh: '整修／翻新改造', note: '詢問歷史建築改建脈絡' },
+            { id: 'ar-v10', must: false, ipa: '/ˈentrəns/', en: 'entrance / exit', colloc: 'main entrance', zh: '入口／出口', note: '尋找參觀動線' },
+            { id: 'ar-v11', must: false, ipa: '/ədˈmɪʃn/', en: 'admission', colloc: 'free admission', zh: '入場費／門票', note: '確認票價或免費時段' },
+            { id: 'ar-v12', must: false, ipa: '/ˈɔːdioʊ ɡaɪd/', en: 'audio guide', colloc: 'headset', zh: '語音導覽機', note: '租借導覽設備' },
+            { id: 'ar-v13', must: false, ipa: '/ˈdoʊsnt/', en: 'docent / guide', colloc: 'museum docent', zh: '導覽員', note: '美術館志工或專業講師' },
+            { id: 'ar-v14', must: false, ipa: '/ɪɡˈzɪbɪt/', en: 'exhibit / gallery', colloc: 'upper gallery', zh: '展覽／展廳', note: '尋找特定展區' },
+            { id: 'ar-v15', must: false, ipa: '/fəˈsɑːd/', en: 'facade', colloc: 'glass facade', zh: '建築立面', note: '欣賞外觀立面設計' },
+            { id: 'ar-v16', must: false, ipa: '/ˈeɪtriəm/', en: 'atrium', colloc: 'sky-lit atrium', zh: '挑高中庭大廳', note: '室內挑高公共空間' },
+            { id: 'ar-v17', must: false, ipa: '/ˈlɑːkər/', en: 'locker', colloc: 'check your backpack', zh: '置物櫃', note: '美術館常規定大包須寄放' },
+            { id: 'ar-v18', must: false, ipa: '/ɡɪft ʃɑːp/', en: 'gift shop', colloc: 'museum bookstore', zh: '博物館禮品店／書店', note: '尋找建築專書與紀念品' }
+          ],
+          phrases: [
+            {
+              id: 'ar-p1', must: true,
+              enHtml: 'Are photos <strong>allowed</strong> inside if I turn off the <strong>flash</strong>?',
+              tts: 'Are photos allowed inside if I turn off the flash?',
+              zh: '如果關掉閃光燈，裡面允許拍照嗎？',
+              note: '入場前確認攝影規定'
+            },
+            {
+              id: 'ar-p2', must: true,
+              enHtml: 'Do I need a <strong>timed entry</strong> ticket, and when is the next <strong>guided tour</strong>?',
+              tts: 'Do I need a timed entry ticket, and when is the next guided tour?',
+              zh: '需要指定時段的門票嗎？下一場專人導覽是幾點？',
+              note: '確認入場與導覽時間'
+            },
+            {
+              id: 'ar-p3', must: true,
+              enHtml: 'Is the <strong>courtyard</strong> <strong>open to the public</strong> today?',
+              tts: 'Is the courtyard open to the public today?',
+              zh: '中庭今天有對外開放嗎？',
+              note: '確認開放區域'
+            },
+            {
+              id: 'ar-p4', must: true,
+              enHtml: 'I love how the <strong>natural light</strong> hits the <strong>concrete</strong> walls. When was the last <strong>renovation</strong>?',
+              tts: 'I love how the natural light hits the concrete walls. When was the last renovation?',
+              zh: '我很喜歡自然光灑在清水模牆上的效果。最近一次整修是什麼時候？',
+              note: '與導覽員自然交流'
+            },
+            {
+              id: 'ar-p5', must: false,
+              enHtml: 'Do I need to put my backpack in a <strong>locker</strong> before entering the <strong>gallery</strong>?',
+              tts: 'Do I need to put my backpack in a locker before entering the gallery?',
+              zh: '進展廳前需要先把背包放進置物櫃嗎？',
+              note: '確認隨身包規定'
+            }
+          ]
+        },
+        {
+          key: 'broadway',
+          icon: '🎭',
+          name: '紐約百老匯看劇',
+          meta: '16 單字 ・ 5 句型',
+          subtitle: '涵蓋實體售票口購票、取票流程、座位視野確認與中場休息實用用語。',
+          color: '#4F7C7D',
+          bgTint: '#ECF4F4',
+          vocab: [
+            { id: 'bw-v1', must: true, ipa: '/bɑːks ˈɔːfɪs/', en: 'box office', colloc: 'buy at the box office', zh: '劇場實體售票口', note: '現場買可省高額線上服務費' },
+            { id: 'bw-v2', must: true, ipa: '/wɪl kɔːl/', en: 'Will Call', colloc: 'pick up at Will Call', zh: '現場取票窗口', note: '需帶護照與訂票姓名' },
+            { id: 'bw-v3', must: true, ipa: '/ˈɔːrkɪstrə/', en: 'Orchestra', colloc: 'Center Orchestra', zh: '一樓主座位區', note: '百老匯一樓席統稱' },
+            { id: 'bw-v4', must: true, ipa: '/ˈmezəniːn/', en: 'Mezzanine', colloc: 'Front Mezzanine', zh: '二樓看台區', note: '二樓前排視野常極佳' },
+            { id: 'bw-v5', must: true, ipa: '/ˈpɑːrʃl vjuː/', en: 'partial view', colloc: 'obstructed view', zh: '視線部分受阻席', note: '買低價票前必確認' },
+            { id: 'bw-v6', must: true, ipa: '/ˌɪntərˈmɪʃn/', en: 'intermission', colloc: '15-minute break', zh: '中場休息', note: '善用時間去洗手間' },
+            { id: 'bw-v7', must: true, ipa: '/dɔːrz ˈoʊpn/', en: 'doors open', colloc: '30 minutes before showtime', zh: '開放進場', note: '通常開演前 30 分鐘開門' },
+            { id: 'bw-v8', must: true, ipa: '/koʊt tʃek/', en: 'coat check', colloc: 'check a large bag', zh: '寄物處', note: '百老匯座位窄大包常須寄放' },
+            { id: 'bw-v9', must: false, ipa: '/siːt/ · /roʊ/', en: 'seat / row', colloc: 'Row G, Seat 12', zh: '座位／排數', note: '對照票面找位置' },
+            { id: 'bw-v10', must: false, ipa: '/aɪl siːt/', en: 'aisle seat', colloc: 'easy exit', zh: '走道座位', note: '進出較方便' },
+            { id: 'bw-v11', must: false, ipa: '/ˈpleɪbɪl/', en: 'Playbill', colloc: 'free program', zh: '百老匯免費節目冊', note: '入場引座員發送極具紀念價值' },
+            { id: 'bw-v12', must: false, ipa: '/ˌmætɪˈneɪ/', en: 'matinee', colloc: 'afternoon show', zh: '午場演出', note: '週三、六、日常有午場' },
+            { id: 'bw-v13', must: false, ipa: '/ˈrʌntaɪm/', en: 'runtime', colloc: 'total length', zh: '總演出時間', note: '安排散場晚餐時間用' },
+            { id: 'bw-v14', must: false, ipa: '/ˈdɪskaʊnt ˈtɪkɪts/', en: 'discount tickets', colloc: 'TKTS booth / rush tickets', zh: '折扣票／當日票', note: '時報廣場 TKTS 常見' },
+            { id: 'bw-v15', must: false, ipa: '/ˌpriːˈɔːrdər/', en: 'pre-order', colloc: 'intermission drinks', zh: '預訂', note: '中場飲料可先訂免排隊' },
+            { id: 'bw-v16', must: false, ipa: '/ˈʌʃər/', en: 'usher', colloc: 'theater staff', zh: '引座員', note: '找座位時請他們協助' }
+          ],
+          phrases: [
+            {
+              id: 'bw-p1', must: true,
+              enHtml: "Hi, I'm picking up two tickets at <strong>Will Call</strong> under [Last Name].",
+              tts: "Hi, I'm picking up two tickets at Will Call under [Last Name].",
+              zh: '你好，我在現場取票口領兩張票，姓氏是 [姓氏]。',
+              note: '窗口領票標準句'
+            },
+            {
+              id: 'bw-p2', must: true,
+              enHtml: 'Do these Front <strong>Mezzanine</strong> or <strong>Orchestra</strong> seats have any <strong>partial view</strong>?',
+              tts: 'Do these Front Mezzanine or Orchestra seats have any partial view?',
+              zh: '這些二樓前排或一樓座位會有視線受阻的問題嗎？',
+              note: '現場買票避開柱子遮擋'
+            },
+            {
+              id: 'bw-p3', must: true,
+              enHtml: 'What time do the <strong>doors open</strong>, and how long is the show including <strong>intermission</strong>?',
+              tts: 'What time do the doors open, and how long is the show including intermission?',
+              zh: '幾點開放進場？含中場休息總共多長？',
+              note: '掌握開演與散場節奏'
+            },
+            {
+              id: 'bw-p4', must: true,
+              enHtml: 'Is there a <strong>coat check</strong> where I can leave my shopping bags during the show?',
+              tts: 'Is there a coat check where I can leave my shopping bags during the show?',
+              zh: '這裡有寄物處嗎？看劇時我想先寄放購物袋。',
+              note: '逛完街直接看劇必問'
+            },
+            {
+              id: 'bw-p5', must: false,
+              enHtml: "Can I buy <strong>discount tickets</strong> at the <strong>box office</strong> for tonight's show?",
+              tts: "Can I buy discount tickets at the box office for tonight's show?",
+              zh: '售票口有賣今晚場次的折扣票嗎？',
+              note: '詢問當日優惠票'
+            }
+          ]
+        },
+        {
+          key: 'listening',
+          icon: '🎧',
+          name: '聽力防禦與語氣',
+          meta: '12 組聽力 ・ 6 組語氣',
+          subtitle: '應對美國店員語速快與連音突襲，以及讓中高級英語聽起來更自然得體的禮貌公式。',
+          color: '#826B8A',
+          bgTint: '#F4F0F6',
+          qaList: [
+            {
+              id: 'ls-q1', must: true,
+              q: 'You all set? / Anything else for ya?',
+              a: "I'm all set, thanks!",
+              zh: '問：還要別的嗎／好了嗎？ / 回：這樣就好，謝謝！',
+              note: '結帳或點餐收尾最高頻'
+            },
+            {
+              id: 'ls-q2', must: true,
+              q: 'How are we doing over here?',
+              a: "Everything's great, thank you!",
+              zh: '問：各位用餐還好嗎？ / 回：都很棒，謝謝！',
+              note: '美國服務生巡桌必問'
+            },
+            {
+              id: 'ls-q3', must: true,
+              q: 'Still working on that?',
+              a: "I'm all done, you can take it.",
+              zh: '問：這盤還要吃嗎？ / 回：吃完了，你可以收走。',
+              note: '還要吃可回 Yeah, just a little bit more.'
+            },
+            {
+              id: 'ls-q4', must: true,
+              q: 'For here or to go?',
+              a: 'For here, please.',
+              zh: '問：內用還是外帶？ / 回：內用謝謝。（外帶回 To go, please.）',
+              note: '咖啡館與快餐必聽'
+            },
+            {
+              id: 'ls-q5', must: true,
+              q: 'Tap, insert, or swipe?',
+              a: "I'll tap it.",
+              zh: '問：感應、插卡還是刷磁條？ / 回：我用感應的。',
+              note: '信用卡結帳必聽'
+            },
+            {
+              id: 'ls-q6', must: true,
+              q: 'Wanna leave it open or close it out?',
+              a: "Let's close it out, please.",
+              zh: '問：要繼續記帳還是現在結清？ / 回：我們直接結清吧。',
+              note: '酒吧或餐酒館常見'
+            },
+            {
+              id: 'ls-q7', must: true,
+              q: 'Need a bag, or are you good?',
+              a: "I'm good, I have my own.",
+              zh: '問：需要袋子嗎還是不用？ / 回：不用，我有自備。',
+              note: '紐約多半不免費供袋'
+            },
+            {
+              id: 'ls-q8', must: true,
+              q: 'Can I get you started with something to drink?',
+              a: 'Just tap water for now, thanks.',
+              zh: '問：要先點飲料嗎？ / 回：先喝一般開水就好。',
+              note: '剛入座服務生第一句'
+            },
+            {
+              id: 'ls-q9', must: false,
+              q: 'Do you have a phone number with us?',
+              a: "No, I'm just visiting.",
+              zh: '問：有我們會員電話嗎？ / 回：沒有，我只是來旅遊的。',
+              note: '一句話優雅終結會員推銷'
+            },
+            {
+              id: 'ls-q10', must: false,
+              q: 'Would you like your receipt in the bag or with you?',
+              a: 'In the bag is fine.',
+              zh: '問：收據放袋子裡還是直接拿？ / 回：放袋子裡就好。',
+              note: '零售店結帳常見'
+            },
+            {
+              id: 'ls-q11', must: false,
+              q: "How's your day going so far?",
+              a: 'Pretty good, thanks! How about you?',
+              zh: '問：今天過得如何？ / 回：還不錯，謝謝！你呢？',
+              note: '美式親切寒暄'
+            },
+            {
+              id: 'ls-q12', must: false,
+              q: 'Are you finding everything okay?',
+              a: 'Just browsing for now, thanks!',
+              zh: '問：逛得還順利嗎？ / 回：我先隨便看看，謝謝！',
+              note: '店員上前關心時自然回應'
+            }
+          ],
+          toneList: [
+            {
+              id: 'ls-t1', must: true,
+              formula: 'Could I possibly... / Any chance we could...',
+              example: 'Any chance we could get a late checkout tomorrow?',
+              zh: '柔化請求：比 Can I... 更禮貌自然，向飯店爭取延遲退房或餐廳換位成功率大增。'
+            },
+            {
+              id: 'ls-t2', must: true,
+              formula: 'I was wondering if...',
+              example: 'I was wondering if the courtyard is open to the public today.',
+              zh: '委婉詢問：開口詢問銀行、導覽員或櫃檯規定時，最沒有壓迫感的起手式。'
+            },
+            {
+              id: 'ls-t3', must: true,
+              formula: "I'll pass on... / I'm good with...",
+              example: "I'll pass on the extra insurance, thanks.",
+              zh: '禮貌婉拒：拒絕租車保險、加購升級或推銷時，比直接說 No, I don\'t want it 圓滑許多。'
+            },
+            {
+              id: 'ls-t4', must: true,
+              formula: "I'll do the... / Could I get the...",
+              example: 'Could I get the iced latte with oat milk?',
+              zh: '點餐自然語氣：美國點餐很少說 I want...，用 I\'ll do 或 Could I get 立刻聽起來很道地。'
+            },
+            {
+              id: 'ls-t5', must: false,
+              formula: 'Just to double-check, ...',
+              example: 'Just to double-check, is gratuity already included?',
+              zh: '禮貌確認細節：確認小費、過路費、退貨或銀行結清規定時，清楚又不失禮。'
+            },
+            {
+              id: 'ls-t6', must: false,
+              formula: "Sorry, I didn't quite catch that — could you say that one more time?",
+              example: "Sorry, I didn't quite catch that — could you say that one more time?",
+              zh: '請對方重說：遇到紐約超快語速或連音時，比 Pardon? 更自然大方。'
+            }
+          ]
+        }
+      ];
+
+      // =========================================================================
+      // 2. 固定順序索引與狀態管理 (171 項)
+      // =========================================================================
+      const STORAGE_KEY = 'us_east_english_v1';
+
+      const ALL_ITEMS = [];
+      CATEGORIES.forEach(function (cat) {
+        if (cat.vocab) cat.vocab.forEach(function (x) { ALL_ITEMS.push({ id: x.id, must: !!x.must, catKey: cat.key }); });
+        if (cat.phrases) cat.phrases.forEach(function (x) { ALL_ITEMS.push({ id: x.id, must: !!x.must, catKey: cat.key }); });
+        if (cat.qaList) cat.qaList.forEach(function (x) { ALL_ITEMS.push({ id: x.id, must: !!x.must, catKey: cat.key }); });
+        if (cat.toneList) cat.toneList.forEach(function (x) { ALL_ITEMS.push({ id: x.id, must: !!x.must, catKey: cat.key }); });
+      });
+
+      const ALL_IDS = ALL_ITEMS.map(function (item) { return item.id; });
+      const CORE_IDS = ALL_ITEMS.filter(function (item) { return item.must; }).map(function (item) { return item.id; });
+      const VALID_ID_SET = new Set(ALL_IDS);
+
+      const state = {
+        activeCategory: CATEGORIES[0].key,
+        filterScope: 'all',     // 'all' | 'core'
+        hideMastered: false,
+        maskEn: false,
+        maskHint: false,
+        maskZh: false,
+        speechRate: 1.0,
+        mastered: new Set(),
+        resetConfirmTimer: null
+      };
+
+      const els = {
+        btnFilterAll: document.getElementById('btnFilterAll'),
+        btnFilterCore: document.getElementById('btnFilterCore'),
+        totalAllChip: document.getElementById('totalAllChip'),
+        coreTotalChip: document.getElementById('coreTotalChip'),
+        btnHideMastered: document.getElementById('btnHideMastered'),
+        btnMaskEn: document.getElementById('btnMaskEn'),
+        btnMaskHint: document.getElementById('btnMaskHint'),
+        btnMaskZh: document.getElementById('btnMaskZh'),
+        btnRateNormal: document.getElementById('btnRateNormal'),
+        btnRateSlow: document.getElementById('btnRateSlow'),
+        btnSyncProgress: document.getElementById('btnSyncProgress'),
+        coreProgressFill: document.getElementById('coreProgressFill'),
+        coreProgressText: document.getElementById('coreProgressText'),
+        allProgressFill: document.getElementById('allProgressFill'),
+        allProgressText: document.getElementById('allProgressText'),
+        btnResetProgress: document.getElementById('btnResetProgress'),
+        sidebarNav: document.getElementById('sidebarNav'),
+        mainScrollArea: document.getElementById('mainScrollArea'),
+        contentContainer: document.getElementById('contentContainer'),
+        toastContainer: document.getElementById('toastContainer'),
+        syncModalBackdrop: document.getElementById('syncModalBackdrop'),
+        syncModalDesc: document.getElementById('syncModalDesc'),
+        syncModalInput: document.getElementById('syncModalInput'),
+        btnSyncModalCopy: document.getElementById('btnSyncModalCopy'),
+        btnSyncModalClose: document.getElementById('btnSyncModalClose')
+      };
+
+      // =========================================================================
+      // 3. 工具函式：安全存取 localStorage、HTML 轉義、Toast 提示
+      // =========================================================================
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function loadProgressFromStorage() {
+        try {
+          const raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            state.mastered = new Set(parsed.filter(function (id) { return VALID_ID_SET.has(id); }));
+          }
+        } catch (err) {
+          // 沙盒或隱私模式自動退回記憶體暫存
+        }
+      }
+
+      function saveProgressToStorage() {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(state.mastered)));
+        } catch (err) {
+          // 忽略儲存例外
+        }
+      }
+
+      function showToast(message, durationMs) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-item';
+        toast.textContent = message;
+        els.toastContainer.appendChild(toast);
+
+        const stayTime = typeof durationMs === 'number' ? durationMs : 3200;
+        window.setTimeout(function () {
+          toast.classList.add('is-fading');
+          window.setTimeout(function () {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+          }, 260);
+        }, stayTime);
+      }
+
+      // =========================================================================
+      // 4. 跨裝置同步：Bitset -> Uint8Array -> Base64URL (#sync=...)
+      // =========================================================================
+      function encodeMasteredToCode(masteredSet) {
+        const byteLen = Math.ceil(ALL_IDS.length / 8);
+        const bytes = new Uint8Array(byteLen);
+        for (let i = 0; i < ALL_IDS.length; i++) {
+          if (masteredSet.has(ALL_IDS[i])) {
+            bytes[i >> 3] |= (1 << (i & 7));
+          }
+        }
+        let binary = '';
+        for (let i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary)
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=+$/, '');
+      }
+
+      function decodeCodeToMastered(code) {
+        if (!code || typeof code !== 'string') return null;
+        try {
+          let b64 = code.replace(/-/g, '+').replace(/_/g, '/');
+          while (b64.length % 4 !== 0) {
+            b64 += '=';
+          }
+          const binary = atob(b64);
+          const expectedLen = Math.ceil(ALL_IDS.length / 8);
+          if (binary.length !== expectedLen) return null;
+
+          const restored = new Set();
+          for (let i = 0; i < ALL_IDS.length; i++) {
+            const byteVal = binary.charCodeAt(i >> 3);
+            if ((byteVal & (1 << (i & 7))) !== 0) {
+              restored.add(ALL_IDS[i]);
+            }
+          }
+          return restored;
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function buildSyncUrl(code) {
+        const proto = window.location.protocol;
+        if (proto === 'http:' || proto === 'https:') {
+          return {
+            url: window.location.origin + window.location.pathname + '#sync=' + code,
+            isHosted: true
+          };
+        }
+        if (proto === 'file:') {
+          return {
+            url: window.location.href.split('#')[0] + '#sync=' + code,
+            isHosted: true
+          };
+        }
+        return {
+          url: '#sync=' + code,
+          isHosted: false
+        };
+      }
+
+      function copyViaExecCommand(text) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.top = '-9999px';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return !!ok;
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function copyTextWithFallback(text) {
+        return new Promise(function (resolve) {
+          if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(text).then(function () {
+              resolve(true);
+            }).catch(function () {
+              resolve(copyViaExecCommand(text));
+            });
+          } else {
+            resolve(copyViaExecCommand(text));
+          }
+        });
+      }
+
+      function openSyncModal(urlText, isHosted) {
+        els.syncModalDesc.textContent = isHosted
+          ? '請複製下方專屬同步網址，貼到其他裝置開啟即可還原進度：'
+          : '目前為預覽環境，請複製下方短碼並加在您 GitHub Pages 網址後方即可同步：';
+        els.syncModalInput.value = urlText;
+        els.syncModalBackdrop.classList.add('is-open');
+        window.setTimeout(function () {
+          els.syncModalInput.focus();
+          els.syncModalInput.select();
+        }, 30);
+      }
+
+      function closeSyncModal() {
+        els.syncModalBackdrop.classList.remove('is-open');
+      }
+
+      function handleExportSync() {
+        const code = encodeMasteredToCode(state.mastered);
+        const result = buildSyncUrl(code);
+        copyTextWithFallback(result.url).then(function (copied) {
+          if (copied) {
+            showToast('已複製同步網址！在其他裝置貼上開啟即可還原進度', 3600);
+          } else {
+            openSyncModal(result.url, result.isHosted);
+          }
+        });
+      }
+
+      function checkAndApplySyncFromHash() {
+        const hash = window.location.hash || '';
+        if (hash.indexOf('#sync=') !== 0) return false;
+        const code = hash.slice(6).split('&')[0].trim();
+        const decodedSet = decodeCodeToMastered(code);
+        if (!decodedSet) {
+          showToast('同步短碼無效，未變更現有學習進度', 3000);
+          return false;
+        }
+
+        state.mastered = decodedSet;
+        saveProgressToStorage();
+
+        try {
+          if (window.history && typeof window.history.replaceState === 'function') {
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          }
+        } catch (err) {
+          // 忽略受限環境例外
+        }
+
+        updateAllUI();
+        showToast('已成功匯入跨裝置學習進度！', 3600);
+        return true;
+      }
+
+      // =========================================================================
+      // 5. 美式英語真人語音朗讀引擎 (Web Speech API, en-US)
+      // =========================================================================
+      let preferredUsVoice = null;
+      let activeSpeakBtn = null;
+
+      function refreshEnglishVoice() {
+        if (!('speechSynthesis' in window)) return;
+        const voices = window.speechSynthesis.getVoices() || [];
+        const usVoices = voices.filter(function (v) {
+          return v.lang && v.lang.toLowerCase().replace('_', '-').indexOf('en-us') === 0;
+        });
+        const enVoices = usVoices.length ? usVoices : voices.filter(function (v) {
+          return v.lang && v.lang.toLowerCase().indexOf('en') === 0;
+        });
+        if (!enVoices.length) return;
+
+        const preferredNames = ['google us english', 'samantha', 'alex', 'aria', 'guy', 'jenny', 'zira', 'david'];
+        for (let i = 0; i < preferredNames.length; i++) {
+          const kw = preferredNames[i];
+          const found = enVoices.find(function (v) {
+            return v.name && v.name.toLowerCase().indexOf(kw) !== -1;
+          });
+          if (found) {
+            preferredUsVoice = found;
+            return;
+          }
+        }
+        preferredUsVoice = enVoices[0];
+      }
+
+      if ('speechSynthesis' in window) {
+        refreshEnglishVoice();
+        if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+          window.speechSynthesis.onvoiceschanged = refreshEnglishVoice;
+        }
+      }
+
+      function sanitizeSpeechText(rawText) {
+        return String(rawText || '')
+          .replace(/\[Last Name\]/gi, 'Smith')
+          .replace(/\([^)]*\)/g, ' ')
+          .replace(/\[[^\]]*\]/g, ' ')
+          .replace(/\s*\/\s*/g, ', ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function speakEnglish(rawText, btnEl) {
+        if (!('speechSynthesis' in window)) {
+          showToast('此瀏覽器不支援語音朗讀功能', 2600);
+          return;
+        }
+        const cleaned = sanitizeSpeechText(rawText);
+        if (!cleaned) return;
+
+        try {
+          window.speechSynthesis.cancel();
+          if (activeSpeakBtn) {
+            activeSpeakBtn.classList.remove('is-speaking');
+            activeSpeakBtn = null;
+          }
+
+          const utter = new SpeechSynthesisUtterance(cleaned);
+          utter.lang = 'en-US';
+          utter.rate = state.speechRate;
+          if (preferredUsVoice) {
+            utter.voice = preferredUsVoice;
+          }
+
+          if (btnEl) {
+            btnEl.classList.add('is-speaking');
+            activeSpeakBtn = btnEl;
+          }
+
+          const clearState = function () {
+            if (btnEl) btnEl.classList.remove('is-speaking');
+            if (activeSpeakBtn === btnEl) activeSpeakBtn = null;
+          };
+          utter.onend = clearState;
+          utter.onerror = clearState;
+
+          window.speechSynthesis.speak(utter);
+        } catch (err) {
+          showToast('語音播放暫時無法啟動，請再試一次', 2400);
+        }
+      }
+
+      // =========================================================================
+      // 6. 遮罩渲染輔助函式 (支援點擊切換 .revealed 單獨偷看)
+      // =========================================================================
+      function wrapMask(innerHtml, type, hintText) {
+        const masked =
+          (type === 'en' && state.maskEn) ||
+          (type === 'hint' && state.maskHint) ||
+          (type === 'zh' && state.maskZh);
+
+        if (!masked) {
+          return innerHtml;
+        }
+        return (
+          '<span class="mask-wrap is-masked" data-action="toggle-reveal" data-hint="' + escapeHtml(hintText) + '" title="點擊偷看答案">' +
+            '<span class="mask-content">' + innerHtml + '</span>' +
+          '</span>'
+        );
+      }
+
+      // =========================================================================
+      // 7. 介面渲染：頂部狀態、左側 7 大分類、右側高密度卡片
+      // =========================================================================
+      function getCategoryItems(cat) {
+        const list = [];
+        if (cat.vocab) cat.vocab.forEach(function (x) { list.push(x); });
+        if (cat.phrases) cat.phrases.forEach(function (x) { list.push(x); });
+        if (cat.qaList) cat.qaList.forEach(function (x) { list.push(x); });
+        if (cat.toneList) cat.toneList.forEach(function (x) { list.push(x); });
+        return list;
+      }
+
+      function filterItems(list) {
+        if (!list) return [];
+        return list.filter(function (item) {
+          if (state.filterScope === 'core' && !item.must) return false;
+          if (state.hideMastered && state.mastered.has(item.id)) return false;
+          return true;
+        });
+      }
+
+      function updateHeaderAndProgress() {
+        els.totalAllChip.textContent = String(ALL_IDS.length);
+        els.coreTotalChip.textContent = String(CORE_IDS.length);
+
+        els.btnFilterAll.classList.toggle('is-active', state.filterScope === 'all');
+        els.btnFilterCore.classList.toggle('is-core-active', state.filterScope === 'core');
+        els.btnHideMastered.classList.toggle('is-hide-active', state.hideMastered);
+
+        els.btnMaskEn.classList.toggle('is-active', state.maskEn);
+        els.btnMaskHint.classList.toggle('is-active', state.maskHint);
+        els.btnMaskZh.classList.toggle('is-active', state.maskZh);
+
+        els.btnRateNormal.classList.toggle('is-rate-active', state.speechRate === 1.0);
+        els.btnRateSlow.classList.toggle('is-rate-active', state.speechRate === 0.75);
+
+        let coreDone = 0;
+        for (let i = 0; i < CORE_IDS.length; i++) {
+          if (state.mastered.has(CORE_IDS[i])) coreDone++;
+        }
+        const allDone = state.mastered.size;
+
+        const corePct = CORE_IDS.length ? Math.round((coreDone / CORE_IDS.length) * 100) : 0;
+        const allPct = ALL_IDS.length ? Math.round((allDone / ALL_IDS.length) * 100) : 0;
+
+        els.coreProgressFill.style.width = corePct + '%';
+        els.coreProgressText.textContent = coreDone + '/' + CORE_IDS.length + ' (' + corePct + '%)';
+
+        els.allProgressFill.style.width = allPct + '%';
+        els.allProgressText.textContent = allDone + '/' + ALL_IDS.length + ' (' + allPct + '%)';
+      }
+
+      function renderSidebar() {
+        const html = CATEGORIES.map(function (cat) {
+          const visibleCount = filterItems(getCategoryItems(cat)).length;
+          const isActive = cat.key === state.activeCategory;
+          const activeStyle = isActive
+            ? 'border-width:2.5px;border-color:' + cat.color + ';background-color:' + cat.bgTint + ';'
+            : '';
+
+          return (
+            '<button type="button" class="cat-card-btn" data-cat-key="' + escapeHtml(cat.key) + '" style="' + activeStyle + '">' +
+              '<div class="cat-card-top">' +
+                '<span class="cat-card-title" style="' + (isActive ? 'color:' + cat.color + ';' : '') + '">' +
+                  '<span>' + cat.icon + '</span>' +
+                  '<span>' + escapeHtml(cat.name) + '</span>' +
+                '</span>' +
+                '<span class="cat-card-count">' + visibleCount + '</span>' +
+              '</div>' +
+              '<span class="cat-card-meta">' + escapeHtml(cat.meta) + '</span>' +
+            '</button>'
+          );
+        }).join('');
+
+        els.sidebarNav.innerHTML = html;
+      }
+
+      function renderVocabCard(item) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base vocab-card' + (item.must ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="vocab-left">' +
+              '<div class="vocab-ipa">' + wrapMask(escapeHtml(item.ipa), 'hint', '顯示音標') + '</div>' +
+              '<div class="vocab-en">' + wrapMask(escapeHtml(item.en), 'en', '顯示英文') + '</div>' +
+              '<div class="vocab-colloc">' + wrapMask(escapeHtml(item.colloc), 'hint', '顯示搭配詞') + '</div>' +
+            '</div>' +
+            '<div class="vocab-right">' +
+              '<div>' +
+                '<div class="vocab-zh">' + wrapMask(escapeHtml(item.zh), 'zh', '顯示中文') + '</div>' +
+                (item.note ? '<p class="vocab-note">' + wrapMask(escapeHtml(item.note), 'zh', '顯示備註') + '</p>' : '') +
+              '</div>' +
+              '<div class="vocab-actions">' +
+                '<div class="action-btns">' +
+                  '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.en) + '" title="朗讀美式英語發音" aria-label="朗讀英文">🔊</button>' +
+                  '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderPhraseCard(item) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base phrase-card' + (item.must ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="phrase-left">' +
+              '<div class="phrase-en">' + wrapMask(item.enHtml, 'en', '顯示英文句型') + '</div>' +
+            '</div>' +
+            '<div class="phrase-right">' +
+              '<div>' +
+                '<div class="phrase-zh">' + wrapMask(escapeHtml(item.zh), 'zh', '顯示中文翻譯') + '</div>' +
+                (item.note ? '<p class="phrase-note">' + wrapMask(escapeHtml(item.note), 'zh', '顯示備註') + '</p>' : '') +
+              '</div>' +
+              '<div class="vocab-actions">' +
+                '<div class="action-btns">' +
+                  '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.tts) + '" title="朗讀完整句型" aria-label="朗讀句型">🔊</button>' +
+                  '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderQaCard(item) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base qa-card' + (item.must ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="qa-left">' +
+              '<div class="qa-line">' +
+                '<div class="qa-line-body">' +
+                  '<span class="role-badge role-q">對方問</span>' +
+                  '<div class="qa-en-q">' + wrapMask(escapeHtml(item.q), 'en', '顯示對方提問') + '</div>' +
+                '</div>' +
+                '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.q) + '" title="聽對方提問" aria-label="朗讀對方提問">🔊</button>' +
+              '</div>' +
+              '<div class="qa-line">' +
+                '<div class="qa-line-body">' +
+                  '<span class="role-badge role-a">自然回</span>' +
+                  '<div class="qa-en-a">' + wrapMask(escapeHtml(item.a), 'en', '顯示建議回應') + '</div>' +
+                '</div>' +
+                '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.a) + '" title="朗讀建議回應" aria-label="朗讀建議回應">🔊</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="qa-right">' +
+              '<div>' +
+                '<div class="qa-zh-block">' + wrapMask(escapeHtml(item.zh), 'zh', '顯示中文對照') + '</div>' +
+                (item.note ? '<p class="phrase-note">' + wrapMask(escapeHtml(item.note), 'zh', '顯示實戰備註') + '</p>' : '') +
+              '</div>' +
+              '<div class="vocab-actions">' +
+                '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderToneCard(item) {
+        const isMastered = state.mastered.has(item.id);
+        const cls = 'card-base tone-card' + (item.must ? ' is-core' : '') + (isMastered ? ' is-mastered' : '');
+        const checkCls = 'icon-btn' + (isMastered ? ' is-checked' : '');
+
+        return (
+          '<article class="' + cls + '">' +
+            '<div class="tone-left">' +
+              '<div class="tone-formula">' + wrapMask(escapeHtml(item.formula), 'en', '顯示語氣公式') + '</div>' +
+              '<div class="tone-example-row">' +
+                '<div class="tone-example">' + wrapMask(escapeHtml(item.example), 'en', '顯示英文例句') + '</div>' +
+                '<button type="button" class="icon-btn" data-action="speak" data-tts="' + escapeHtml(item.example) + '" title="朗讀例句" aria-label="朗讀例句">🔊</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="tone-right">' +
+              '<div class="tone-zh">' + wrapMask(escapeHtml(item.zh), 'zh', '顯示中文解說') + '</div>' +
+              '<div class="vocab-actions">' +
+                '<button type="button" class="' + checkCls + '" data-action="toggle-mastered" data-id="' + escapeHtml(item.id) + '" title="' + (isMastered ? '取消已熟記' : '標記為已熟記') + '" aria-label="切換已熟記">✓</button>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderMainContent() {
+        const cat = CATEGORIES.find(function (c) { return c.key === state.activeCategory; }) || CATEGORIES[0];
+        const parts = [];
+
+        parts.push(
+          '<header class="section-header">' +
+            '<h2><span>' + cat.icon + '</span><span>' + escapeHtml(cat.name) + '</span></h2>' +
+            '<p>' + escapeHtml(cat.subtitle) + '</p>' +
+          '</header>'
+        );
+
+        let visibleTotal = 0;
+
+        if (cat.vocab) {
+          const filteredVocab = filterItems(cat.vocab);
+          visibleTotal += filteredVocab.length;
+          if (filteredVocab.length) {
+            parts.push(
+              '<section>' +
+                '<h3 class="sub-heading">核心單字與片語（' + filteredVocab.length + '）</h3>' +
+                '<div class="vocab-grid">' + filteredVocab.map(renderVocabCard).join('') + '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (cat.phrases) {
+          const filteredPhrases = filterItems(cat.phrases);
+          visibleTotal += filteredPhrases.length;
+          if (filteredPhrases.length) {
+            parts.push(
+              '<section>' +
+                '<h3 class="sub-heading">實戰句型（' + filteredPhrases.length + '）</h3>' +
+                '<div class="two-col-grid">' + filteredPhrases.map(renderPhraseCard).join('') + '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (cat.qaList) {
+          const filteredQa = filterItems(cat.qaList);
+          visibleTotal += filteredQa.length;
+          if (filteredQa.length) {
+            parts.push(
+              '<section>' +
+                '<h3 class="sub-heading">美式聽力防禦 Q&amp;A（' + filteredQa.length + '）</h3>' +
+                '<div class="two-col-grid">' + filteredQa.map(renderQaCard).join('') + '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (cat.toneList) {
+          const filteredTone = filterItems(cat.toneList);
+          visibleTotal += filteredTone.length;
+          if (filteredTone.length) {
+            parts.push(
+              '<section>' +
+                '<h3 class="sub-heading">道地美式禮貌語氣公式（' + filteredTone.length + '）</h3>' +
+                '<div class="two-col-grid">' + filteredTone.map(renderToneCard).join('') + '</div>' +
+              '</section>'
+            );
+          }
+        }
+
+        if (visibleTotal === 0) {
+          parts.push(
+            '<div class="empty-state">' +
+              '<h3>這個分類在目前篩選條件下已全部完成！</h3>' +
+              '<p>您可以切換左側其他分類，或取消「隱藏已熟記／必背」篩選檢視完整內容。</p>' +
+              '<button type="button" class="empty-btn" data-action="clear-filters">顯示本分類全部卡片</button>' +
+            '</div>'
+          );
+        }
+
+        els.contentContainer.innerHTML = parts.join('');
+      }
+
+      function updateAllUI() {
+        updateHeaderAndProgress();
+        renderSidebar();
+        renderMainContent();
+      }
+
+      // =========================================================================
+      // 8. 事件綁定與事件委派
+      // =========================================================================
+      els.btnFilterAll.addEventListener('click', function () {
+        state.filterScope = 'all';
+        updateAllUI();
+      });
+
+      els.btnFilterCore.addEventListener('click', function () {
+        state.filterScope = 'core';
+        updateAllUI();
+      });
+
+      els.btnHideMastered.addEventListener('click', function () {
+        state.hideMastered = !state.hideMastered;
+        updateAllUI();
+      });
+
+      els.btnMaskEn.addEventListener('click', function () {
+        state.maskEn = !state.maskEn;
+        updateAllUI();
+      });
+
+      els.btnMaskHint.addEventListener('click', function () {
+        state.maskHint = !state.maskHint;
+        updateAllUI();
+      });
+
+      els.btnMaskZh.addEventListener('click', function () {
+        state.maskZh = !state.maskZh;
+        updateAllUI();
+      });
+
+      els.btnRateNormal.addEventListener('click', function () {
+        state.speechRate = 1.0;
+        updateHeaderAndProgress();
+      });
+
+      els.btnRateSlow.addEventListener('click', function () {
+        state.speechRate = 0.75;
+        updateHeaderAndProgress();
+      });
+
+      els.btnSyncProgress.addEventListener('click', handleExportSync);
+
+      // 兩段式安全重置（不使用原生 confirm）
+      els.btnResetProgress.addEventListener('click', function () {
+        if (!els.btnResetProgress.classList.contains('is-confirm')) {
+          els.btnResetProgress.classList.add('is-confirm');
+          els.btnResetProgress.textContent = '確定重置？';
+          state.resetConfirmTimer = window.setTimeout(function () {
+            els.btnResetProgress.classList.remove('is-confirm');
+            els.btnResetProgress.textContent = '重置';
+          }, 3000);
+          return;
+        }
+
+        if (state.resetConfirmTimer) {
+          window.clearTimeout(state.resetConfirmTimer);
+          state.resetConfirmTimer = null;
+        }
+        els.btnResetProgress.classList.remove('is-confirm');
+        els.btnResetProgress.textContent = '重置';
+        state.mastered.clear();
+        saveProgressToStorage();
+        updateAllUI();
+        showToast('已清空所有熟記進度紀錄', 2600);
+      });
+
+      // 左側 7 大分類切換
+      els.sidebarNav.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-cat-key]');
+        if (!btn) return;
+        const nextKey = btn.getAttribute('data-cat-key');
+        if (nextKey && nextKey !== state.activeCategory) {
+          state.activeCategory = nextKey;
+          updateAllUI();
+          els.mainScrollArea.scrollTop = 0;
+        }
+      });
+
+      // 右側主內容區事件委派（發音 / 熟記 / 單獨偷看 / 清除篩選）
+      els.contentContainer.addEventListener('click', function (e) {
+        const target = e.target.closest('[data-action]');
+        if (!target) return;
+
+        const action = target.getAttribute('data-action');
+        if (action === 'speak') {
+          const ttsText = target.getAttribute('data-tts');
+          if (ttsText) speakEnglish(ttsText, target);
+          return;
+        }
+
+        if (action === 'toggle-mastered') {
+          const id = target.getAttribute('data-id');
+          if (!id) return;
+          if (state.mastered.has(id)) {
+            state.mastered.delete(id);
+          } else {
+            state.mastered.add(id);
+          }
+          saveProgressToStorage();
+          updateAllUI();
+          return;
+        }
+
+        if (action === 'toggle-reveal') {
+          target.classList.toggle('revealed');
+          return;
+        }
+
+        if (action === 'clear-filters') {
+          state.filterScope = 'all';
+          state.hideMastered = false;
+          updateAllUI();
+        }
+      });
+
+      // 備援複製視窗事件
+      els.btnSyncModalCopy.addEventListener('click', function () {
+        els.syncModalInput.focus();
+        els.syncModalInput.select();
+        const ok = copyViaExecCommand(els.syncModalInput.value);
+        if (ok) {
+          closeSyncModal();
+          showToast('已複製同步網址！在其他裝置貼上開啟即可還原進度', 3400);
+        }
+      });
+
+      els.btnSyncModalClose.addEventListener('click', closeSyncModal);
+      els.syncModalBackdrop.addEventListener('click', function (e) {
+        if (e.target === els.syncModalBackdrop) closeSyncModal();
+      });
+
+      window.addEventListener('hashchange', checkAndApplySyncFromHash);
+
+      // =========================================================================
+      // 9. 初始化啟動
+      // =========================================================================
+      function init() {
+        loadProgressFromStorage();
+        const loadedFromSync = checkAndApplySyncFromHash();
+        if (!loadedFromSync) {
+          updateAllUI();
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "hubTitle": "語言學習中心",
+  "hubSubtitle": "LANGUAGE LEARNING HUB",
+  "updatedAt": "2026-11-24",
+  "topics": [
+    {
+      "id": "japanese-winter",
+      "title": "冬季旅遊日文實戰手冊",
+      "subtitle": "JAPANESE PHRASEBOOK",
+      "version": "JP / 日語",
+      "category": "日語會話",
+      "icon": "flight_takeoff",
+      "accentColor": "#C92A2A",
+      "accentSoft": "#FCE9E9",
+      "description": "專為日本冬季自由行打造的高對比實戰手冊，涵蓋機場入境、交通票券、餐廳點餐、購物退稅與緊急求助句型，支援熟練度打勾與跨裝置狀態同步。",
+      "url": "./japanese.html",
+      "isExternal": false,
+      "actionLabel": "開啟日文手冊",
+      "tags": ["日文", "日本", "冬季旅遊", "五十音", "點餐", "交通"],
+      "subLinks": []
+    },
+    {
+      "id": "english-us-east",
+      "title": "美東旅遊英文實戰手冊",
+      "subtitle": "US EAST ENGLISH GUIDE",
+      "version": "EN / 英語",
+      "category": "英語會話",
+      "icon": "record_voice_over",
+      "accentColor": "#1971C2",
+      "accentSoft": "#E6F1FA",
+      "description": "專為美東城市自由行設計的高對比實用英語手冊，涵蓋海關問答、飯店入住、地鐵巴士、博物館購票與美式餐廳小費點餐情境，支援學習進度追蹤。",
+      "url": "./english.html",
+      "isExternal": false,
+      "actionLabel": "開啟英文手冊",
+      "tags": ["英文", "美東", "紐約", "旅遊英文", "海關", "點餐"],
+      "subLinks": []
+    }
+  ]
+}

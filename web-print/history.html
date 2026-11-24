@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>純淨文章閱讀與編輯器 - 開發日誌 (v2.2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            border: 4px solid #eff6ff;
+            position: absolute;
+            left: -8px;
+            top: 6px;
+        }
+        .timeline-dot.latest {
+            background-color: #10b981;
+            border-color: #d1fae5;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid #e5e7eb;
+            padding-bottom: 2.5rem;
+        }
+        .timeline-item:last-child {
+            border-left-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen py-10 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-10 text-white">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+                <h1 class="text-3xl font-bold flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    純淨文章閱讀與編輯器
+                </h1>
+                <div class="flex items-center gap-2">
+                    <a href="./index.html" class="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/30 transition">← 返回網頁列印工具</a>
+                    <a href="./guide.html" class="bg-white/15 hover:bg-white/25 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/20 transition">操作說明</a>
+                    <a href="../" class="bg-white/15 hover:bg-white/25 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/20 transition">工具箱首頁</a>
+                    <span class="bg-white/20 backdrop-blur-xs text-white text-xs font-bold px-3 py-1 rounded-full border border-white/30">最新版本 v2.2</span>
+                </div>
+            </div>
+            <p class="text-blue-100 text-lg">系統開發與演進日誌 (Changelog)</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="p-8 sm:p-12 pl-10 sm:pl-14">
+
+            <!-- v2.2 -->
+            <div class="timeline-item">
+                <div class="timeline-dot latest"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v2.2 - A4 分頁格線與精準所見即所得修正</h2>
+                    <span class="text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">2026-11-24</span>
+                </div>
+                <div class="bg-emerald-50 text-emerald-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Print &amp; Layout Precision</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">即時 A4 分頁格線：</strong>內建隱藏式 <code>100mm</code> 校正尺換算螢幕 <code>px/mm</code> 比例，以 A4 每頁可印高度 <code>257mm</code> 自動繪製紅色虛線分頁線與左右 <code>20mm</code> 邊界參考線，並支援工具列一鍵開關。</li>
+                    <li><strong class="text-gray-800">預估總頁數即時同步：</strong>左側新增「A4 列印預估卡」，列印按鈕亦即時顯示預估頁數；調整字級、行距、縮放圖片或增刪文字時，格線與頁數會自動重算。</li>
+                    <li><strong class="text-gray-800">徹底解決列印跑版與縮放：</strong>列印模式解除外層 Flexbox 並嚴格鎖定 <code>170mm</code> 內容寬度，確保螢幕斷行與實體輸出 100% 一致；透過 CSS 變數同步字體大小與行距，並限制圖片放大上限與表格／程式碼自動折行，防止觸發瀏覽器整頁縮小。</li>
+                    <li><strong class="text-gray-800">來源頁尾同步排版：</strong>將來源網址頁尾改為螢幕與列印同步顯示並納入高度計算，避免列印時意外多出空白尾頁。</li>
+                </ul>
+            </div>
+
+            <!-- v2.1 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v2.1 - 全純 Icon 工具列與開啟原始網址</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-11-24</span>
+                </div>
+                <div class="bg-purple-50 text-purple-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">UI/UX Redesign</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">新增開啟原始網址按鈕：</strong>網址列旁新增外開連結圖示，輸入有效網址後自動啟用，點擊可於新分頁檢視原始文章。</li>
+                    <li><strong class="text-gray-800">純 Icon 化圓角設計：</strong>移除所有工具列按鈕與滑桿文字標籤，統一為 <code>40×40px</code> 圓角按鈕與適中圖示，滑鼠移過即刻浮現深色圓角 Tooltip 提示（調整字級／行距時即時更新數值）。</li>
+                    <li><strong class="text-gray-800">視覺層級色彩區分：</strong>核心操作（擷取、列印）採實心醒目底色；常用特色功能（開啟原文、通道測試、雙色螢光筆、存檔）採柔色底配彩色圖示；一般編輯工具採俐落白底細框。</li>
+                </ul>
+            </div>
+
+            <!-- v2.0 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v2.0 - 五層多通道擷取引擎與圖片防破圖</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-11-24</span>
+                </div>
+                <div class="bg-blue-50 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Major Upgrade</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">五層自動降級擷取架構：</strong>移除已停用的 <code>codetabs</code>，改以 <strong>Jina Reader</strong>、<strong>Imread</strong>（支援 SPA 動態網頁並以 <code>marked.js</code> 轉譯）為優先，搭配 <code>cors.lol</code>、<code>AllOrigins</code>（Raw / JSON）+ <code>Readability.js</code> 備援。</li>
+                    <li><strong class="text-gray-800">逾時中斷與防護頁偵測：</strong>加入 <code>AbortController</code>（10～14 秒逾時）與 Cloudflare／403 驗證頁過濾，不再卡死轉圈；內建「5 大網站通道測試」診斷工具，可直接實測成功率與耗時。</li>
+                    <li><strong class="text-gray-800">圖片懶載入與防盜連補強：</strong>自動解析 <code>data-original</code>、<code>data-lazy-src</code>、<code>srcset</code> 並過濾 1×1 佔位圖；全面加上 <code>referrerpolicy="no-referrer"</code> 與 <code>loading="eager"</code> 降低破圖率。</li>
+                    <li><strong class="text-gray-800">進階排版與細節修復：</strong>新增「隱藏所有圖片（省墨水列印）」開關、行距滑桿與「匯出獨立 HTML 存檔」；修正作者／發布時間樣式遭洗掉、螢光筆外框 CSS 無效，並將網址列改為聚焦自動全選＋獨立清除鈕與 <code>Enter</code> 快捷擷取。</li>
+                </ul>
+            </div>
+
+            <!-- v1.8 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.8 - 終極重構與效能優化版</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 20:35</span>
+                </div>
+                <div class="bg-blue-50 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Refactoring</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">HTML 模板化：</strong>將冗長的錯誤提示畫面字串，移至原生的 <code>&lt;template&gt;</code> 標籤中，大幅提升代碼可讀性與後續維護性。</li>
+                    <li><strong class="text-gray-800">邏輯抽象化：</strong>將圖片刪除、工具列定位等重複邏輯獨立封裝為共用函數（如 <code>deleteSelectedImage</code>），減少代碼冗餘。</li>
+                    <li><strong class="text-gray-800">DOM 操作精簡：</strong>優化了空白行清理與樣式過濾的迴圈寫法，提升執行效率，整體程式碼結構更加現代化與緊湊。</li>
+                </ul>
+            </div>
+
+            <!-- v1.7 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.7 - A4 所見即所得列印修正</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 20:10</span>
+                </div>
+                <div class="bg-green-50 text-green-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Print Optimization</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">精準多頁留白：</strong>捨棄容器 <code>padding</code>，改用 CSS 原生 <code>@page { margin: 20mm; }</code> 徹底解決第二頁之後印表機邊界消失的問題。</li>
+                    <li><strong class="text-gray-800">修正跨頁斷行：</strong>移除了段落的 <code>page-break-inside: avoid;</code> 限制，讓長段落文字可以自然跨頁斷行，不再將整塊文字硬推到下一頁。</li>
+                    <li><strong class="text-gray-800">修正第一頁頂部空白：</strong>強制歸零文章首個元素（通常為 <code>&lt;h1&gt;</code>）的頂部 <code>margin</code>，解決列印第一頁頂端留白過大的排版異常。</li>
+                </ul>
+            </div>
+
+            <!-- v1.6 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.6 - A4 擬真模式導入</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 19:45</span>
+                </div>
+                <div class="bg-purple-50 text-purple-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">UI/UX Upgrade</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">A4 紙張模擬：</strong>放棄複雜的 PDF 匯出機制，專心將網頁編輯區打造成標準 A4 寬度（210mm）加上立體陰影，讓畫面直接變成「紙張」。</li>
+                    <li><strong class="text-gray-800">100% 排版同步：</strong>將螢幕上的模擬邊距與列印邊距統一。螢幕上看到的每一行字距、斷行點，列印出來將完全一致，不再有排版落差。</li>
+                </ul>
+            </div>
+
+            <!-- v1.5 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.5 - 連續螢光筆與版面同步</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 19:20</span>
+                </div>
+                <div class="bg-blue-50 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Feature Enhancement</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">雙色連續螢光筆：</strong>新增藍色螢光筆，並將邏輯改為「模式切換」。啟動後，只要用滑鼠反白文字放開後就會自動上色，提升多段標記效率。</li>
+                    <li><strong class="text-gray-800">強制圖片縮放保留：</strong>透過 JavaScript 寫入 <code>!important</code> 樣式，確保使用者手動放大的圖片在列印與儲存時不會被預設 CSS 洗掉。</li>
+                </ul>
+            </div>
+
+            <!-- v1.4 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.4 - PDF 匯出與細節優化</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 18:55</span>
+                </div>
+                <div class="bg-indigo-50 text-indigo-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">New Feature</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">匯出 PDF：</strong>導入 <code>html2pdf.js</code> 模組，將原本儲存為 HTML 的功能升級為直接下載 PDF。</li>
+                    <li><strong class="text-gray-800">來源網址頁尾：</strong>在列印與匯出文件時，於最底部自動附加來源網址，方便未來查閱出處（無網址則標示「手動貼上」）。</li>
+                    <li><strong class="text-gray-800">修正螢光筆失焦：</strong>加入 <code>mousedown</code> 事件攔截，防止點擊按鈕時失去反白文字的焦點導致上色失敗。</li>
+                </ul>
+            </div>
+
+            <!-- v1.3 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.3 - 大綱目錄與編輯輔助工具</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 18:30</span>
+                </div>
+                <div class="bg-indigo-50 text-indigo-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">New Feature</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">智慧目錄 (TOC)：</strong>左側新增動態大綱目錄，會自動掃描內文的 <code>H1~H3</code> 標籤生成清單，點擊可平滑滾動至該段落。</li>
+                    <li><strong class="text-gray-800">螢光筆標記：</strong>加入螢光筆功能，可反白選取文字後加上黃色底色。</li>
+                    <li><strong class="text-gray-800">匯出存檔：</strong>新增「儲存」按鈕，能將目前編輯完畢的純淨版面與圖片，打包為獨立的 HTML 網頁檔下載。</li>
+                </ul>
+            </div>
+
+            <!-- v1.2 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.2 - 完美貼上淨化與復原功能</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 18:00</span>
+                </div>
+                <div class="bg-yellow-50 text-yellow-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Core Logic Update</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">剪貼簿淨化機制：</strong>攔截 <code>Ctrl+V</code> 事件。剝除貼上內容的外部樣式（黑底白字、自訂字型、固定寬高）與潛在腳本，僅保留純文字結構與圖片。</li>
+                    <li><strong class="text-gray-800">絕對版面約束：</strong>加上嚴格的 CSS 寬高限制與自動斷字（<code>word-wrap</code>），確保貼上大型表格或超長英文不會撐破版面。</li>
+                    <li><strong class="text-gray-800">復原與重置：</strong>導入原生 <code>undo</code> 指令（支援 <code>Ctrl+Z</code> 復原文字與圖片），並增加一鍵還原至網頁初始讀取狀態的「還原」按鈕。</li>
+                </ul>
+            </div>
+
+            <!-- v1.1 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.1 - 突破反爬蟲防護機制</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 17:30</span>
+                </div>
+                <div class="bg-yellow-50 text-yellow-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Core Logic Update</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">多重 Proxy 備援：</strong>新增多組代理伺服器輪替嘗試（如 <code>codetabs</code>, <code>allorigins</code>），提高對抗一般網站防抓取機制的成功率。</li>
+                    <li><strong class="text-gray-800">引導式完美備案：</strong>針對 Cloudflare 等高強度防禦網站，實裝友善的錯誤提示介面，並引導使用者直接使用「全選複製貼上」作為最終 100% 成功解決方案。</li>
+                </ul>
+            </div>
+
+            <!-- v1.0 -->
+            <div class="timeline-item pb-0 border-transparent">
+                <div class="timeline-dot bg-gray-400 border-gray-100"></div>
+                <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
+                    <h2 class="text-xl font-bold text-gray-900">v1.0 - 核心功能上線</h2>
+                    <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">2026-04-23 17:00</span>
+                </div>
+                <div class="bg-gray-200 text-gray-800 text-xs font-bold px-2 py-1 rounded inline-block mb-3">Initial Release</div>
+                <ul class="list-disc list-inside text-gray-600 space-y-2 text-base leading-relaxed">
+                    <li><strong class="text-gray-800">網址智慧提取：</strong>整合 Mozilla <code>Readability.js</code> 核心，自動剝除側邊欄、廣告與雜訊，僅保留乾淨文章本文。</li>
+                    <li><strong class="text-gray-800">文件編輯模式：</strong>結合 HTML <code>contenteditable</code> 屬性，實踐如同 Word 般的點擊編輯與段落刪除體驗。</li>
+                    <li><strong class="text-gray-800">圖片控制列：</strong>實作懸浮圖片控制列，支援點擊圖片進行等比例放大、縮小與刪除。</li>
+                    <li><strong class="text-gray-800">無用空白過濾：</strong>撰寫演算法自動清理連續的空白 <code>&lt;br&gt;</code> 與無內容標籤，節省排版與列印空間。</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
