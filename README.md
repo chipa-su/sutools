@@ -106,6 +106,8 @@ tools/
 
 ## 📝 更新日誌 (Changelog)
 
+- **2026-11-25 (v1.1.1)**：
+  - 新增跨裝置靜態資源防快取版本參數（Cache-Busting `?v=1.1.1`）於 `index.html` 與 `learning-language/index.html`，確保 GitHub Pages 更新後手機與電腦瀏覽器皆能自動載入最新樣式與設定。
 - **2026-11-25 (v1.1.0)**：
   - **卡片版面緊湊化改版**（詳見 [`doc/dev/plan_card_layout_refinement.md`](doc/dev/plan_card_layout_refinement.md)）：
     1. 移除首頁重複的「S2 Design 官方網站」卡片（保留頂部導覽列右上角官網按鈕）。

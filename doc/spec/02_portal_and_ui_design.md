@@ -45,6 +45,8 @@
 3. **點擊開啟分頁邏輯 (`openInNewTab`)**：
    - **主入口 (`data/tools.json`)**：除 **「語言學習中心 (`learning-language`)」** 設為 `"openInNewTab": false`（於原頁面進入第二層次主題頁）外，其餘所有工具卡片皆設為 `"openInNewTab": true`（點擊開啟新分頁並帶入 `target="_blank" rel="noopener noreferrer"`）。
    - **語言學習中心第二頁 (`learning-language/topics.json`)**：所有語言手冊小卡片版面格式與開啟方式完全比照辦理，皆設為 `"openInNewTab": true`（點擊開啟新分頁）。
+4. **靜態資源防快取機制 (Cache-Busting `?v=x.y.z`)**：
+   - 為防止 GitHub Pages CDN 與跨裝置（特別是手機/平板）瀏覽器快取舊版 CSS、JS 或 JSON，於 `index.html` 與 `learning-language/index.html` 引入 `dashboard.css`、`portal.js`、`vault.js` 及 `data-config-url` 時統一附加版本查詢參數（如 `?v=1.1.1`）。
 
 ---
 
