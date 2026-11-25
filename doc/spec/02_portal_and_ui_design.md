@@ -1,6 +1,6 @@
 # 第 02 章：入口介面與視覺設計規格
 
-> **章節狀態**：✅ 已全數實作完成（v1.1 緊湊卡片版，詳見 [index.html](../../index.html)、[learning-language/index.html](../../learning-language/index.html)、[assets/css/dashboard.css](../../assets/css/dashboard.css) 與 [assets/js/portal.js](../../assets/js/portal.js)）。
+> **章節狀態**：✅ 已全數實作完成（v1.1.1 緊湊兩截式卡片與防快取版，詳見 [index.html](../../index.html)、[learning-language/index.html](../../learning-language/index.html)、[assets/css/dashboard.css](../../assets/css/dashboard.css) 與 [assets/js/portal.js](../../assets/js/portal.js)）。
 
 ---
 
@@ -13,9 +13,9 @@
   - `--board-bg`: `#1B2B47`（深海藍頂部導覽列）
   - `--board-text`: `#F4F7FD`（導覽列高對比白字）
   - `--board-muted`: `#8FA3C4`（導覽列英文副標與次要資訊）
-  - `--bg-panel`: `#FFFFFF`（純白卡片面板）
-  - `--bg-subtle`: `#F4F7FB`（標題下方灰色說明框底色）
-  - `--line-default`: `#D9DFEA`（卡片與灰色說明框邊框）
+  - `--bg-panel`: `#FFFFFF`（卡片上半截純白面板底色）
+  - `--bg-subtle`: `#F4F7FB`（卡片下半截滿版灰色說明區底色）
+  - `--line-default`: `#D9DFEA`（卡片外框與上下半截中間滿版橫向分隔線）
   - `--ink-primary`: `#17233B`（深藍黑主文字）
   - `--ink-secondary`: `#5B6B85`（次要說明文字）
   - `--accent-primary`: `#0B7285`（青藍強調色，用於主要按鈕、Icon 徽章與 Hover 邊框）

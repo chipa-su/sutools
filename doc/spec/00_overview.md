@@ -1,7 +1,7 @@
 # 📘 蘇的工具箱 (SU's TOOLBOX) — 系統規格書總目錄 (Spec Index)
 
 > **最後同步日期**：2026-11-25  
-> **目前專案階段**：`Phase 1.1 (v1.1.0) — 緊湊卡片版面精簡與新分頁開啟行為全面完工`
+> **目前專案階段**：`Phase 1.1 (v1.1.1) — 緊湊兩截式卡片版面、新分頁開啟行為與靜態資源防快取機制全面完工`
 
 ---
 
@@ -28,7 +28,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **本地開發伺服器** | 已建立 `server.js` (v1.1 紅隊加固版)、`start-server.ps1/.bat`、`stop-server.ps1/.bat` | 本地 `127.0.0.1:8080` 預覽與健康檢查 `/__health` | ✅ **已實作完成** | [plan_portal_initial_setup.md](../dev/plan_portal_initial_setup.md) |
 | **文件與治理架構** | 已建立 `doc/spec/`、`doc/dev/`、`DESIGN.md`、`AGENTS.md` | 計畫先行、完工回寫 Spec、README 同步更新 | ✅ **已實作完成** | [plan_portal_initial_setup.md](../dev/plan_portal_initial_setup.md) |
-| **主入口首頁** | 已建立 `index.html`、`data/tools.json`、`assets/css/dashboard.css`、`assets/js/portal.js`、`assets/js/vault.js` | 深藍專業儀表板首頁 + 緊湊卡片（標題下方灰色說明框、無箭頭、無底部附屬列、移除重複官網卡片）+ 除語言學習中心外皆開新分頁 | ✅ **已實作完成** | [plan_card_layout_refinement.md](../dev/plan_card_layout_refinement.md) |
+| **主入口首頁** | 已建立 `index.html` (含 `?v=1.1.1` 防快取)、`data/tools.json`、`assets/css/dashboard.css`、`assets/js/portal.js`、`assets/js/vault.js` | 深藍專業儀表板首頁 + 上白下滿版灰兩截式緊湊卡片（中間滿版橫線分隔、無箭頭、無底部附屬列、移除重複官網卡片）+ 除語言學習中心外皆開新分頁 | ✅ **已實作完成** | [plan_card_layout_refinement.md](../dev/plan_card_layout_refinement.md) |
 | **工具 1：行程規劃板** | 位於 `trip-planner/index.html` 與 `template-london-35-v4.xlsx`，舊版已歸檔於 `trip-planner/_archive/` | `trip-planner/` 標準化結構（首頁卡片點擊開啟新分頁），並已完成紅隊 XSS 跳脫加固 | ✅ **已實作完成** | [plan_portal_initial_setup.md](../dev/plan_portal_initial_setup.md) |
 | **工具 2：語言學習中心** | 位於 `learning-language/index.html` + `topics.json`，連結 `japanese.html` 與 `english.html` | 主頁點擊原頁進入次主題頁；次主題頁小卡片比照緊湊格式且點擊開啟新分頁 | ✅ **已實作完成** | [plan_card_layout_refinement.md](../dev/plan_card_layout_refinement.md) |
 | **工具 3：純淨網頁列印** | 位於 `web-print/index.html`，活文件 `guide.html` 與 `history.html` 均保留在 `web-print/` 主目錄 | `web-print/` 標準化結構（首頁卡片點擊開啟新分頁）、活文件保留於第一層目錄且工具內建頂部導覽 | ✅ **已實作完成** | [plan_portal_initial_setup.md](../dev/plan_portal_initial_setup.md) |
