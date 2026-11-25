@@ -37,6 +37,8 @@
        - 冬季旅遊日文手冊：`flight_takeoff`
        - 美東旅遊英文手冊：`record_voice_over`
      - 純淨網頁列印 (`web-print`)：`print`
+     - 智能發票報帳辨識 (`invoice-scanner`)：`receipt_long`
+     - 影印機計數清單擷取 (`copier-counter`)：`document_scanner`
      - Header 右上角 S2 Design 官網按鈕：`captive_portal`
 2. **緊湊卡片結構（v1.1 規範）**：
    - **不放置重複的官方網站卡片**：因頂部 Header 右上角已有「S2 Design 官網」按鈕，卡片網格僅呈現實際工具卡片。
@@ -99,6 +101,34 @@
       "url": "./web-print/",
       "openInNewTab": true,
       "tags": ["列印", "A4", "排版", "閱讀器", "Markdown", "文章擷取"]
+    },
+    {
+      "id": "invoice-scanner",
+      "title": "智能發票報帳辨識",
+      "subtitle": "INVOICE SCANNER",
+      "version": "BYOK AI",
+      "category": "AI 辨識",
+      "icon": "receipt_long",
+      "accentColor": "#E8890C",
+      "accentSoft": "#FFF1DE",
+      "description": "台灣電子發票 QR Code 本地條碼直讀結合 Gemini AI 店名與報帳分類辨識，支援單筆編輯與一鍵匯出 Excel 報帳表。",
+      "url": "./invoice-scanner/",
+      "openInNewTab": true,
+      "tags": ["發票", "報帳", "QR Code", "Gemini", "AI", "Excel", "統編"]
+    },
+    {
+      "id": "copier-counter",
+      "title": "影印機計數清單擷取",
+      "subtitle": "COPIER COUNTER",
+      "version": "BYOK AI",
+      "category": "AI 辨識",
+      "icon": "document_scanner",
+      "accentColor": "#1971C2",
+      "accentSoft": "#E6F1FA",
+      "description": "批次上傳事務機計數清單照片，透過 Gemini AI 自動擷取右上角日期與黑白/全彩複印、列印、掃描讀數，一鍵複製貼入 Excel。",
+      "url": "./copier-counter/",
+      "openInNewTab": true,
+      "tags": ["影印機", "事務機", "計數清單", "讀數", "Gemini", "AI", "Excel"]
     }
   ]
 }

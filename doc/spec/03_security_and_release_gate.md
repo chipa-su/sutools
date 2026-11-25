@@ -26,7 +26,10 @@
 ## 3.2 靜態網站與未來 API / 權限控管四大防線
 
 1. **前端零機密 (No Secrets in Frontend)**：GitHub Pages 上任何 HTML/JS/JSON 皆為公開可讀，嚴禁將任何 API Key 或密碼寫死於原始碼中。
-2. **BYOK 本地金鑰保險箱 (`assets/js/vault.js`)**：未來需要呼叫外部 API 的小工具，統一將 API Key 儲存於使用者瀏覽器本地的 `localStorage` 或 `sessionStorage`。
+2. **BYOK 本地金鑰保險箱 (`assets/js/vault.js`) 集中管理與 API Header 傳遞規範**：
+   - **首頁集中管理、子分頁零重複輸入框**：所有需要外部 AI API（如 `invoice-scanner`、`copier-counter` 呼叫 Google Gemini API）的小工具，**不在子工具頁面重複放置 API Key 輸入框**，一律由工具箱首頁右上角「🔑 金鑰保險箱 (BYOK)」集中設定並透過 `assets/js/vault.js` 跨新分頁自動連動（支援 8 小時 TTL 自動過期銷毀之暫存模式與本機長期記憶模式，並透過 `storage` 事件即時同步跨分頁狀態）。
+   - 子工具頂部導覽列僅呈現「金鑰連動狀態指示徽章」與最新 Gemini 辨識引擎選擇器（`gemini-2.5-flash`、`gemini-2.5-flash-lite`、`gemini-2.5-pro`、`gemini-3-flash-preview`）。
+   - 呼叫 Google Gemini API 時，**嚴禁將 API Key 串接於 URL Query String (`?key=...`)**，強制改由 HTTP Request Header (`x-goog-api-key`) 傳遞，避免金鑰殘留於網址列或代理紀錄中。
 3. **外部連結與防 XSS 規範**：
    - 所有外部連結（含 `https://s2design.com.tw/`）強制加上 `target="_blank" rel="noopener noreferrer"`，防止 Tabnabbing 釣魚劫持。
    - 渲染 JSON 卡片與搜尋過濾時，一律使用 `textContent` / `createElement` 等安全 DOM API，禁止將未過濾字串直接餵給 `innerHTML`。

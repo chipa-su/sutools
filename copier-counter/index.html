@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>影印機計數清單擷取｜蘇的工具箱 SU's TOOLBOX</title>
+  <!-- Google Fonts: Noto Sans TC, IBM Plex Mono & Google Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,450,0,0" />
+  <style>
+    :root {
+      --bg-canvas: #EDF0F6;
+      --bg-panel: #FFFFFF;
+      --bg-subtle: #F4F7FB;
+      --board-bg: #1B2B47;
+      --board-bg-deep: #121E33;
+      --board-text: #F4F7FD;
+      --board-muted: #8FA3C4;
+      --ink-primary: #17233B;
+      --ink-secondary: #5B6B85;
+      --ink-muted: #7C8CA5;
+      --line-default: #D9DFEA;
+      --line-strong: #BFC9DA;
+      --accent-primary: #0B7285;
+      --accent-hover: #095C6B;
+      --accent-soft: #E3F3F5;
+      --accent-ok: #2F9E44;
+      --accent-ok-soft: #E9F5EC;
+      --accent-warn: #E8890C;
+      --accent-warn-soft: #FFF1DE;
+      --accent-danger: #C92A2A;
+      --accent-danger-soft: #FCE9E9;
+      --radius-card: 12px;
+      --radius-sm: 8px;
+      --shadow-card: 0 2px 8px rgba(23, 35, 59, 0.06);
+      --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+      --font-mono: "IBM Plex Mono", "Consolas", "Courier New", monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      background:
+        radial-gradient(circle at 1px 1px, rgba(27, 43, 71, 0.065) 1px, transparent 0) 0 0 / 22px 22px,
+        var(--bg-canvas);
+      color: var(--ink-primary);
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+      user-select: none;
+      vertical-align: middle;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── 頂部深藍專業儀表板 Header ─────────────────────── */
+    .app-header {
+      background: linear-gradient(135deg, var(--board-bg) 0%, var(--board-bg-deep) 100%);
+      color: var(--board-text);
+      padding: 14px 24px;
+      box-shadow: 0 3px 14px rgba(18, 30, 51, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .header-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: rgba(11, 114, 133, 0.35);
+      border: 1px solid rgba(102, 217, 232, 0.4);
+      color: #66D9E8;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand-titles .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 2px;
+      color: var(--board-muted);
+      text-transform: uppercase;
+      display: block;
+    }
+    .brand-titles h1 {
+      font-size: 20px; font-weight: 700; color: var(--board-text);
+      display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    }
+    .brand-titles h1 .sub {
+      font-family: var(--font-mono); font-size: 12.5px; color: #66D9E8; font-weight: 500;
+    }
+    .header-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 13px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--board-text);
+      transition: all 0.16s ease;
+    }
+    .header-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(102, 217, 232, 0.55);
+    }
+
+    /* ── 主容器與儀表板面板 ─────────────────────── */
+    .app-main {
+      max-width: 1120px; width: 100%; margin: 0 auto;
+      padding: 24px 20px 48px; flex: 1;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--line-default);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    /* ── BYOK API Key 與模型設定面板 ─────────────────────── */
+    .api-bar {
+      padding: 16px 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .api-bar-top {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .api-title {
+      font-size: 14px; font-weight: 700; color: var(--ink-primary);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .api-title .material-symbols-outlined { color: var(--accent-primary); font-size: 20px; }
+    .vault-badge {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px;
+      background: var(--accent-soft); color: var(--accent-primary);
+    }
+    .api-controls {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .input-ctrl, .select-ctrl {
+      padding: 8px 12px;
+      border: 1px solid var(--line-default);
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      color: var(--ink-primary);
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.16s, background 0.16s;
+    }
+    .input-ctrl:focus, .select-ctrl:focus {
+      background: var(--bg-panel);
+      border-color: var(--accent-primary);
+    }
+    .key-input { flex: 1; min-width: 220px; font-family: var(--font-mono); }
+    .api-hint {
+      font-size: 12px; color: var(--ink-secondary);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .api-hint a {
+      color: var(--accent-primary); font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    .api-hint a:hover { text-decoration: underline; }
+
+    /* ── 按鈕系統 ─────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      font-size: 13.5px; font-weight: 600; font-family: inherit;
+      cursor: pointer; border: 1px solid transparent;
+      transition: all 0.16s ease; white-space: nowrap;
+    }
+    .btn .material-symbols-outlined { font-size: 18px; }
+    .btn-primary { background: var(--accent-primary); color: #FFFFFF; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-navy { background: var(--board-bg); color: var(--board-text); }
+    .btn-navy:hover { background: var(--board-bg-deep); }
+    .btn-danger-outline {
+      background: var(--bg-panel); color: var(--accent-danger); border-color: rgba(201, 42, 42, 0.3);
+    }
+    .btn-danger-outline:hover { background: var(--accent-danger-soft); }
+
+    /* ── 上傳與預覽區 ─────────────────────── */
+    .upload-panel { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .drop-zone {
+      border: 2px dashed var(--line-strong);
+      border-radius: 10px;
+      background: var(--bg-subtle);
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .drop-zone:hover, .drop-zone.active {
+      border-color: var(--accent-primary);
+      background: var(--accent-soft);
+    }
+    .drop-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--bg-panel);
+      color: var(--accent-primary);
+      border: 1px solid var(--line-default);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .drop-icon .material-symbols-outlined { font-size: 26px; }
+    .drop-title { font-size: 16px; font-weight: 700; color: var(--ink-primary); margin-bottom: 4px; }
+    .drop-sub { font-size: 13px; color: var(--ink-secondary); }
+
+    .preview-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+      padding-top: 8px; border-top: 1px solid var(--line-default);
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      background: var(--bg-subtle);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-default);
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .preview-item {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--line-strong);
+      height: 92px;
+      background: #000;
+    }
+    .preview-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .preview-caption {
+      position: absolute; inset: auto 0 0 0;
+      background: rgba(18, 30, 51, 0.78);
+      color: #FFF; font-size: 11px;
+      padding: 2px 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ── 載入狀態 ─────────────────────── */
+    .loading-panel {
+      padding: 40px 20px; text-align: center;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 4px solid var(--line-default);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.85s linear infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 結果表格 ─────────────────────── */
+    .result-toolbar {
+      padding: 14px 20px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--line-default);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .result-toolbar h2 {
+      font-size: 15.5px; font-weight: 700;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    th {
+      background: var(--bg-subtle);
+      color: var(--ink-secondary);
+      font-size: 12.5px; font-weight: 700;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--line-default);
+      border-right: 1px solid var(--line-default);
+      text-align: center;
+    }
+    th:last-child { border-right: none; }
+    td {
+      padding: 11px 14px;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--line-default);
+      border-right: 1px solid var(--line-default);
+      text-align: center;
+      font-family: var(--font-mono);
+    }
+    td:last-child { border-right: none; }
+    .date-merged-cell {
+      background: var(--accent-soft);
+      color: var(--accent-primary);
+      font-weight: 700;
+    }
+    .label-cell {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      text-align: left;
+      color: var(--ink-primary);
+    }
+    .row-large { background: #F8FAFD; }
+    .row-large td { border-bottom-color: var(--line-strong); }
+
+    .hidden { display: none !important; }
+
+    /* ── Toast 通知 ─────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--board-bg); color: var(--board-text);
+      padding: 11px 18px; border-radius: var(--radius-sm);
+      box-shadow: 0 10px 25px rgba(18, 30, 51, 0.28);
+      font-size: 13.5px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      opacity: 0; transform: translateY(12px);
+      pointer-events: none; transition: all 0.22s ease; z-index: 60;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.is-error { background: var(--accent-danger); }
+  </style>
+</head>
+<body>
+
+  <!-- ── 頂部深藍專業儀表板導覽列 ─────────────────────── -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-icon" aria-hidden="true">
+          <span class="material-symbols-outlined">document_scanner</span>
+        </div>
+        <div class="brand-titles">
+          <span class="eyebrow">SU's TOOLBOX / AI OCR UTILITY</span>
+          <h1>
+            <span>影印機計數清單擷取</span>
+            <span class="sub">/ COPIER COUNTER</span>
+          </h1>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <a href="../" id="vault-status-badge" class="header-btn" title="金鑰統一由工具箱首頁右上角「金鑰保險箱 (BYOK)」管理">
+          <span class="material-symbols-outlined" id="vault-status-icon" style="font-size:18px;">key</span>
+          <span id="vault-status-text">檢查金鑰中...</span>
+        </a>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:var(--radius-sm);padding:4px 10px;">
+          <span class="material-symbols-outlined" style="font-size:17px;color:#66D9E8;">neurology</span>
+          <select id="model-select" aria-label="選擇 Gemini 辨識引擎" style="background:transparent;border:none;color:var(--board-text);font-size:13px;font-weight:600;font-family:var(--font-mono);outline:none;cursor:pointer;">
+            <option value="gemini-2.5-flash" style="color:#17233B;">gemini-2.5-flash (推薦/主力)</option>
+            <option value="gemini-2.5-flash-lite" style="color:#17233B;">gemini-2.5-flash-lite (極速輕量)</option>
+            <option value="gemini-2.5-pro" style="color:#17233B;">gemini-2.5-pro (高精準推理)</option>
+            <option value="gemini-3-flash-preview" style="color:#17233B;">gemini-3-flash-preview (次世代預覽)</option>
+          </select>
+        </div>
+        <a href="../" class="header-btn">
+          <span class="material-symbols-outlined" style="font-size:18px;">home</span>
+          <span>返回蘇的工具箱</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- ── 批次報表圖片上傳與預覽區 ─────────────────────── -->
+    <section class="panel upload-panel" aria-label="上傳計數清單圖片">
+      <div id="drop-zone" class="drop-zone">
+        <input type="file" id="file-upload" class="hidden" accept="image/jpeg, image/png" multiple />
+        <div class="drop-icon">
+          <span class="material-symbols-outlined">upload_file</span>
+        </div>
+        <div class="drop-title">點擊或拖曳上傳多張事務機計數清單照片</div>
+        <div class="drop-sub">支援 JPG、PNG 批次選取，自動擷取右上角日期（轉換為 YYYY/MM/DD 排序）與黃色螢光筆標示讀數</div>
+      </div>
+
+      <div id="preview-container" class="hidden" style="display:flex;flex-direction:column;gap:12px;">
+        <div class="preview-header">
+          <span style="font-size:13.5px;font-weight:700;color:var(--ink-primary);">
+            已選取 <span id="selected-count" style="color:var(--accent-primary);font-family:var(--font-mono);">0</span> 張報表圖片：
+          </span>
+          <button type="button" id="analyze-btn" class="btn btn-primary">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <span>開始批次擷取數據</span>
+          </button>
+        </div>
+        <div id="image-preview-grid" class="preview-grid"></div>
+      </div>
+    </section>
+
+    <!-- ── AI 分析進度狀態 ─────────────────────── -->
+    <section id="loading-state" class="panel loading-panel hidden" aria-live="polite">
+      <div class="spinner"></div>
+      <h3 id="loading-text" style="font-size:16px;font-weight:700;color:var(--ink-primary);">正在透過 AI 分析報表圖片...</h3>
+      <p style="font-size:13px;color:var(--ink-secondary);margin-top:4px;">系統正在依序解析讀數並自動防止 API 頻率限制，請稍候。</p>
+    </section>
+
+    <!-- ── 擷取結果表格區 ─────────────────────── -->
+    <section id="result-container" class="panel hidden" aria-label="計數清單擷取結果">
+      <div class="result-toolbar">
+        <h2>
+          <span class="material-symbols-outlined" style="color:var(--accent-primary);">table_chart</span>
+          <span>計數清單擷取結果（已依日期由舊至新排序）</span>
+        </h2>
+        <button type="button" id="copy-btn" class="btn btn-primary">
+          <span class="material-symbols-outlined">content_copy</span>
+          <span>複製數據 (直接貼入 Excel)</span>
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th style="text-align:left;">數據項目</th>
+              <th>黑色複印</th>
+              <th>全彩複印</th>
+              <th>黑色印表機</th>
+              <th>全彩印表機</th>
+              <th>黑色掃描</th>
+              <th>全彩掃描</th>
+            </tr>
+          </thead>
+          <tbody id="result-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">
+    <span class="material-symbols-outlined" id="toast-icon">check_circle</span>
+    <span id="toast-message">操作成功</span>
+  </div>
+
+  <!-- 引入工具箱共用 BYOK 金鑰保險箱模組 -->
+  <script src="../assets/js/vault.js?v=1.2.0"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const VAULT_KEY_NAME = 'gemini_api_key';
+      const MODEL_STORAGE_KEY = 'su_toolbox_gemini_model';
+
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      const modelSelect = document.getElementById('model-select');
+      const vaultStatusBadge = document.getElementById('vault-status-badge');
+      const vaultStatusText = document.getElementById('vault-status-text');
+      const vaultStatusIcon = document.getElementById('vault-status-icon');
+      const fileUpload = document.getElementById('file-upload');
+      const dropZone = document.getElementById('drop-zone');
+      const previewContainer = document.getElementById('preview-container');
+      const imagePreviewGrid = document.getElementById('image-preview-grid');
+      const selectedCount = document.getElementById('selected-count');
+      const analyzeBtn = document.getElementById('analyze-btn');
+      const loadingState = document.getElementById('loading-state');
+      const loadingText = document.getElementById('loading-text');
+      const resultContainer = document.getElementById('result-container');
+      const resultTbody = document.getElementById('result-tbody');
+      const copyBtn = document.getElementById('copy-btn');
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      let selectedImages = [];
+      let allExtractedData = [];
+
+      function getSharedApiKey() {
+        return (window.SuVault && window.SuVault.getKey(VAULT_KEY_NAME)) || '';
+      }
+
+      function loadApiKeyConfig() {
+        const key = getSharedApiKey();
+        const savedModel = localStorage.getItem(MODEL_STORAGE_KEY) || 'gemini-2.5-flash';
+
+        if (key) {
+          vaultStatusText.textContent = '已連動首頁金鑰';
+          vaultStatusIcon.textContent = 'verified_user';
+          vaultStatusBadge.style.borderColor = 'rgba(102, 217, 232, 0.55)';
+          vaultStatusBadge.style.color = '#66D9E8';
+        } else {
+          vaultStatusText.textContent = '尚未設定金鑰 (點此回首頁設定)';
+          vaultStatusIcon.textContent = 'warning';
+          vaultStatusBadge.style.borderColor = 'rgba(232, 137, 12, 0.7)';
+          vaultStatusBadge.style.color = '#FFD8A8';
+        }
+
+        if (savedModel && [...modelSelect.options].some(o => o.value === savedModel)) {
+          modelSelect.value = savedModel;
+        }
+      }
+
+      modelSelect.addEventListener('change', () => {
+        localStorage.setItem(MODEL_STORAGE_KEY, modelSelect.value);
+        showToast('已切換辨識引擎為 ' + modelSelect.value);
+      });
+
+      window.addEventListener('storage', () => loadApiKeyConfig());
+      window.addEventListener('focus', () => loadApiKeyConfig());
+
+      dropZone.addEventListener('click', () => fileUpload.click());
+      fileUpload.addEventListener('change', handleFileSelect);
+
+      dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropZone.classList.add('active');
+      });
+      dropZone.addEventListener('dragleave', e => {
+        e.preventDefault();
+        dropZone.classList.remove('active');
+      });
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('active');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          fileUpload.files = e.dataTransfer.files;
+          handleFileSelect();
+        }
+      });
+
+      function handleFileSelect() {
+        const files = fileUpload.files;
+        if (!files || files.length === 0) return;
+
+        selectedImages = [];
+        imagePreviewGrid.textContent = '';
+        resultContainer.classList.add('hidden');
+
+        let validFilesCount = 0;
+
+        Array.from(files).forEach((file, index) => {
+          if (!file.type.startsWith('image/')) {
+            if (index === 0) showToast('包含非圖片檔案，將自動跳過', true);
+            return;
+          }
+
+          validFilesCount++;
+          const reader = new FileReader();
+          reader.onload = e => {
+            const dataUrl = e.target.result;
+            selectedImages.push({
+              filename: file.name,
+              mimeType: file.type,
+              base64: dataUrl.split(',')[1]
+            });
+
+            // 使用安全 DOM API 建立預覽卡片，防範惡意檔名 XSS
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'preview-item';
+
+            const imgEl = document.createElement('img');
+            imgEl.src = dataUrl;
+            imgEl.alt = file.name;
+
+            const capDiv = document.createElement('div');
+            capDiv.className = 'preview-caption';
+            capDiv.textContent = file.name;
+
+            itemDiv.appendChild(imgEl);
+            itemDiv.appendChild(capDiv);
+            imagePreviewGrid.appendChild(itemDiv);
+
+            if (selectedImages.length === validFilesCount) {
+              selectedCount.textContent = String(validFilesCount);
+              previewContainer.classList.remove('hidden');
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      analyzeBtn.addEventListener('click', async () => {
+        if (selectedImages.length === 0) return;
+
+        const apiKey = getSharedApiKey();
+        if (!apiKey) {
+          showToast('請先回「蘇的工具箱」首頁右上角【金鑰保險箱 (BYOK)】設定 Gemini API Key！', true);
+          return;
+        }
+
+        previewContainer.classList.add('hidden');
+        loadingState.classList.remove('hidden');
+        resultContainer.classList.add('hidden');
+        allExtractedData = [];
+
+        try {
+          for (let i = 0; i < selectedImages.length; i++) {
+            loadingText.textContent = `正在透過 AI 分析報表圖片... (${i + 1} / ${selectedImages.length})`;
+            const img = selectedImages[i];
+            if (i > 0) await new Promise(r => setTimeout(r, 1000));
+            const data = await callGeminiAPI(img.base64, img.mimeType, apiKey, modelSelect.value);
+            allExtractedData.push(data);
+          }
+
+          allExtractedData.sort((a, b) => {
+            const dateA = String(a.date || '');
+            const dateB = String(b.date || '');
+            return dateA.localeCompare(dateB);
+          });
+
+          renderTable(allExtractedData);
+
+          loadingState.classList.add('hidden');
+          resultContainer.classList.remove('hidden');
+          previewContainer.classList.remove('hidden');
+          showToast(`成功完成 ${selectedImages.length} 張計數清單辨識！`);
+        } catch (error) {
+          console.error('Analysis failed:', error);
+          showToast(`辨識失敗：${error.message}`, true);
+          loadingState.classList.add('hidden');
+          previewContainer.classList.remove('hidden');
+        } finally {
+          loadingText.textContent = '正在透過 AI 分析報表圖片...';
+        }
+      });
+
+      async function fetchWithRetry(url, options, maxRetries = 5) {
+        const delays = [1000, 2000, 4000, 8000, 16000];
+        let lastError = null;
+        for (let i = 0; i < maxRetries; i++) {
+          try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+              let errDetail = '';
+              try {
+                const errData = await response.json();
+                errDetail = errData.error?.message || 'Unknown error';
+              } catch (_) {}
+              throw new Error(`HTTP ${response.status} - ${errDetail}`);
+            }
+            return await response.json();
+          } catch (e) {
+            lastError = e;
+            if (i === maxRetries - 1) break;
+            await new Promise(r => setTimeout(r, delays[i]));
+          }
+        }
+        throw lastError;
+      }
+
+      async function callGeminiAPI(base64Data, mimeType, apiKey, selectedModel) {
+        const useModel = (selectedModel || 'gemini-2.5-flash').trim();
+        // 資安加固：API Key 改由 x-goog-api-key Header 傳送，不暴露於網址列
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(useModel)}:generateContent`;
+
+        const promptText = `這是一張事務機的「計數清單」照片。請幫我擷取圖片中「右上角的日期」以及通常有「黃色螢光筆」標示位置的數值。
+請務必只回傳純 JSON 格式，不要包含任何其他文字或 Markdown 語法（例如 \`\`\`json ）。
+
+JSON 格式需包含以下 key：
+- date (右上角的日期，原圖上的格式為 DD/MM/YYYY (日/月/年)，請務必將其轉換為 YYYY/MM/DD (年/月/日) 的格式回傳。例如若看到 01/12/2025，這代表 12月 1日，請轉換並回傳 "2025/12/01")
+- copy_black_total (複印-黑色-總數)
+- copy_black_large (複印-黑色-大尺寸)
+- copy_color_total (複印-全彩-總數)
+- copy_color_large (複印-全彩-大尺寸)
+- printer_black_total (印表機-黑色-總數)
+- printer_black_large (印表機-黑色-大尺寸)
+- printer_color_total (印表機-全彩-總數)
+- printer_color_large (印表機-全彩-大尺寸)
+- fax_black_total (傳真/掃描-黑色-總數)
+- fax_black_large (傳真/掃描-黑色-大尺寸)
+- fax_color_total (傳真/掃描-全彩-總數)
+- fax_color_large (傳真/掃描-全彩-大尺寸)
+
+數值請填寫字串。如果該欄位沒有螢光筆標示但有數字，也請擷取。如果為空或只有連字號，請填寫 "0"。`;
+
+        const payload = {
+          contents: [{
+            role: 'user',
+            parts: [
+              { text: promptText },
+              { inlineData: { mimeType, data: base64Data } }
+            ]
+          }],
+          generationConfig: {
+            temperature: 0.1,
+            responseMimeType: 'application/json'
+          }
+        };
+
+        const data = await fetchWithRetry(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify(payload)
+        });
+
+        let textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!textResponse) throw new Error('API 回傳格式異常');
+
+        textResponse = textResponse.replace(/```json\n?/ig, '').replace(/```\n?/g, '').trim();
+        try {
+          return JSON.parse(textResponse);
+        } catch (e) {
+          throw new Error('回傳的數據無法解析為 JSON');
+        }
+      }
+
+      function formatNumber(val) {
+        if (val == null) return '0';
+        const s = String(val).trim();
+        if (!s || s === '0') return '0';
+        return s.replace(/[^\d]/g, '') || '0';
+      }
+
+      function renderTable(dataArray) {
+        resultTbody.innerHTML = '';
+
+        dataArray.forEach(data => {
+          const safeDate = escapeHtml(data.date || '無日期');
+
+          const tr1 = document.createElement('tr');
+          tr1.innerHTML = `
+            <td rowspan="2" class="date-merged-cell">${safeDate}</td>
+            <td class="label-cell">總數</td>
+            <td>${formatNumber(data.copy_black_total)}</td>
+            <td>${formatNumber(data.copy_color_total)}</td>
+            <td>${formatNumber(data.printer_black_total)}</td>
+            <td>${formatNumber(data.printer_color_total)}</td>
+            <td>${formatNumber(data.fax_black_total)}</td>
+            <td>${formatNumber(data.fax_color_total)}</td>
+          `;
+
+          const tr2 = document.createElement('tr');
+          tr2.className = 'row-large';
+          tr2.innerHTML = `
+            <td class="label-cell">大尺寸</td>
+            <td>${formatNumber(data.copy_black_large)}</td>
+            <td>${formatNumber(data.copy_color_large)}</td>
+            <td>${formatNumber(data.printer_black_large)}</td>
+            <td>${formatNumber(data.printer_color_large)}</td>
+            <td>${formatNumber(data.fax_black_large)}</td>
+            <td>${formatNumber(data.fax_color_large)}</td>
+          `;
+
+          resultTbody.appendChild(tr1);
+          resultTbody.appendChild(tr2);
+        });
+      }
+
+      copyBtn.addEventListener('click', () => {
+        if (!allExtractedData || allExtractedData.length === 0) return;
+
+        let tsv = '';
+        allExtractedData.forEach(d => {
+          let dateStr = String(d.date || '無日期').replace(/[\t\r\n]/g, ' ').trim();
+          if (/^[=+\-@]/.test(dateStr)) dateStr = "'" + dateStr;
+          tsv += `${dateStr}\t${formatNumber(d.copy_black_total)}\t${formatNumber(d.copy_color_total)}\t${formatNumber(d.printer_black_total)}\t${formatNumber(d.printer_color_total)}\t${formatNumber(d.fax_black_total)}\t${formatNumber(d.fax_color_total)}\n`;
+          tsv += `${dateStr}\t${formatNumber(d.copy_black_large)}\t${formatNumber(d.copy_color_large)}\t${formatNumber(d.printer_black_large)}\t${formatNumber(d.printer_color_large)}\t${formatNumber(d.fax_black_large)}\t${formatNumber(d.fax_color_large)}\n`;
+        });
+
+        const textarea = document.createElement('textarea');
+        textarea.value = tsv;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          showToast('表格數據已複製！可直接貼上至 Excel。');
+        } catch (err) {
+          showToast('複製失敗，請手動選取複製。', true);
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      });
+
+      let toastTimer = null;
+      function showToast(message, isError = false) {
+        toastMessage.textContent = message;
+        toastIcon.textContent = isError ? 'error' : 'check_circle';
+        toast.classList.toggle('is-error', Boolean(isError));
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+
+      loadApiKeyConfig();
+    })();
+  </script>
+</body>
+</html>

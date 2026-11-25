@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>智能發票報帳辨識｜蘇的工具箱 SU's TOOLBOX</title>
+  <!-- Google Fonts: Noto Sans TC, IBM Plex Mono & Google Material Symbols Outlined -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,450,0,0" />
+  <!-- SheetJS 用於匯出 Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- jsQR 用於本地端直接解析台灣電子發票 QR Code -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <style>
+    :root {
+      --bg-canvas: #EDF0F6;
+      --bg-panel: #FFFFFF;
+      --bg-subtle: #F4F7FB;
+      --board-bg: #1B2B47;
+      --board-bg-deep: #121E33;
+      --board-text: #F4F7FD;
+      --board-muted: #8FA3C4;
+      --ink-primary: #17233B;
+      --ink-secondary: #5B6B85;
+      --ink-muted: #7C8CA5;
+      --line-default: #D9DFEA;
+      --line-strong: #BFC9DA;
+      --accent-primary: #0B7285;
+      --accent-hover: #095C6B;
+      --accent-soft: #E3F3F5;
+      --accent-ok: #2F9E44;
+      --accent-ok-soft: #E9F5EC;
+      --accent-warn: #E8890C;
+      --accent-warn-soft: #FFF1DE;
+      --accent-danger: #C92A2A;
+      --accent-danger-soft: #FCE9E9;
+      --radius-card: 12px;
+      --radius-sm: 8px;
+      --shadow-card: 0 2px 8px rgba(23, 35, 59, 0.06);
+      --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+      --font-mono: "IBM Plex Mono", "Consolas", "Courier New", monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      background:
+        radial-gradient(circle at 1px 1px, rgba(27, 43, 71, 0.065) 1px, transparent 0) 0 0 / 22px 22px,
+        var(--bg-canvas);
+      color: var(--ink-primary);
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+      user-select: none;
+      vertical-align: middle;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── 頂部深藍專業儀表板 Header ─────────────────────── */
+    .app-header {
+      background: linear-gradient(135deg, var(--board-bg) 0%, var(--board-bg-deep) 100%);
+      color: var(--board-text);
+      padding: 14px 24px;
+      box-shadow: 0 3px 14px rgba(18, 30, 51, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: rgba(11, 114, 133, 0.35);
+      border: 1px solid rgba(102, 217, 232, 0.4);
+      color: #66D9E8;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand-titles .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 2px;
+      color: var(--board-muted);
+      text-transform: uppercase;
+      display: block;
+    }
+    .brand-titles h1 {
+      font-size: 20px; font-weight: 700; color: var(--board-text);
+      display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    }
+    .brand-titles h1 .sub {
+      font-family: var(--font-mono); font-size: 12.5px; color: #66D9E8; font-weight: 500;
+    }
+    .header-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 13px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--board-text);
+      transition: all 0.16s ease;
+    }
+    .header-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(102, 217, 232, 0.55);
+    }
+
+    /* ── 主容器與儀表板面板 ─────────────────────── */
+    .app-main {
+      max-width: 1180px; width: 100%; margin: 0 auto;
+      padding: 24px 20px 48px; flex: 1;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--line-default);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    /* ── BYOK API Key 與模型設定面板 ─────────────────────── */
+    .api-bar {
+      padding: 16px 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .api-bar-top {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .api-title {
+      font-size: 14px; font-weight: 700; color: var(--ink-primary);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .api-title .material-symbols-outlined { color: var(--accent-primary); font-size: 20px; }
+    .vault-badge {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px;
+      background: var(--accent-soft); color: var(--accent-primary);
+    }
+    .api-controls {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .input-ctrl, .select-ctrl {
+      padding: 8px 12px;
+      border: 1px solid var(--line-default);
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      color: var(--ink-primary);
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.16s, background 0.16s;
+    }
+    .input-ctrl:focus, .select-ctrl:focus {
+      background: var(--bg-panel);
+      border-color: var(--accent-primary);
+    }
+    .key-input { flex: 1; min-width: 220px; font-family: var(--font-mono); }
+    .api-hint {
+      font-size: 12px; color: var(--ink-secondary);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .api-hint a {
+      color: var(--accent-primary); font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    .api-hint a:hover { text-decoration: underline; }
+
+    /* ── 按鈕系統 ─────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      font-size: 13.5px; font-weight: 600; font-family: inherit;
+      cursor: pointer; border: 1px solid transparent;
+      transition: all 0.16s ease; white-space: nowrap;
+    }
+    .btn .material-symbols-outlined { font-size: 18px; }
+    .btn-primary {
+      background: var(--accent-primary); color: #FFFFFF;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-navy {
+      background: var(--board-bg); color: var(--board-text);
+    }
+    .btn-navy:hover { background: var(--board-bg-deep); }
+    .btn-outline {
+      background: var(--bg-panel); color: var(--ink-secondary); border-color: var(--line-default);
+    }
+    .btn-outline:hover {
+      color: var(--ink-primary); border-color: var(--line-strong); background: var(--bg-subtle);
+    }
+    .btn-danger-outline {
+      background: var(--bg-panel); color: var(--accent-danger); border-color: rgba(201, 42, 42, 0.3);
+    }
+    .btn-danger-outline:hover { background: var(--accent-danger-soft); }
+
+    /* ── 上傳拖曳區 ─────────────────────── */
+    .upload-panel { padding: 20px; }
+    .drop-zone {
+      border: 2px dashed var(--line-strong);
+      border-radius: 10px;
+      background: var(--bg-subtle);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .drop-zone:hover, .drop-zone.active {
+      border-color: var(--accent-primary);
+      background: var(--accent-soft);
+    }
+    .drop-icon {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: var(--bg-panel);
+      color: var(--accent-primary);
+      border: 1px solid var(--line-default);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(23, 35, 59, 0.06);
+    }
+    .drop-icon .material-symbols-outlined { font-size: 28px; }
+    .drop-title { font-size: 16.5px; font-weight: 700; color: var(--ink-primary); margin-bottom: 4px; }
+    .drop-sub { font-size: 13px; color: var(--ink-secondary); }
+    .drop-feature {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 10px; padding: 4px 10px; border-radius: 999px;
+      background: var(--bg-panel); border: 1px solid var(--line-default);
+      font-size: 12px; font-weight: 600; color: var(--accent-primary);
+    }
+
+    /* ── 統計與動作工具列 ─────────────────────── */
+    .stats-toolbar {
+      padding: 14px 20px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--line-default);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .stats-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .count-pill {
+      font-family: var(--font-mono); font-size: 12.5px; font-weight: 600;
+      padding: 4px 12px; border-radius: 999px;
+      background: var(--bg-panel); border: 1px solid var(--line-default);
+      color: var(--ink-primary);
+    }
+    .sum-display {
+      font-size: 16px; font-weight: 700; color: var(--accent-primary);
+      font-family: var(--font-mono);
+    }
+
+    /* ── 資料表格 ─────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    thead tr {
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--line-default);
+    }
+    th {
+      padding: 11px 14px;
+      font-size: 12px; font-weight: 700; color: var(--ink-secondary);
+      text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line-default);
+      font-size: 13.5px; color: var(--ink-primary);
+      vertical-align: middle;
+    }
+    tbody tr:hover { background: #F8FAFD; }
+    .mono-cell { font-family: var(--font-mono); font-weight: 600; }
+    .amount-cell { font-family: var(--font-mono); font-weight: 700; color: var(--ink-primary); }
+    .invoice-no { font-family: var(--font-mono); font-weight: 600; color: var(--accent-primary); }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 999px;
+      font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .status-ok { background: var(--accent-ok-soft); color: var(--accent-ok); }
+    .status-loading { background: var(--accent-soft); color: var(--accent-primary); }
+    .status-err { background: var(--accent-danger-soft); color: var(--accent-danger); cursor: help; }
+
+    .icon-action-btn {
+      background: transparent; border: 1px solid transparent;
+      border-radius: 6px; padding: 4px; cursor: pointer;
+      color: var(--ink-secondary); display: inline-flex; align-items: center;
+      transition: all 0.15s;
+    }
+    .icon-action-btn:hover {
+      background: var(--bg-subtle); color: var(--ink-primary); border-color: var(--line-default);
+    }
+    .icon-action-btn.del:hover {
+      background: var(--accent-danger-soft); color: var(--accent-danger); border-color: rgba(201,42,42,0.25);
+    }
+
+    .edit-input {
+      padding: 5px 8px; border: 1px solid var(--accent-primary);
+      border-radius: 6px; font-size: 13px; font-family: inherit;
+      width: 100%; min-width: 72px; background: #FFFFFF;
+    }
+
+    .empty-box {
+      padding: 48px 20px; text-align: center; color: var(--ink-muted);
+    }
+    .empty-box .material-symbols-outlined { font-size: 40px; margin-bottom: 6px; opacity: 0.5; }
+
+    /* ── Toast 通知 ─────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--board-bg); color: var(--board-text);
+      padding: 11px 18px; border-radius: var(--radius-sm);
+      box-shadow: 0 10px 25px rgba(18, 30, 51, 0.28);
+      font-size: 13.5px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      opacity: 0; transform: translateY(12px);
+      pointer-events: none; transition: all 0.22s ease; z-index: 60;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.is-error { background: var(--accent-danger); }
+  </style>
+</head>
+<body>
+
+  <!-- ── 頂部深藍專業儀表板導覽列 ─────────────────────── -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-icon" aria-hidden="true">
+          <span class="material-symbols-outlined">receipt_long</span>
+        </div>
+        <div class="brand-titles">
+          <span class="eyebrow">SU's TOOLBOX / AI OCR UTILITY</span>
+          <h1>
+            <span>智能發票報帳辨識</span>
+            <span class="sub">/ INVOICE SCANNER</span>
+          </h1>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <a href="../" id="vault-status-badge" class="header-btn" title="金鑰統一由工具箱首頁右上角「金鑰保險箱 (BYOK)」管理">
+          <span class="material-symbols-outlined" id="vault-status-icon" style="font-size:18px;">key</span>
+          <span id="vault-status-text">檢查金鑰中...</span>
+        </a>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:var(--radius-sm);padding:4px 10px;">
+          <span class="material-symbols-outlined" style="font-size:17px;color:#66D9E8;">neurology</span>
+          <select id="model-input" aria-label="選擇 Gemini 辨識引擎" style="background:transparent;border:none;color:var(--board-text);font-size:13px;font-weight:600;font-family:var(--font-mono);outline:none;cursor:pointer;">
+            <option value="gemini-2.5-flash" style="color:#17233B;">gemini-2.5-flash (推薦/主力)</option>
+            <option value="gemini-2.5-flash-lite" style="color:#17233B;">gemini-2.5-flash-lite (極速輕量)</option>
+            <option value="gemini-2.5-pro" style="color:#17233B;">gemini-2.5-pro (高精準推理)</option>
+            <option value="gemini-3-flash-preview" style="color:#17233B;">gemini-3-flash-preview (次世代預覽)</option>
+          </select>
+        </div>
+        <a href="../" class="header-btn">
+          <span class="material-symbols-outlined" style="font-size:18px;">home</span>
+          <span>返回蘇的工具箱</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- ── 發票圖片上傳區 ─────────────────────── -->
+    <section class="panel upload-panel" aria-label="上傳發票圖片">
+      <div id="drop-zone" class="drop-zone">
+        <input type="file" id="file-input" style="display:none;" multiple accept="image/*" capture="environment" />
+        <div class="drop-icon">
+          <span class="material-symbols-outlined">cloud_upload</span>
+        </div>
+        <div class="drop-title">點擊或拖放發票照片進行辨識</div>
+        <div class="drop-sub">支援單張或多張台灣電子發票、傳統收銀機發票與手寫三聯式發票 (JPG, PNG)</div>
+        <div class="drop-feature">
+          <span class="material-symbols-outlined" style="font-size:16px;">qr_code_scanner</span>
+          <span>雙引擎辨識：本地 QR Code 條碼 100% 精準直讀號碼/日期/金額 ＋ Gemini AI 智能辨識店名與報帳分類</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 辨識結果統計與表格區 ─────────────────────── -->
+    <section class="panel" aria-label="發票辨識結果清單">
+      <div class="stats-toolbar">
+        <div class="stats-group">
+          <span class="count-pill">解析結果：共 <span id="record-count">0</span> 筆</span>
+          <span id="total-sum" class="sum-display">總計：$0</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" id="clear-btn" class="btn btn-outline">
+            <span class="material-symbols-outlined">delete_sweep</span>
+            <span>清空紀錄</span>
+          </button>
+          <button type="button" id="export-btn" class="btn btn-primary">
+            <span class="material-symbols-outlined">download</span>
+            <span>匯出 Excel 報帳表</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>金額</th>
+              <th>發票號碼 (8碼)</th>
+              <th>報帳分類</th>
+              <th style="min-width:180px;">店家名稱 / 狀態說明</th>
+              <th>買方統編</th>
+              <th>狀態</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="result-list">
+            <tr id="empty-state">
+              <td colspan="8">
+                <div class="empty-box">
+                  <span class="material-symbols-outlined">receipt</span>
+                  <p>尚無任何發票辨識資料，請由上方上傳發票圖片</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">
+    <span class="material-symbols-outlined" id="toast-icon">check_circle</span>
+    <span id="toast-text">已完成操作</span>
+  </div>
+
+  <!-- 引入工具箱共用 BYOK 金鑰保險箱模組 -->
+  <script src="../assets/js/vault.js?v=1.2.0"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const VAULT_KEY_NAME = 'gemini_api_key';
+      const MODEL_STORAGE_KEY = 'su_toolbox_gemini_model';
+      const RECORDS_STORAGE_KEY = 'gemini_invoice_records';
+      const CATEGORIES = ['餐飲', '禮品', '書籍', '文具', '軟硬體', '印刷', '其他'];
+
+      // HTML 跳脫函式 (防範 AI 回傳文字或檔名觸發 DOM XSS)
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      let records = [];
+
+      // DOM 元素
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const resultList = document.getElementById('result-list');
+      const recordCount = document.getElementById('record-count');
+      const totalSumDisplay = document.getElementById('total-sum');
+      const clearBtn = document.getElementById('clear-btn');
+      const exportBtn = document.getElementById('export-btn');
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      const toastIcon = document.getElementById('toast-icon');
+      const modelInput = document.getElementById('model-input');
+      const vaultStatusBadge = document.getElementById('vault-status-badge');
+      const vaultStatusText = document.getElementById('vault-status-text');
+      const vaultStatusIcon = document.getElementById('vault-status-icon');
+
+      // 統一從工具箱首頁 BYOK 金鑰保險箱 (SuVault) 讀取金鑰
+      function getSharedApiKey() {
+        return (window.SuVault && window.SuVault.getKey(VAULT_KEY_NAME)) || '';
+      }
+
+      function loadApiKeyConfig() {
+        const key = getSharedApiKey();
+        const savedModel = localStorage.getItem(MODEL_STORAGE_KEY) || 'gemini-2.5-flash';
+
+        if (key) {
+          vaultStatusText.textContent = '已連動首頁金鑰';
+          vaultStatusIcon.textContent = 'verified_user';
+          vaultStatusBadge.style.borderColor = 'rgba(102, 217, 232, 0.55)';
+          vaultStatusBadge.style.color = '#66D9E8';
+        } else {
+          vaultStatusText.textContent = '尚未設定金鑰 (點此回首頁設定)';
+          vaultStatusIcon.textContent = 'warning';
+          vaultStatusBadge.style.borderColor = 'rgba(232, 137, 12, 0.7)';
+          vaultStatusBadge.style.color = '#FFD8A8';
+        }
+
+        if (savedModel && [...modelInput.options].some(o => o.value === savedModel)) {
+          modelInput.value = savedModel;
+        }
+      }
+
+      modelInput.addEventListener('change', () => {
+        localStorage.setItem(MODEL_STORAGE_KEY, modelInput.value);
+        showToast('已切換辨識引擎為 ' + modelInput.value);
+      });
+
+      // 當使用者在首頁分頁更新金鑰保險箱時，此分頁即時自動同步狀態！
+      window.addEventListener('storage', () => loadApiKeyConfig());
+      window.addEventListener('focus', () => loadApiKeyConfig());
+
+      // 拖曳與點擊上傳
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropZone.classList.add('active');
+      });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('active'));
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('active');
+        if (e.dataTransfer && e.dataTransfer.files) {
+          handleFiles(e.dataTransfer.files);
+        }
+      });
+      fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+      function saveData() {
+        try {
+          localStorage.setItem(RECORDS_STORAGE_KEY, JSON.stringify(records));
+        } catch (err) {
+          console.error('儲存記錄失敗', err);
+        }
+      }
+
+      function loadData() {
+        const saved = localStorage.getItem(RECORDS_STORAGE_KEY);
+        if (!saved) return;
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const emptyState = document.getElementById('empty-state');
+            if (emptyState) emptyState.remove();
+            records = parsed;
+            parsed.forEach(r => {
+              if (r.status === 'loading') {
+                r.status = 'error';
+                r.errorMsg = '處理中斷';
+                r.vendor = '辨識未完成';
+              }
+              addTableRow(r, true);
+            });
+            updateStats();
+          }
+        } catch (e) {
+          console.error('讀取歷史紀錄失敗', e);
+        }
+      }
+
+      // 解析台灣電子發票左側 QR Code (77碼規範前53碼核心區塊)
+      function parseTaiwanQR(text) {
+        if (typeof text === 'string' && text.length >= 53 && /^[A-Z]{2}\d{8}\d{7}/.test(text)) {
+          const invNum = text.substring(2, 10);
+          const year = parseInt(text.substring(10, 13), 10) + 1911;
+          const month = text.substring(13, 15);
+          const day = text.substring(15, 17);
+          const date = `${year}-${month}-${day}`;
+          const amountHex = text.substring(29, 37);
+          const amount = parseInt(amountHex, 16);
+          const buyerId = text.substring(37, 45) === '00000000' ? '' : text.substring(37, 45);
+          const sellerId = text.substring(45, 53);
+          return { invNum, date, amount: isNaN(amount) ? 0 : amount, buyerId, sellerId };
+        }
+        return null;
+      }
+
+      function processImageAndScanQR(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const MAX_WIDTH = 1024;
+              let width = img.width;
+              let height = img.height;
+              if (width > MAX_WIDTH) {
+                height = Math.round((height * MAX_WIDTH) / width);
+                width = MAX_WIDTH;
+              }
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d', { willReadFrequently: true });
+              ctx.drawImage(img, 0, 0, width, height);
+
+              let qrResult = null;
+              if (typeof jsQR !== 'undefined') {
+                const imageData = ctx.getImageData(0, 0, width, height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                if (code && code.data) {
+                  qrResult = parseTaiwanQR(code.data);
+                }
+              }
+
+              resolve({
+                base64: canvas.toDataURL('image/png'),
+                qrResult
+              });
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function handleFiles(files) {
+        if (!files || files.length === 0) return;
+
+        const activeKey = getSharedApiKey();
+        if (!activeKey) {
+          showToast('請先回「蘇的工具箱」首頁右上角【金鑰保險箱 (BYOK)】設定 Gemini API Key！', true);
+          return;
+        }
+
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.remove();
+
+        for (const file of files) {
+          if (!file.type.startsWith('image/')) continue;
+          const id = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+
+          try {
+            const { base64, qrResult } = await processImageAndScanQR(file);
+            const vendorText = qrResult ? '條碼直讀成功，AI 分析店名中...' : 'AI 影像分析中...';
+
+            addTableRow({
+              id,
+              date: qrResult ? qrResult.date : '處理中...',
+              amount: qrResult ? qrResult.amount : 0,
+              invoiceNo: qrResult ? qrResult.invNum : '辨識中...',
+              category: '分析中...',
+              vendor: vendorText,
+              buyerId: qrResult ? (qrResult.buyerId || '無') : '...',
+              status: 'loading'
+            });
+
+            const results = await recognizeReceipt(base64, qrResult, activeKey, modelInput.value);
+
+            if (results.isError) {
+              updateTableRow(id, results);
+            } else if (Array.isArray(results) && results.length > 0) {
+              updateTableRow(id, results[0]);
+              for (let i = 1; i < results.length; i++) {
+                const newId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+                addTableRow({
+                  id: newId,
+                  date: '...',
+                  amount: 0,
+                  invoiceNo: '載入中...',
+                  category: '...',
+                  vendor: '...',
+                  buyerId: '...',
+                  status: 'loading'
+                });
+                updateTableRow(newId, results[i]);
+              }
+            } else {
+              updateTableRow(id, {
+                date: '-',
+                amount: 0,
+                invoiceNo: '未找到發票',
+                category: '其他',
+                vendor: '無法辨識圖片內容',
+                buyerId: '-',
+                status: 'error',
+                errorMsg: '未能從圖片中解析出發票資訊'
+              });
+            }
+          } catch (err) {
+            console.error('處理失敗', err);
+            updateTableRow(id, {
+              date: '-',
+              amount: 0,
+              invoiceNo: '系統錯誤',
+              category: '其他',
+              vendor: '圖片處理失敗',
+              buyerId: '-',
+              status: 'error',
+              errorMsg: err.message || '未知錯誤'
+            });
+          }
+        }
+      }
+
+      async function recognizeReceipt(base64Data, qrResult, apiKey, modelName) {
+        const useModel = (modelName || 'gemini-2.5-flash').trim();
+        try {
+          const base64Content = base64Data.split(',')[1];
+          let prompt = '';
+
+          if (qrResult) {
+            prompt = `這張圖片中的電子發票，我們已經透過 QR Code 掃描「100% 準確」取得了以下數值：
+- 發票號碼(8碼): ${qrResult.invNum}
+- 開立日期: ${qrResult.date}
+- 總計金額: ${qrResult.amount}
+- 賣方統編: ${qrResult.sellerId}
+- 買方統編: ${qrResult.buyerId}
+
+你現在的「唯一任務」，是看著圖片中的文字，辨識出「店家名稱 (vendor)」並進行「分類 (category)」。
+必須嚴格以 JSON 陣列 (Array) 格式回傳，請直接將上述的精準數值填入對應欄位中，【絕對不要更改數值】！
+
+分類規則（絕對只能是這幾個字）："餐飲"（所有餐飲/飲料）、"禮品"（服飾/藥妝/禮物）、"書籍"（書局/書籍）、"文具"（文具店）、"軟硬體"（軟硬體/3C/電腦）、"印刷"（【極度重要】只要品項含晒圖紙/影印/大圖輸出，或店名含詠旺/印刷/影印店，務必歸此類）、"其他"（無法分類的）。
+
+回傳範例：[{"invoiceNo": "${qrResult.invNum}", "date": "${qrResult.date}", "amount": ${qrResult.amount}, "vendor": "你辨識的店名", "category": "你的分類", "sellerId": "${qrResult.sellerId}", "buyerId": "${qrResult.buyerId}"}]`;
+          } else {
+            prompt = `你現在是一個專業的台灣發票辨識專家。請仔細辨識圖片中的「所有」發票（包含電子發票證明聯、傳統收銀機發票，或是手寫三聯式發票）。
+若圖片中包含多張發票，請獨立解析每一張的資訊。
+必須嚴格以 JSON 陣列 (Array) 格式回傳。
+請確保每個發票物件包含以下 Key：
+"invoiceNo": 發票號碼的「8位數字」部分（請務必忽略前面的2個大寫英文字母）
+"date": 開立日期（格式為 YYYY-MM-DD，若有民國年請加 1911 轉換為西元年）
+"vendor": 店家名稱（【極度重要】請直接讀取發票最上方、最顯眼的文字！尤其是傳統收銀機發票，店名通常印在最上方的虛線框框內第一行，例如「詠旺(有)公司」。請勿自行腦補成便利商店！）
+"category": 根據店家名稱或購買品項歸類（絕對只能是這幾個字）："餐飲"、"禮品"、"書籍"、"文具"、"軟硬體"、"印刷"（【極度重要】只要品項包含晒圖紙/影印/大圖輸出，或是店名包含詠旺/印刷/影印店，務必歸類為"印刷"！）、"其他"。
+"sellerId": 賣方統編（8位數字）
+"buyerId": 買方統編（若無請填空字串）
+"amount": 總計金額（純數字，不含逗號與符號）`;
+          }
+
+          // 資安加固：API Key 不放 URL query string，改由 x-goog-api-key HTTP Header 傳遞
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(useModel)}:generateContent`;
+
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': apiKey
+            },
+            body: JSON.stringify({
+              contents: [{
+                role: 'user',
+                parts: [
+                  { text: prompt },
+                  { inlineData: { mimeType: 'image/png', data: base64Content } }
+                ]
+              }]
+            })
+          });
+
+          if (!response.ok) {
+            let errorMessage = 'HTTP 錯誤碼: ' + response.status;
+            try {
+              const errorData = await response.json();
+              if (errorData && errorData.error && errorData.error.message) {
+                errorMessage = errorData.error.message;
+              }
+            } catch (_) {}
+            throw new Error(errorMessage);
+          }
+
+          const data = await response.json();
+          let text = '[]';
+          if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+            text = data.candidates[0].content.parts[0].text;
+          }
+
+          const arrayMatch = text.match(/\[[\s\S]*\]/);
+          const objectMatch = text.match(/\{[\s\S]*\}/);
+          let parsed = [];
+          if (arrayMatch) {
+            parsed = JSON.parse(arrayMatch[0]);
+          } else if (objectMatch) {
+            parsed = [JSON.parse(objectMatch[0])];
+          }
+
+          if (!Array.isArray(parsed) || parsed.length === 0) {
+            return {
+              isError: true, date: '-', amount: 0, invoiceNo: '解析失敗',
+              category: '其他', vendor: '未找到任何發票結構', buyerId: '-',
+              status: 'error', errorMsg: '未找到發票'
+            };
+          }
+
+          return parsed.map(p => {
+            let cleanNums = String(p.invoiceNo || '').replace(/[^0-9]/g, '');
+            if (cleanNums.length > 8) cleanNums = cleanNums.slice(-8);
+            return {
+              date: String(p.date || '-'),
+              amount: parseFloat(p.amount) || 0,
+              invoiceNo: cleanNums || '未偵測',
+              category: String(p.category || '其他'),
+              vendor: String(p.vendor || '未知店家'),
+              buyerId: String(p.buyerId || '無'),
+              status: 'success'
+            };
+          });
+        } catch (error) {
+          console.error('AI 辨識或解析失敗:', error);
+          const displayError = '錯誤: ' + (error.message || '系統發生未知錯誤');
+          return {
+            isError: true,
+            date: qrResult ? qrResult.date : '-',
+            amount: qrResult ? qrResult.amount : 0,
+            invoiceNo: qrResult ? qrResult.invNum : '解析失敗',
+            category: '其他',
+            vendor: displayError,
+            buyerId: qrResult ? (qrResult.buyerId || '無') : '-',
+            status: 'error',
+            errorMsg: displayError
+          };
+        }
+      }
+
+      function buildStatusPillHTML(status, errorMsg) {
+        if (status === 'success') {
+          return `<span class="status-pill status-ok"><span class="material-symbols-outlined" style="font-size:14px;">check_circle</span>解析完成</span>`;
+        }
+        if (status === 'loading') {
+          return `<span class="status-pill status-loading"><span class="material-symbols-outlined" style="font-size:14px;">hourglass_top</span>辨識中</span>`;
+        }
+        const safeTitle = escapeHtml(errorMsg || '辨識過程中發生錯誤');
+        return `<span class="status-pill status-err" title="${safeTitle}"><span class="material-symbols-outlined" style="font-size:14px;">error</span>失敗</span>`;
+      }
+
+      function addTableRow(data, isInitialLoad = false) {
+        const safeId = escapeHtml(data.id);
+        const row = document.createElement('tr');
+        row.id = `row-${data.id}`;
+
+        row.innerHTML = `
+          <td class="mono-cell date-cell">${escapeHtml(data.date)}</td>
+          <td class="amount-cell">$ ${escapeHtml(data.amount)}</td>
+          <td class="invoice-no">${escapeHtml(data.invoiceNo)}</td>
+          <td class="category-cell">${escapeHtml(data.category)}</td>
+          <td class="vendor-cell" style="${data.status === 'error' ? 'color:var(--accent-danger);font-weight:600;' : ''}">${escapeHtml(data.vendor)}</td>
+          <td class="mono-cell buyer-cell">${escapeHtml(data.buyerId)}</td>
+          <td class="status-cell">${buildStatusPillHTML(data.status, data.errorMsg)}</td>
+          <td class="action-cell" style="white-space:nowrap;">
+            <button type="button" class="icon-action-btn" data-action="edit" data-id="${safeId}" title="編輯此筆資料">
+              <span class="material-symbols-outlined" style="font-size:19px;">edit</span>
+            </button>
+            <button type="button" class="icon-action-btn del" data-action="remove" data-id="${safeId}" title="刪除此筆資料">
+              <span class="material-symbols-outlined" style="font-size:19px;">delete</span>
+            </button>
+          </td>
+        `;
+
+        resultList.prepend(row);
+
+        if (!isInitialLoad) {
+          records.push(data);
+          updateStats();
+          saveData();
+        }
+      }
+
+      function updateTableRow(id, result) {
+        const row = document.getElementById(`row-${id}`);
+        if (!row) return;
+
+        const index = records.findIndex(r => r.id === id);
+        if (index !== -1) {
+          records[index] = Object.assign({}, records[index], result);
+        }
+
+        row.querySelector('.date-cell').textContent = result.date;
+        row.querySelector('.amount-cell').textContent = '$ ' + (parseFloat(result.amount) || 0);
+        row.querySelector('.invoice-no').textContent = result.invoiceNo;
+        row.querySelector('.category-cell').textContent = result.category || '其他';
+
+        const vendorCell = row.querySelector('.vendor-cell');
+        vendorCell.textContent = result.vendor;
+        vendorCell.style.color = result.status === 'error' ? 'var(--accent-danger)' : '';
+        vendorCell.style.fontWeight = result.status === 'error' ? '600' : '';
+
+        row.querySelector('.buyer-cell').textContent = result.buyerId;
+        row.querySelector('.status-cell').innerHTML = buildStatusPillHTML(result.status, result.errorMsg);
+
+        updateStats();
+        saveData();
+      }
+
+      // 事件委派處理編輯 / 儲存 / 取消 / 刪除 (避免 inline onclick 字串注入風險)
+      resultList.addEventListener('click', e => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const action = btn.getAttribute('data-action');
+        const id = btn.getAttribute('data-id');
+        if (!id) return;
+
+        if (action === 'edit') editRecord(id);
+        else if (action === 'save') saveRecord(id);
+        else if (action === 'cancel') cancelEdit(id);
+        else if (action === 'remove') removeRecord(id);
+      });
+
+      function editRecord(id) {
+        const row = document.getElementById(`row-${id}`);
+        const record = records.find(r => r.id === id);
+        if (!row || !record) return;
+
+        const createInput = (val, cls, type = 'text') => {
+          const inp = document.createElement('input');
+          inp.type = type;
+          inp.className = 'edit-input ' + cls;
+          inp.value = val != null ? String(val) : '';
+          return inp;
+        };
+
+        const dateCell = row.querySelector('.date-cell');
+        dateCell.textContent = '';
+        dateCell.appendChild(createInput(record.date, 'edit-input-date'));
+
+        const amountCell = row.querySelector('.amount-cell');
+        amountCell.textContent = '';
+        amountCell.appendChild(createInput(record.amount, 'edit-input-amount', 'number'));
+
+        const invCell = row.querySelector('.invoice-no');
+        invCell.textContent = '';
+        invCell.appendChild(createInput(record.invoiceNo, 'edit-input-invoice'));
+
+        const catCell = row.querySelector('.category-cell');
+        catCell.textContent = '';
+        const sel = document.createElement('select');
+        sel.className = 'edit-input edit-input-category';
+        const allCats = CATEGORIES.includes(record.category) ? CATEGORIES : [...CATEGORIES, record.category];
+        allCats.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          if (c === record.category) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        catCell.appendChild(sel);
+
+        const vendorCell = row.querySelector('.vendor-cell');
+        vendorCell.textContent = '';
+        vendorCell.appendChild(createInput(record.vendor, 'edit-input-vendor'));
+
+        const buyerCell = row.querySelector('.buyer-cell');
+        buyerCell.textContent = '';
+        buyerCell.appendChild(createInput(record.buyerId, 'edit-input-buyer'));
+
+        const safeId = escapeHtml(id);
+        row.querySelector('.action-cell').innerHTML = `
+          <button type="button" class="icon-action-btn" data-action="save" data-id="${safeId}" title="儲存修改" style="color:var(--accent-ok);">
+            <span class="material-symbols-outlined" style="font-size:20px;">check_circle</span>
+          </button>
+          <button type="button" class="icon-action-btn" data-action="cancel" data-id="${safeId}" title="取消編輯">
+            <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+          </button>
+        `;
+      }
+
+      function saveRecord(id) {
+        const row = document.getElementById(`row-${id}`);
+        const index = records.findIndex(r => r.id === id);
+        if (!row || index === -1) return;
+
+        const updatedResult = {
+          date: row.querySelector('.edit-input-date').value.trim(),
+          amount: parseFloat(row.querySelector('.edit-input-amount').value) || 0,
+          invoiceNo: row.querySelector('.edit-input-invoice').value.trim(),
+          category: row.querySelector('.edit-input-category').value,
+          vendor: row.querySelector('.edit-input-vendor').value.trim(),
+          buyerId: row.querySelector('.edit-input-buyer').value.trim(),
+          status: records[index].status,
+          errorMsg: records[index].errorMsg
+        };
+
+        updateTableRow(id, updatedResult);
+        restoreActionButtons(id);
+        showToast('單筆發票資料已更新');
+      }
+
+      function cancelEdit(id) {
+        const record = records.find(r => r.id === id);
+        if (record) {
+          updateTableRow(id, record);
+          restoreActionButtons(id);
+        }
+      }
+
+      function restoreActionButtons(id) {
+        const row = document.getElementById(`row-${id}`);
+        if (!row) return;
+        const safeId = escapeHtml(id);
+        row.querySelector('.action-cell').innerHTML = `
+          <button type="button" class="icon-action-btn" data-action="edit" data-id="${safeId}" title="編輯此筆資料">
+            <span class="material-symbols-outlined" style="font-size:19px;">edit</span>
+          </button>
+          <button type="button" class="icon-action-btn del" data-action="remove" data-id="${safeId}" title="刪除此筆資料">
+            <span class="material-symbols-outlined" style="font-size:19px;">delete</span>
+          </button>
+        `;
+      }
+
+      function removeRecord(id) {
+        const row = document.getElementById(`row-${id}`);
+        if (row) row.remove();
+        records = records.filter(r => r.id !== id);
+        updateStats();
+        if (records.length === 0) showEmptyState();
+        saveData();
+      }
+
+      function updateStats() {
+        recordCount.textContent = String(records.length);
+        const total = records.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+        totalSumDisplay.textContent = '總計：$' + total.toLocaleString();
+      }
+
+      function showEmptyState() {
+        resultList.innerHTML = `
+          <tr id="empty-state">
+            <td colspan="8">
+              <div class="empty-box">
+                <span class="material-symbols-outlined">receipt</span>
+                <p>尚無任何發票辨識資料，請由上方上傳發票圖片</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+
+      clearBtn.addEventListener('click', () => {
+        records = [];
+        showEmptyState();
+        updateStats();
+        saveData();
+        showToast('已清空所有辨識紀錄');
+      });
+
+      exportBtn.addEventListener('click', () => {
+        if (records.length === 0) {
+          showToast('目前沒有資料可以匯出', true);
+          return;
+        }
+        const exportData = records.map(r => ({
+          '日期': r.date,
+          '金額': r.amount,
+          '發票號碼(8碼)': r.invoiceNo,
+          '分類': r.category,
+          '店家名稱/錯誤': r.vendor,
+          '買方統編': r.buyerId,
+          '狀態': r.status === 'success' ? '解析成功' : '失敗'
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, '發票紀錄');
+        XLSX.writeFile(wb, `發票報帳表_${new Date().toISOString().split('T')[0]}.xlsx`);
+        showToast('已成功匯出 Excel 報帳表格');
+      });
+
+      let toastTimer = null;
+      function showToast(msg, isError = false) {
+        toastText.textContent = msg;
+        toastIcon.textContent = isError ? 'error' : 'check_circle';
+        toast.classList.toggle('is-error', Boolean(isError));
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+
+      loadApiKeyConfig();
+      loadData();
+    })();
+  </script>
+</body>
+</html>

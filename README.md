@@ -6,7 +6,7 @@
 - **設計規範**：[DESIGN.md](DESIGN.md)
 - **AI 協作與資安準則**：[AGENTS.md](AGENTS.md)
 - **系統規格書總覽**：[doc/spec/00_overview.md](doc/spec/00_overview.md)
-- **開發計畫紀錄**：[doc/dev/plan_portal_initial_setup.md](doc/dev/plan_portal_initial_setup.md)、[doc/dev/plan_card_layout_refinement.md](doc/dev/plan_card_layout_refinement.md)
+- **開發計畫紀錄**：[doc/dev/plan_portal_initial_setup.md](doc/dev/plan_portal_initial_setup.md)、[doc/dev/plan_card_layout_refinement.md](doc/dev/plan_card_layout_refinement.md)、[doc/dev/plan_ai_ocr_tools_integration.md](doc/dev/plan_ai_ocr_tools_integration.md)
 
 ---
 
@@ -33,10 +33,12 @@
 
 | 卡片名稱 | 標準路徑 | 版本 / 類型 | 開啟方式 | Google Icon | 功能簡介與活文件連結 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **蘇的工具箱 (主入口)** | [`/index.html`](index.html) | `v1.1.0` | 主頁面 | `home_repair_service` | 跨平台緊湊工具卡片總覽、分類篩選、即時搜尋、右上角 S2 Design 官網連結與 BYOK 金鑰保險箱（設定檔：[`data/tools.json`](data/tools.json)） |
+| **蘇的工具箱 (主入口)** | [`/index.html`](index.html) | `v1.2.0` | 主頁面 | `home_repair_service` | 跨平台緊湊工具卡片總覽、分類篩選、即時搜尋、右上角 S2 Design 官網連結與 BYOK 金鑰保險箱（設定檔：[`data/tools.json`](data/tools.json)） |
 | **行程規劃板** | [`/trip-planner/`](trip-planner/index.html) | `v6.0` | **新分頁** | `map` | 多日行程排程、Leaflet 互動地圖、QR Code 分享。目錄內含樣板：[`template-london-35-v4.xlsx`](trip-planner/template-london-35-v4.xlsx) |
 | **語言學習中心** | [`/learning-language/`](learning-language/index.html) | `2 主題` | **原頁面** (次主題卡開新分頁) | `translate` | 次主題入口頁（設定檔：[`learning-language/topics.json`](learning-language/topics.json)），內含兩張開啟新分頁之主題卡：<br/>• [冬季旅遊日文實戰手冊 (`japanese.html`)](learning-language/japanese.html)<br/>• [美東旅遊英文實戰手冊 (`english.html`)](learning-language/english.html) |
 | **純淨網頁列印** | [`/web-print/`](web-print/index.html) | `v2.2` | **新分頁** | `print` | 多通道正文擷取、1:1 A4 分頁格線模擬與無干擾列印。工具頂部內建活文件導覽按鈕（保留於主目錄）：<br/>• [互動操作說明 (`guide.html`)](web-print/guide.html)<br/>• [版本演進日誌 (`history.html`)](web-print/history.html) |
+| **智能發票報帳辨識** | [`/invoice-scanner/`](invoice-scanner/index.html) | `BYOK AI` | **新分頁** | `receipt_long` | 台灣電子發票 QR Code 本地條碼直讀結合 Gemini AI 店名與報帳分類辨識，支援單筆編輯與一鍵匯出 Excel 報帳表（連動 `vault.js` 金鑰保險箱） |
+| **影印機計數清單擷取** | [`/copier-counter/`](copier-counter/index.html) | `BYOK AI` | **新分頁** | `document_scanner` | 批次上傳事務機計數清單照片，透過 Gemini AI 自動擷取右上角日期與黑白/全彩讀數，一鍵複製貼入 Excel（連動 `vault.js` 金鑰保險箱） |
 
 ---
 
@@ -83,6 +85,10 @@ tools/
 │   ├── index.html                      # 主程式 (v2.2)
 │   ├── guide.html                      # ★ 互動操作手冊 (活文件，保留於主目錄)
 │   └── history.html                    # ★ 版本演進日誌 (活文件，保留於主目錄)
+├── invoice-scanner/                    # 【工具 4】智能發票報帳辨識 (BYOK Gemini AI + QR 直讀)
+│   └── index.html
+├── copier-counter/                     # 【工具 5】影印機計數清單擷取 (BYOK Gemini AI 批次擷取)
+│   └── index.html
 ├── doc/
 │   ├── spec/                           # 【正式規格書】(分章節撰寫，跨電腦無縫接續基準)
 │   │   ├── 00_overview.md
@@ -92,7 +98,8 @@ tools/
 │   │   └── 04_workflow_and_database_policy.md
 │   └── dev/                            # 【開發計畫區】(plan_<功能名稱>.md)
 │       ├── plan_portal_initial_setup.md
-│       └── plan_card_layout_refinement.md
+│       ├── plan_card_layout_refinement.md
+│       └── plan_ai_ocr_tools_integration.md
 ├── server.js                           # 本地安全開發伺服器 (Node.js 127.0.0.1:8080)
 ├── start-server.ps1 / start-server.bat # 啟動伺服器腳本
 ├── stop-server.ps1  / stop-server.bat  # 關閉伺服器腳本
@@ -106,6 +113,11 @@ tools/
 
 ## 📝 更新日誌 (Changelog)
 
+- **2026-11-25 (v1.2.0)**：
+  - **新增兩項 BYOK Gemini AI 辨識工具**（詳見 [`doc/dev/plan_ai_ocr_tools_integration.md`](doc/dev/plan_ai_ocr_tools_integration.md)）：
+    1. 新增 [`invoice-scanner/index.html`](invoice-scanner/index.html)（**智能發票報帳辨識**）與 [`copier-counter/index.html`](copier-counter/index.html)（**影印機計數清單擷取**），並在首頁註冊兩張獨立緊湊卡片（分類：`AI 辨識`）。
+    2. 兩項工具全面統一為 **深藍專業儀表板風（Navy Professional Dashboard）** 與 **Google Material Symbols Outlined** 圖示系統。
+    3. 完成 4 道資安加固：打通 `assets/js/vault.js` 全站金鑰保險箱（支援 Session 暫存與 Local 記憶互通）、Gemini API Key 改由 `x-goog-api-key` HTTP Header 傳送（不暴露於 URL）、全欄位 `escapeHtml()` 防範 DOM XSS、外部連結補齊 `rel="noopener noreferrer"`。
 - **2026-11-25 (v1.1.1)**：
   - 新增跨裝置靜態資源防快取版本參數（Cache-Busting `?v=1.1.1`）於 `index.html` 與 `learning-language/index.html`，確保 GitHub Pages 更新後手機與電腦瀏覽器皆能自動載入最新樣式與設定。
 - **2026-11-25 (v1.1.0)**：

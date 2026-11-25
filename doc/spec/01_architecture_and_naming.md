@@ -7,7 +7,7 @@
 ## 1.1 雙層導覽系統架構
 
 系統採用 **「主入口網 →（直達工具 或 次主題入口）→ 實際工具 / 操作手冊 / 改版歷史」** 的雙層彈性架構：
-- **第一層（主入口 `index.html`）**：由 `assets/js/portal.js` 讀取 `data/tools.json`，展示三大核心工具緊湊卡片（`trip-planner`、`learning-language`、`web-print`），頂部導覽列右上角提供 **[S2 Design 官網 (https://s2design.com.tw/)](https://s2design.com.tw/)** 按鈕與 BYOK 本地 API 金鑰保險箱 (`assets/js/vault.js`)。除「語言學習中心」在原頁面進入第二層外，其餘工具卡片點擊皆開啟新分頁。
+- **第一層（主入口 `index.html`）**：由 `assets/js/portal.js` 讀取 `data/tools.json`，展示五大核心工具緊湊卡片（`trip-planner`、`learning-language`、`web-print`、`invoice-scanner`、`copier-counter`），頂部導覽列右上角提供 **[S2 Design 官網 (https://s2design.com.tw/)](https://s2design.com.tw/)** 按鈕與 BYOK 本地 API 金鑰保險箱 (`assets/js/vault.js`)。除「語言學習中心」在原頁面進入第二層外，其餘工具卡片點擊皆開啟新分頁。
 - **第二層（次主題入口 `learning-language/index.html`）**：點擊「語言學習中心」卡片後進入次主題選擇頁，由 `learning-language/topics.json` 動態渲染「冬季旅遊日文實戰手冊 (`japanese.html`)」與「美東旅遊英文實戰手冊 (`english.html`)」緊湊卡片（點擊皆開啟新分頁），未來可無限擴充其他語言或學習主題。
 
 ---
@@ -45,3 +45,5 @@
 | **純淨網頁列印 (主程式)** | `web-print/index.html` | `網頁列印/網頁列印.html` | v2.2 版，已內建導覽按鈕與 DOM XSS 淨化 |
 | **純淨網頁列印 (操作說明)** | `web-print/guide.html` | `網頁列印/網頁列印_操作說明_v2.2.html` | **活文件保留於 `web-print/` 主目錄** |
 | **純淨網頁列印 (改版歷史)** | `web-print/history.html` | `網頁列印/網頁列印_history_v2.2.html` | **活文件保留於 `web-print/` 主目錄** |
+| **智能發票報帳辨識 (主程式)** | `invoice-scanner/index.html` | `new project/發票.html` | 深藍專業儀表板風 + 串接 `vault.js` + `x-goog-api-key` Header 防護 |
+| **影印機計數清單擷取 (主程式)** | `copier-counter/index.html` | `new project/影印機辨識.html` | 深藍專業儀表板風 + 串接 `vault.js` + `x-goog-api-key` Header 防護 |
