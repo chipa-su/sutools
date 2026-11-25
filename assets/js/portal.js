@@ -1,10 +1,11 @@
 /**
- * 蘇的工具箱 (SU's TOOLBOX) — 資料驅動入口渲染引擎 (portal.js)
+ * 蘇的工具箱 (SU's TOOLBOX) — 資料驅動入口渲染引擎 (portal.js v1.1)
  * -----------------------------------------------------------------
- * 資安設計原則：
+ * 資安與版面設計原則：
  * 1. 全面採用 createElement 與 textContent，零 innerHTML 動態拼接，徹底杜絕 DOM XSS。
  * 2. 嚴格檢查所有 URL Schema，僅允許相對路徑 (./ 或 ../) 與 http://, https://。
- * 3. 所有外部連結強制加上 target="_blank" 與 rel="noopener noreferrer" 防範 Tabnabbing。
+ * 3. 緊湊卡片結構：無標題後箭頭、無底部附屬按鈕欄，說明文字統一置於標題下方的灰色色帶框 (.card-desc-box)。
+ * 4. 除語言學習中心 (openInNewTab: false) 外，各工具與語言手冊卡片皆以新分頁開啟並強制加上 rel="noopener noreferrer"。
  */
 
 (function () {
@@ -32,7 +33,7 @@
 
   function buildCardElement(item) {
     const article = document.createElement('article');
-    article.className = 'tool-card' + (item.isExternal ? ' is-brand' : '');
+    article.className = 'tool-card';
     if (item.accentColor) {
       article.style.setProperty('--card-accent', item.accentColor);
     }
@@ -40,16 +41,21 @@
       article.style.setProperty('--card-accent-soft', item.accentSoft);
     }
 
-    // 主連結區域
+    // 整張卡片主連結區域
     const mainLink = document.createElement('a');
     mainLink.className = 'card-main-link';
     mainLink.href = isSafeUrl(item.url) ? item.url : '#';
-    if (item.isExternal) {
+
+    const shouldOpenNewTab = Boolean(item.openInNewTab || item.isExternal);
+    if (shouldOpenNewTab) {
       mainLink.target = '_blank';
       mainLink.rel = 'noopener noreferrer';
     }
 
-    // 卡片頂部：Google Material Icon + 徽章
+    // 卡片上半部：Google Material Icon + 徽章 + 標題
+    const headerBlock = document.createElement('div');
+    headerBlock.className = 'card-header-block';
+
     const topRow = document.createElement('div');
     topRow.className = 'card-top';
 
@@ -69,7 +75,7 @@
 
     if (item.version) {
       const verBadge = document.createElement('span');
-      verBadge.className = 'badge ' + (item.isExternal ? 'external' : 'version');
+      verBadge.className = 'badge version';
       verBadge.textContent = item.version;
       badgesWrap.appendChild(verBadge);
     }
@@ -77,7 +83,7 @@
     topRow.appendChild(iconWrap);
     topRow.appendChild(badgesWrap);
 
-    // 卡片標題與英文副標
+    // 卡片標題與英文副標 (不顯示後方箭頭符號)
     const headings = document.createElement('div');
     headings.className = 'card-headings';
 
@@ -90,65 +96,24 @@
 
     const titleH2 = document.createElement('h2');
     titleH2.className = 'card-title';
-    const titleText = document.createElement('span');
-    titleText.textContent = item.title || '未命名工具';
-    titleH2.appendChild(titleText);
-    titleH2.appendChild(createIcon(item.isExternal ? 'open_in_new' : 'arrow_forward', 'launch-arrow'));
+    titleH2.textContent = item.title || '未命名工具';
     headings.appendChild(titleH2);
 
-    // 卡片簡短說明
+    headerBlock.appendChild(topRow);
+    headerBlock.appendChild(headings);
+
+    // 標題下方灰色框：放置簡短說明文字
+    const descBox = document.createElement('div');
+    descBox.className = 'card-desc-box';
+
     const descP = document.createElement('p');
     descP.className = 'card-desc';
     descP.textContent = item.description || '';
+    descBox.appendChild(descP);
 
-    mainLink.appendChild(topRow);
-    mainLink.appendChild(headings);
-    mainLink.appendChild(descP);
+    mainLink.appendChild(headerBlock);
+    mainLink.appendChild(descBox);
     article.appendChild(mainLink);
-
-    // 卡片底部：附屬連結 (如 guide.html / history.html / 樣板下載) 或進入提示
-    const footer = document.createElement('div');
-    footer.className = 'card-footer';
-
-    const sublinksWrap = document.createElement('div');
-    sublinksWrap.className = 'sublinks-list';
-
-    if (Array.isArray(item.subLinks) && item.subLinks.length > 0) {
-      item.subLinks.forEach(sub => {
-        if (!isSafeUrl(sub.url)) return;
-        const subA = document.createElement('a');
-        subA.className = 'sublink-btn';
-        subA.href = sub.url;
-        if (sub.isExternal) {
-          subA.target = '_blank';
-          subA.rel = 'noopener noreferrer';
-        }
-        if (sub.download) {
-          subA.setAttribute('download', '');
-        }
-        subA.appendChild(createIcon(sub.icon || 'link'));
-        const lbl = document.createElement('span');
-        lbl.textContent = sub.label || '附屬連結';
-        subA.appendChild(lbl);
-        sublinksWrap.appendChild(subA);
-      });
-    }
-
-    const enterHint = document.createElement('a');
-    enterHint.className = 'enter-hint';
-    enterHint.href = isSafeUrl(item.url) ? item.url : '#';
-    if (item.isExternal) {
-      enterHint.target = '_blank';
-      enterHint.rel = 'noopener noreferrer';
-    }
-    const hintText = document.createElement('span');
-    hintText.textContent = item.actionLabel || (item.isExternal ? '造訪網站' : '開啟工具');
-    enterHint.appendChild(hintText);
-    enterHint.appendChild(createIcon(item.isExternal ? 'north_east' : 'chevron_right'));
-
-    footer.appendChild(sublinksWrap);
-    footer.appendChild(enterHint);
-    article.appendChild(footer);
 
     return article;
   }

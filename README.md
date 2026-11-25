@@ -6,7 +6,7 @@
 - **設計規範**：[DESIGN.md](DESIGN.md)
 - **AI 協作與資安準則**：[AGENTS.md](AGENTS.md)
 - **系統規格書總覽**：[doc/spec/00_overview.md](doc/spec/00_overview.md)
-- **開發計畫紀錄**：[doc/dev/plan_portal_initial_setup.md](doc/dev/plan_portal_initial_setup.md)
+- **開發計畫紀錄**：[doc/dev/plan_portal_initial_setup.md](doc/dev/plan_portal_initial_setup.md)、[doc/dev/plan_card_layout_refinement.md](doc/dev/plan_card_layout_refinement.md)
 
 ---
 
@@ -31,13 +31,12 @@
 
 ## 🧰 工具箱收錄清單 (Tools Inventory)
 
-| 卡片名稱 | 標準路徑 | 版本 / 類型 | Google Icon | 功能簡介與活文件連結 |
-| :--- | :--- | :--- | :--- | :--- |
-| **蘇的工具箱 (主入口)** | [`/index.html`](index.html) | `v1.0.0` | `home_repair_service` | 跨平台工具總覽、分類篩選、即時搜尋與 BYOK 金鑰保險箱（設定檔：[`data/tools.json`](data/tools.json)） |
-| **行程規劃板** | [`/trip-planner/`](trip-planner/index.html) | `v6.0` | `map` | 多日行程排程、Leaflet 互動地圖、QR Code 分享。附屬樣板：[`template-london-35-v4.xlsx`](trip-planner/template-london-35-v4.xlsx) |
-| **語言學習中心** | [`/learning-language/`](learning-language/index.html) | `Multi-Topic` | `translate` | 次主題入口頁（設定檔：[`learning-language/topics.json`](learning-language/topics.json)），內含：<br/>• [冬季旅遊日文實戰手冊 (`japanese.html`)](learning-language/japanese.html)<br/>• [美東旅遊英文實戰手冊 (`english.html`)](learning-language/english.html) |
-| **純淨網頁列印** | [`/web-print/`](web-print/index.html) | `v2.2` | `print` | 多通道正文擷取、1:1 A4 分頁格線模擬與無干擾列印。附屬活文件（保留於主目錄）：<br/>• [互動操作說明 (`guide.html`)](web-print/guide.html)<br/>• [版本演進日誌 (`history.html`)](web-print/history.html) |
-| **S2 Design 官方網站** | `https://s2design.com.tw/` | `OFFICIAL` | `captive_portal` | 蘇的官方設計品牌與作品集網站（外部連結卡片） |
+| 卡片名稱 | 標準路徑 | 版本 / 類型 | 開啟方式 | Google Icon | 功能簡介與活文件連結 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **蘇的工具箱 (主入口)** | [`/index.html`](index.html) | `v1.1.0` | 主頁面 | `home_repair_service` | 跨平台緊湊工具卡片總覽、分類篩選、即時搜尋、右上角 S2 Design 官網連結與 BYOK 金鑰保險箱（設定檔：[`data/tools.json`](data/tools.json)） |
+| **行程規劃板** | [`/trip-planner/`](trip-planner/index.html) | `v6.0` | **新分頁** | `map` | 多日行程排程、Leaflet 互動地圖、QR Code 分享。目錄內含樣板：[`template-london-35-v4.xlsx`](trip-planner/template-london-35-v4.xlsx) |
+| **語言學習中心** | [`/learning-language/`](learning-language/index.html) | `2 主題` | **原頁面** (次主題卡開新分頁) | `translate` | 次主題入口頁（設定檔：[`learning-language/topics.json`](learning-language/topics.json)），內含兩張開啟新分頁之主題卡：<br/>• [冬季旅遊日文實戰手冊 (`japanese.html`)](learning-language/japanese.html)<br/>• [美東旅遊英文實戰手冊 (`english.html`)](learning-language/english.html) |
+| **純淨網頁列印** | [`/web-print/`](web-print/index.html) | `v2.2` | **新分頁** | `print` | 多通道正文擷取、1:1 A4 分頁格線模擬與無干擾列印。工具頂部內建活文件導覽按鈕（保留於主目錄）：<br/>• [互動操作說明 (`guide.html`)](web-print/guide.html)<br/>• [版本演進日誌 (`history.html`)](web-print/history.html) |
 
 ---
 
@@ -68,7 +67,7 @@ tools/
 │       ├── portal.js                   # 資料驅動卡片渲染、分類篩選與搜尋引擎 (Zero-innerHTML)
 │       └── vault.js                    # 本地 API Key 保險箱模組 (BYOK 資安防護)
 ├── data/
-│   └── tools.json                      # 【主入口註冊表】首頁所有工具卡片與 S2 Design 官網連結
+│   └── tools.json                      # 【主入口註冊表】首頁所有工具卡片設定
 ├── _skills/                            # 【AI Skills 與開發提示詞專區】
 │   └── gemini-code-1795498926267.md
 ├── trip-planner/                       # 【工具 1】行程規劃板
@@ -92,7 +91,8 @@ tools/
 │   │   ├── 03_security_and_release_gate.md
 │   │   └── 04_workflow_and_database_policy.md
 │   └── dev/                            # 【開發計畫區】(plan_<功能名稱>.md)
-│       └── plan_portal_initial_setup.md
+│       ├── plan_portal_initial_setup.md
+│       └── plan_card_layout_refinement.md
 ├── server.js                           # 本地安全開發伺服器 (Node.js 127.0.0.1:8080)
 ├── start-server.ps1 / start-server.bat # 啟動伺服器腳本
 ├── stop-server.ps1  / stop-server.bat  # 關閉伺服器腳本
@@ -106,6 +106,12 @@ tools/
 
 ## 📝 更新日誌 (Changelog)
 
+- **2026-11-25 (v1.1.0)**：
+  - **卡片版面緊湊化改版**（詳見 [`doc/dev/plan_card_layout_refinement.md`](doc/dev/plan_card_layout_refinement.md)）：
+    1. 移除首頁重複的「S2 Design 官方網站」卡片（保留頂部導覽列右上角官網按鈕）。
+    2. 取消卡片底部灰色附屬按鈕欄，將灰色區塊上移至標題下方包覆說明文字（`.card-desc-box`），大幅縮減卡片高度。
+    3. 移除卡片標題後方的小箭頭符號。
+    4. 除「語言學習中心」在原頁面切換外，其餘所有工具卡片及語言學習第二頁的主題小卡片皆統一為點擊開啟新分頁（`target="_blank" rel="noopener noreferrer"`）。
 - **2026-11-24 (v1.0.0)**：
   - 完成資料夾與檔名標準化英文 `kebab-case` 重構（`trip-planner/`、`learning-language/`、`web-print/`、`_skills/`），保留 `web-print/guide.html` 與 `history.html` 於工具第一層主目錄。
   - 完成深藍專業儀表板風主入口首頁 (`index.html` + `data/tools.json`) 與語言學習次主題入口頁 (`learning-language/index.html` + `topics.json`)，全面採用 Google Material Symbols Outlined 圖示，並收錄 `https://s2design.com.tw/` 官方品牌卡片。

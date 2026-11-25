@@ -299,11 +299,11 @@ body {
   text-decoration: underline;
 }
 
-/* ── 工具卡片網格 (Cards Grid) ─────────────────────── */
+/* ── 工具卡片網格 (Cards Grid - Compact v1.1) ─────────────────────── */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
 }
 
 .tool-card {
@@ -313,8 +313,7 @@ body {
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   position: relative;
   overflow: hidden;
 }
@@ -329,54 +328,51 @@ body {
   background: var(--card-accent, var(--accent-primary));
 }
 
-.tool-card.is-brand::before {
-  background: linear-gradient(90deg, #1971C2, #0B7285);
-}
-
 .tool-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-hover);
-  border-color: var(--accent-primary);
+  border-color: var(--card-accent, var(--accent-primary));
 }
 
 .card-main-link {
-  padding: 22px 22px 18px;
+  padding: 0;
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  gap: 14px;
   flex: 1;
+}
+
+.card-header-block {
+  padding: 16px 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-panel);
 }
 
 .card-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .card-icon-wrap {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
   background: var(--card-accent-soft, var(--accent-soft));
   color: var(--card-accent, var(--accent-primary));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid rgba(11, 114, 133, 0.16);
-}
-
-.tool-card.is-brand .card-icon-wrap {
-  background: var(--accent-brand-soft);
-  color: var(--accent-brand);
-  border-color: rgba(25, 113, 194, 0.2);
+  border: 1px solid rgba(11, 114, 133, 0.15);
 }
 
 .card-icon-wrap .material-symbols-outlined {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .card-badges {
@@ -391,7 +387,7 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: 6px;
   background: var(--bg-subtle);
   color: var(--ink-secondary);
@@ -404,107 +400,41 @@ body {
   border-color: rgba(11, 114, 133, 0.22);
 }
 
-.badge.external {
-  background: var(--accent-brand-soft);
-  color: var(--accent-brand);
-  border-color: rgba(25, 113, 194, 0.25);
-}
-
 .card-headings {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .card-subtitle {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 1.5px;
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
   color: var(--ink-muted);
   text-transform: uppercase;
 }
 
 .card-title {
-  font-size: 19px;
+  font-size: 17.5px;
   font-weight: 700;
   color: var(--ink-primary);
+  line-height: 1.35;
+}
+
+/* ── 卡片下半截滿版灰色說明區 (.card-desc-box) ─────────────────────── */
+.card-desc-box {
+  background: var(--bg-subtle);
+  border-top: 1px solid var(--line-default);
+  padding: 13px 20px 15px;
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.card-title .launch-arrow {
-  font-size: 18px;
-  color: var(--ink-muted);
-  transition: transform 0.18s ease, color 0.18s ease;
-}
-
-.tool-card:hover .card-title .launch-arrow {
-  transform: translateX(3px);
-  color: var(--accent-primary);
+  align-items: flex-start;
 }
 
 .card-desc {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--ink-secondary);
-  line-height: 1.65;
-}
-
-/* ── 卡片底部附屬連結與標籤列 (Card Footer) ─────────────────────── */
-.card-footer {
-  padding: 12px 22px;
-  background: var(--bg-subtle);
-  border-top: 1px solid var(--line-default);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.sublinks-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.sublink-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-primary);
-  background: var(--bg-panel);
-  border: 1px solid var(--line-default);
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.sublink-btn:hover {
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
-  background: var(--accent-soft);
-}
-
-.sublink-btn .material-symbols-outlined {
-  font-size: 15px;
-}
-
-.enter-hint {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent-primary);
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  margin-left: auto;
-}
-
-.enter-hint .material-symbols-outlined {
-  font-size: 16px;
+  line-height: 1.55;
 }
 
 /* ── 空狀態提示 ─────────────────────── */

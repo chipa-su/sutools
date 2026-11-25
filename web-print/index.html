@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,7 @@
             min-height: var(--a4-height);
             margin: 0 auto;
             background-color: #ffffff;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
         }
 
@@ -51,7 +52,9 @@
             box-sizing: border-box;
         }
 
-        #article-container > :first-child { margin-top: 0 !important; }
+        #article-container> :first-child {
+            margin-top: 0 !important;
+        }
 
         #article-container *:not(span[style*="background-color"]):not(img):not([data-keep-style="true"]) {
             max-width: 100% !important;
@@ -62,8 +65,15 @@
             box-sizing: border-box;
         }
 
-        #article-container span[style*="background-color"] { border-radius: 4px; padding: 0 2px; }
-        #article-container p { margin-bottom: 1em; }
+        #article-container span[style*="background-color"] {
+            border-radius: 4px;
+            padding: 0 2px;
+        }
+
+        #article-container p {
+            margin-bottom: 1em;
+        }
+
         #article-container img {
             max-width: 100% !important;
             height: auto;
@@ -73,24 +83,55 @@
             transition: box-shadow 0.2s;
             display: block;
         }
-        #article-container img:hover { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5); }
-        #article-container h1, #article-container h2, #article-container h3 {
+
+        #article-container img:hover {
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
+        }
+
+        #article-container h1,
+        #article-container h2,
+        #article-container h3 {
             font-weight: bold;
             margin-top: 1.5em;
             margin-bottom: 0.5em;
         }
-        #article-container h1 { font-size: 1.55em; line-height: 1.35 !important; }
-        #article-container h2 { font-size: 1.3em; line-height: 1.4 !important; }
-        #article-container h3 { font-size: 1.12em; line-height: 1.45 !important; }
-        #article-container ul, #article-container ol { padding-left: 2em; margin-bottom: 1em; }
-        #article-container ul { list-style-type: disc; }
-        #article-container ol { list-style-type: decimal; }
+
+        #article-container h1 {
+            font-size: 1.55em;
+            line-height: 1.35 !important;
+        }
+
+        #article-container h2 {
+            font-size: 1.3em;
+            line-height: 1.4 !important;
+        }
+
+        #article-container h3 {
+            font-size: 1.12em;
+            line-height: 1.45 !important;
+        }
+
+        #article-container ul,
+        #article-container ol {
+            padding-left: 2em;
+            margin-bottom: 1em;
+        }
+
+        #article-container ul {
+            list-style-type: disc;
+        }
+
+        #article-container ol {
+            list-style-type: decimal;
+        }
+
         #article-container blockquote {
             border-left: 4px solid #cbd5e1;
             padding-left: 1rem;
             margin: 1rem 0;
             color: #475569 !important;
         }
+
         #article-container table {
             width: 100%;
             max-width: 100% !important;
@@ -100,16 +141,21 @@
             font-size: 0.92em;
             word-break: break-word;
         }
-        #article-container th, #article-container td {
+
+        #article-container th,
+        #article-container td {
             border: 1px solid #cbd5e1;
             padding: 0.45rem 0.65rem;
             text-align: left;
             word-break: break-word;
         }
-        #article-container pre, #article-container code {
+
+        #article-container pre,
+        #article-container code {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
             font-size: 0.9em;
         }
+
         #article-container pre {
             border: 1px solid #e2e8f0;
             border-radius: 0.5rem;
@@ -148,9 +194,11 @@
             z-index: 20;
             overflow: hidden;
         }
+
         #page-guides-layer.guides-hidden {
             display: none !important;
         }
+
         .page-break-line {
             position: absolute;
             left: 0;
@@ -160,6 +208,7 @@
             align-items: center;
             justify-content: center;
         }
+
         .page-break-label {
             transform: translateY(-50%);
             background-color: #fef2f2;
@@ -172,6 +221,7 @@
             letter-spacing: 0.02em;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
+
         /* 左右 20mm 邊界淡參考線 */
         .margin-guide-left,
         .margin-guide-right {
@@ -181,8 +231,14 @@
             width: 0;
             border-left: 1px dotted rgba(148, 163, 184, 0.35);
         }
-        .margin-guide-left { left: var(--a4-margin); }
-        .margin-guide-right { right: var(--a4-margin); }
+
+        .margin-guide-left {
+            left: var(--a4-margin);
+        }
+
+        .margin-guide-right {
+            right: var(--a4-margin);
+        }
 
         /* ==========================================
            ★ Icon 按鈕與即時浮動提示 (Tooltip)
@@ -198,16 +254,20 @@
             transition: all 0.16s ease;
             flex-shrink: 0;
         }
+
         .icon-btn:active:not(:disabled) {
             transform: scale(0.95);
         }
+
         .icon-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
         }
+
         .has-tip {
             position: relative;
         }
+
         .has-tip::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -229,16 +289,19 @@
             box-shadow: 0 6px 16px rgba(15, 23, 42, 0.22);
             z-index: 100;
         }
+
         .has-tip:hover::after {
             opacity: 1;
             visibility: visible;
             transform: translateX(-50%) translateY(0);
         }
+
         .has-tip.tip-right::after {
             left: auto;
             right: 0;
             transform: translateY(-4px);
         }
+
         .has-tip.tip-right:hover::after {
             transform: translateY(0);
         }
@@ -249,17 +312,20 @@
             background-color: #fef08a !important;
             color: #854d0e !important;
         }
+
         .highlighter-active-blue {
             box-shadow: 0 0 0 2px #3b82f6 inset !important;
             background-color: #bfdbfe !important;
             color: #1e40af !important;
         }
+
         .toggle-active {
             background-color: #eff6ff !important;
             border-color: #3b82f6 !important;
             color: #1d4ed8 !important;
             box-shadow: 0 0 0 1px #3b82f6 inset;
         }
+
         .guides-active {
             background-color: #fef2f2 !important;
             border-color: #f87171 !important;
@@ -275,7 +341,9 @@
                 size: A4 portrait;
                 margin: 20mm;
             }
-            html, body {
+
+            html,
+            body {
                 width: 100% !important;
                 height: auto !important;
                 background-color: #fff !important;
@@ -285,7 +353,10 @@
                 padding: 0 !important;
                 overflow: visible !important;
             }
-            .print-hidden { display: none !important; }
+
+            .print-hidden {
+                display: none !important;
+            }
 
             /* 解除外層 Flexbox，避免 Chromium 列印跨頁跑版或異常縮放 */
             #layout-wrapper {
@@ -295,6 +366,7 @@
                 margin: 0 !important;
                 padding: 0 !important;
             }
+
             #main-stage {
                 display: block !important;
                 width: 100% !important;
@@ -302,6 +374,7 @@
                 padding: 0 !important;
                 overflow: visible !important;
             }
+
             /* 鎖定 170mm 內容寬度，與螢幕 210mm - 20mm*2 完全一致 */
             #paper-stage {
                 width: var(--a4-content-width) !important;
@@ -312,6 +385,7 @@
                 padding: 0 !important;
                 box-shadow: none !important;
             }
+
             #article-container {
                 width: var(--a4-content-width) !important;
                 min-width: var(--a4-content-width) !important;
@@ -324,16 +398,21 @@
                 font-size: var(--doc-font-size) !important;
                 line-height: var(--doc-line-height) !important;
             }
+
             #article-container img {
                 max-width: 100% !important;
                 height: auto !important;
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
-            h1, h2, h3 {
+
+            h1,
+            h2,
+            h3 {
                 page-break-after: avoid;
                 break-after: avoid;
             }
+
             #source-footer {
                 display: block !important;
                 padding: 6mm 0 0 0 !important;
@@ -341,136 +420,209 @@
         }
     </style>
 </head>
+
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
 
     <!-- 隱藏的 100mm 單位校正尺，用來精準換算當前瀏覽器的 px/mm 比例 -->
-    <div id="mm-calibrator" class="print-hidden" style="position: fixed; left: -9999px; top: 0; width: 100mm; height: 100mm; pointer-events: none; visibility: hidden;"></div>
+    <div id="mm-calibrator" class="print-hidden"
+        style="position: fixed; left: -9999px; top: 0; width: 100mm; height: 100mm; pointer-events: none; visibility: hidden;">
+    </div>
 
     <!-- 頂部控制列 (純 Icon 化設計) -->
-    <div class="print-hidden sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200 shadow-sm px-4 py-2.5 flex flex-col lg:flex-row gap-3 items-center justify-between">
-        
+    <div
+        class="print-hidden sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200 shadow-sm px-4 py-2.5 flex flex-col lg:flex-row gap-3 items-center justify-between">
+
         <!-- 左側：網址輸入與擷取控制 -->
         <div class="flex w-full lg:w-auto flex-1 max-w-2xl items-center gap-2">
             <div class="relative flex-1">
-                <input type="url" id="url-input" placeholder="請在此貼上文章網址 (按 Enter 即可擷取)..." class="w-full h-10 pl-3.5 pr-9 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm bg-gray-50/50 focus:bg-white">
-                <button id="clear-url-btn" type="button" class="has-tip hidden absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100" data-tooltip="清除網址" aria-label="清除網址">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                <input type="url" id="url-input" placeholder="請在此貼上文章網址 (按 Enter 即可擷取)..."
+                    class="w-full h-10 pl-3.5 pr-9 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm bg-gray-50/50 focus:bg-white">
+                <button id="clear-url-btn" type="button"
+                    class="has-tip hidden absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
+                    data-tooltip="清除網址" aria-label="清除網址">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
 
             <!-- 擷取文章 (重要功能：藍色實心底) -->
-            <button id="fetch-btn" type="button" class="icon-btn has-tip bg-blue-600 hover:bg-blue-700 text-white shadow-sm" data-tooltip="擷取文章" aria-label="擷取文章">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            <button id="fetch-btn" type="button"
+                class="icon-btn has-tip bg-blue-600 hover:bg-blue-700 text-white shadow-sm" data-tooltip="擷取文章"
+                aria-label="擷取文章">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
             </button>
 
             <!-- 開啟原始網址 -->
-            <button id="open-url-btn" type="button" disabled class="icon-btn has-tip bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200" data-tooltip="尚未輸入有效網址" aria-label="開啟原始網址">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            <button id="open-url-btn" type="button" disabled
+                class="icon-btn has-tip bg-sky-50 hover:bg-sky-100 text-sky-600 border border-sky-200"
+                data-tooltip="尚未輸入有效網址" aria-label="開啟原始網址">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
             </button>
 
             <!-- 通道測試 -->
-            <button id="open-test-btn" type="button" class="icon-btn has-tip bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200" data-tooltip="5 大網站通道測試" aria-label="通道測試">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <button id="open-test-btn" type="button"
+                class="icon-btn has-tip bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200"
+                data-tooltip="5 大網站通道測試" aria-label="通道測試">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </button>
 
             <!-- 操作說明 (guide.html) 與改版紀錄 (history.html) 與返回工具箱 -->
-            <a href="./guide.html" class="icon-btn has-tip bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200" data-tooltip="互動操作說明手冊" aria-label="操作說明">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <a href="./guide.html"
+                class="icon-btn has-tip bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200"
+                data-tooltip="互動操作說明手冊" aria-label="操作說明">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </a>
-            <a href="./history.html" class="icon-btn has-tip bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200" data-tooltip="版本演進日誌 (v2.2)" aria-label="改版紀錄">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <a href="./history.html"
+                class="icon-btn has-tip bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200"
+                data-tooltip="版本演進日誌 (v2.2)" aria-label="改版紀錄">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </a>
-            <a href="../" class="icon-btn has-tip bg-slate-800 hover:bg-slate-900 text-white border border-slate-700" data-tooltip="返回蘇的工具箱首頁" aria-label="返回工具箱">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            <a href="../" class="icon-btn has-tip bg-slate-800 hover:bg-slate-900 text-white border border-slate-700"
+                data-tooltip="返回蘇的工具箱首頁" aria-label="返回工具箱">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
             </a>
         </div>
 
         <!-- 右側：編輯、排版與輸出工具 -->
         <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
-            
+
             <!-- 編輯工具群組 -->
             <div class="flex items-center gap-1.5 pr-2 border-r border-gray-200">
-                <button id="btn-undo" type="button" class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200" data-tooltip="復原 (Ctrl+Z)" aria-label="復原">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                <button id="btn-undo" type="button"
+                    class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200"
+                    data-tooltip="復原 (Ctrl+Z)" aria-label="復原">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                     </svg>
                 </button>
-                <button id="btn-reset" type="button" class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200" data-tooltip="還原初始狀態" aria-label="還原初始狀態">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <button id="btn-reset" type="button"
+                    class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200"
+                    data-tooltip="還原初始狀態" aria-label="還原初始狀態">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                 </button>
 
                 <!-- 黃色螢光筆 -->
-                <button id="btn-highlight-yellow" type="button" class="icon-btn has-tip bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200" data-tooltip="黃色螢光筆模式" aria-label="黃色螢光筆">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                <button id="btn-highlight-yellow" type="button"
+                    class="icon-btn has-tip bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200"
+                    data-tooltip="黃色螢光筆模式" aria-label="黃色螢光筆">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                 </button>
 
                 <!-- 藍色螢光筆 -->
-                <button id="btn-highlight-blue" type="button" class="icon-btn has-tip bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200" data-tooltip="藍色螢光筆模式" aria-label="藍色螢光筆">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                <button id="btn-highlight-blue" type="button"
+                    class="icon-btn has-tip bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200"
+                    data-tooltip="藍色螢光筆模式" aria-label="藍色螢光筆">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                 </button>
 
                 <!-- 隱藏／顯示所有圖片 -->
-                <button id="btn-toggle-images" type="button" class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200" data-tooltip="隱藏所有圖片（省墨水列印）" aria-label="切換隱藏圖片">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <button id="btn-toggle-images" type="button"
+                    class="icon-btn has-tip bg-white hover:bg-gray-100 text-gray-600 border border-gray-200"
+                    data-tooltip="隱藏所有圖片（省墨水列印）" aria-label="切換隱藏圖片">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </button>
 
                 <!-- 分頁格線開關 (預設開啟) -->
-                <button id="btn-toggle-guides" type="button" class="icon-btn has-tip guides-active bg-white hover:bg-red-50 text-red-600 border border-red-200" data-tooltip="隱藏 A4 分頁格線（目前開啟）" aria-label="切換分頁格線">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2m-8 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M4 12h3m4 0h2m4 0h3" />
+                <button id="btn-toggle-guides" type="button"
+                    class="icon-btn has-tip guides-active bg-white hover:bg-red-50 text-red-600 border border-red-200"
+                    data-tooltip="隱藏 A4 分頁格線（目前開啟）" aria-label="切換分頁格線">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2m-8 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M4 12h3m4 0h2m4 0h3" />
                     </svg>
                 </button>
             </div>
 
             <!-- 字體與行距滑桿 (改用 Icon + Tooltip) -->
             <div class="flex items-center gap-2 px-1">
-                <div id="font-size-wrap" class="has-tip flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 h-10" data-tooltip="字體大小：17px">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div id="font-size-wrap"
+                    class="has-tip flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 h-10"
+                    data-tooltip="字體大小：17px">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 shrink-0" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 7V5h16v2M9 20h6M12 5v15" />
                     </svg>
-                    <input type="range" id="font-size-slider" min="12" max="28" value="17" class="w-14 sm:w-16 cursor-pointer accent-blue-600" aria-label="調整字體大小">
+                    <input type="range" id="font-size-slider" min="12" max="28" value="17"
+                        class="w-14 sm:w-16 cursor-pointer accent-blue-600" aria-label="調整字體大小">
                 </div>
-                <div id="line-height-wrap" class="has-tip flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 h-10" data-tooltip="文章行距：1.7">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <div id="line-height-wrap"
+                    class="has-tip flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 h-10"
+                    data-tooltip="文章行距：1.7">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 shrink-0" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
-                    <input type="range" id="line-height-slider" min="1.3" max="2.2" step="0.1" value="1.7" class="w-12 sm:w-14 cursor-pointer accent-blue-600" aria-label="調整行距">
+                    <input type="range" id="line-height-slider" min="1.3" max="2.2" step="0.1" value="1.7"
+                        class="w-12 sm:w-14 cursor-pointer accent-blue-600" aria-label="調整行距">
                 </div>
             </div>
 
             <!-- 輸出工具群組 -->
             <div class="flex items-center gap-1.5 pl-2 border-l border-gray-200">
                 <!-- 匯出存檔 -->
-                <button id="btn-export-html" type="button" class="icon-btn has-tip tip-right bg-teal-50 hover:bg-teal-100 text-teal-600 border border-teal-200" data-tooltip="匯出獨立 HTML 存檔" aria-label="匯出存檔">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                <button id="btn-export-html" type="button"
+                    class="icon-btn has-tip tip-right bg-teal-50 hover:bg-teal-100 text-teal-600 border border-teal-200"
+                    data-tooltip="匯出獨立 HTML 存檔" aria-label="匯出存檔">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                     </svg>
                 </button>
 
                 <!-- 直接列印 (重要功能：綠色實心底 + 頁數即時提示) -->
-                <button id="btn-print" type="button" onclick="window.print()" class="icon-btn has-tip tip-right bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm" data-tooltip="直接列印（預估 1 頁）" aria-label="直接列印">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                <button id="btn-print" type="button" onclick="window.print()"
+                    class="icon-btn has-tip tip-right bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                    data-tooltip="直接列印（預估 1 頁）" aria-label="直接列印">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                     </svg>
                 </button>
             </div>
@@ -478,25 +630,36 @@
     </div>
 
     <!-- 載入中動畫 -->
-    <div id="loading-spinner" class="hidden fixed inset-0 bg-white/85 backdrop-blur-xs z-50 flex flex-col items-center justify-center px-4">
+    <div id="loading-spinner"
+        class="hidden fixed inset-0 bg-white/85 backdrop-blur-xs z-50 flex flex-col items-center justify-center px-4">
         <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-blue-600 mb-4"></div>
         <p id="loading-status" class="text-base font-semibold text-gray-800">正在擷取文章，請稍候...</p>
         <p id="loading-substatus" class="text-xs text-gray-500 mt-1">自動依序嘗試多個高可用通道</p>
     </div>
 
     <!-- 通道診斷測試面板 Modal -->
-    <div id="test-modal" class="print-hidden hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div id="test-modal"
+        class="print-hidden hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[88vh] flex flex-col overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-slate-50">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                         多通道相容性實測工具 (5 組指定網站)
                     </h2>
                     <p class="text-xs text-slate-500 mt-0.5">直接於您的瀏覽器環境實測 5 個目標網站，確認實際擷取成功率、耗時與圖片數量。</p>
                 </div>
-                <button id="close-test-btn" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-xl hover:bg-gray-200" title="關閉">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                <button id="close-test-btn" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-xl hover:bg-gray-200"
+                    title="關閉">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
             <div class="p-6 overflow-y-auto flex-1 space-y-4">
@@ -507,7 +670,8 @@
                         <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">3. cors.lol</span> →
                         <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded">4. AllOrigins</span>
                     </div>
-                    <button id="run-all-tests-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5">
+                    <button id="run-all-tests-btn"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5">
                         ▶ 開始實測這 5 個網站
                     </button>
                 </div>
@@ -529,16 +693,35 @@
     </div>
 
     <!-- 圖片控制浮動工具列 -->
-    <div id="image-toolbar" class="print-hidden hidden absolute z-50 bg-white border border-gray-200 shadow-xl rounded-xl p-1.5 flex gap-1 transform -translate-x-1/2 -translate-y-full mt-[-10px]">
-        <button id="img-enlarge" type="button" class="has-tip p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors" data-tooltip="放大圖片" aria-label="放大圖片">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+    <div id="image-toolbar"
+        class="print-hidden hidden absolute z-50 bg-white border border-gray-200 shadow-xl rounded-xl p-1.5 flex gap-1 transform -translate-x-1/2 -translate-y-full mt-[-10px]">
+        <button id="img-enlarge" type="button"
+            class="has-tip p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors" data-tooltip="放大圖片"
+            aria-label="放大圖片">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+            </svg>
         </button>
-        <button id="img-shrink" type="button" class="has-tip p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors" data-tooltip="縮小圖片" aria-label="縮小圖片">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" /></svg>
+        <button id="img-shrink" type="button"
+            class="has-tip p-2 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors" data-tooltip="縮小圖片"
+            aria-label="縮小圖片">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+            </svg>
         </button>
         <div class="w-px bg-gray-200 my-1"></div>
-        <button id="img-delete" type="button" class="has-tip p-2 hover:bg-red-50 rounded-lg text-red-600 transition-colors" data-tooltip="刪除圖片" aria-label="刪除圖片">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+        <button id="img-delete" type="button"
+            class="has-tip p-2 hover:bg-red-50 rounded-lg text-red-600 transition-colors" data-tooltip="刪除圖片"
+            aria-label="刪除圖片">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
         </button>
     </div>
 
@@ -552,21 +735,32 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">A4 列印預估</span>
-                        <span id="page-count-badge" class="text-xs font-bold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full">約 1 頁</span>
+                        <span id="page-count-badge"
+                            class="text-xs font-bold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full">約
+                            1 頁</span>
                     </div>
                     <div id="layout-metrics" class="text-xs text-gray-500 space-y-1">
-                        <div>字級：<span id="metric-font" class="font-mono font-semibold text-gray-700">17px</span> ｜ 行距：<span id="metric-line" class="font-mono font-semibold text-gray-700">1.7</span></div>
+                        <div>字級：<span id="metric-font" class="font-mono font-semibold text-gray-700">17px</span> ｜
+                            行距：<span id="metric-line" class="font-mono font-semibold text-gray-700">1.7</span></div>
                         <div class="text-[11px] text-gray-400">可印區 170×257mm（四邊 20mm）</div>
                     </div>
-                    <div id="channel-badge" class="hidden mt-2.5 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-lg font-medium"></div>
+                    <div id="channel-badge"
+                        class="hidden mt-2.5 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-lg font-medium">
+                    </div>
                 </div>
 
                 <!-- 文章大綱 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 max-h-[65vh] overflow-y-auto">
                     <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2 border-b pb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>文章大綱
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h7" />
+                        </svg>文章大綱
                     </h3>
-                    <ul id="toc-list" class="space-y-2 text-gray-600"><li class="text-sm text-gray-400 italic">尚未載入文章內容...</li></ul>
+                    <ul id="toc-list" class="space-y-2 text-gray-600">
+                        <li class="text-sm text-gray-400 italic">尚未載入文章內容...</li>
+                    </ul>
                 </div>
             </div>
         </aside>
@@ -580,10 +774,15 @@
                 <!-- 編輯內容區 -->
                 <div id="article-container" contenteditable="true">
                     <div id="placeholder-text" class="text-center text-gray-400 mt-28 print-hidden pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
                         <p class="font-bold text-gray-500 mb-2">A4 精準所見即所得模式 (v2.2)</p>
                         <p>請在上方輸入網址並點擊藍色擷取圖示</p>
-                        <p class="mt-4 text-blue-500 font-medium bg-blue-50 py-2 px-4 rounded-full inline-block">💡 或是直接前往目標網頁全選複製，在這裡直接貼上 (Ctrl+V)</p>
+                        <p class="mt-4 text-blue-500 font-medium bg-blue-50 py-2 px-4 rounded-full inline-block">💡
+                            或是直接前往目標網頁全選複製，在這裡直接貼上 (Ctrl+V)</p>
                         <p class="text-sm mt-4">紅色虛線即為實際 A4 列印分頁位置（每頁可印高度 257mm）</p>
                     </div>
                 </div>
@@ -598,12 +797,18 @@
 
     <!-- 擷取失敗 HTML 模板 -->
     <template id="error-template">
-        <div class="text-red-600 mt-8 p-6 md:p-8 bg-red-50 rounded-xl border border-red-100 text-left max-w-2xl mx-auto" contenteditable="false" data-keep-style="true">
+        <div class="text-red-600 mt-8 p-6 md:p-8 bg-red-50 rounded-xl border border-red-100 text-left max-w-2xl mx-auto"
+            contenteditable="false" data-keep-style="true">
             <div class="flex items-center gap-3 mb-4 justify-center sm:justify-start">
-                <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
                 <h2 class="text-xl font-bold">所有自動通道皆擷取失敗</h2>
             </div>
-            <div class="mb-4 text-xs font-mono bg-white/80 p-3 rounded-lg border border-red-200 text-red-700 whitespace-pre-wrap error-msg"></div>
+            <div
+                class="mb-4 text-xs font-mono bg-white/80 p-3 rounded-lg border border-red-200 text-red-700 whitespace-pre-wrap error-msg">
+            </div>
             <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
                 <p class="font-bold text-gray-800 mb-2">💡 常見失敗原因：</p>
                 <ul class="list-disc list-inside text-sm text-gray-600 space-y-1 mb-4">
@@ -613,8 +818,12 @@
                 <hr class="my-4 border-gray-200">
                 <p class="font-bold text-blue-600 mb-2 text-base">✅ 100% 成功的替代方案（手動複製貼上）：</p>
                 <ol class="list-decimal list-inside text-sm text-gray-700 space-y-1.5">
-                    <li>前往目標網頁，按 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">A</kbd> 全選並 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">C</kbd> 複製。</li>
-                    <li>回到本頁點擊下方編輯區，按 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">V</kbd> 貼上即可自動淨化排版列印。</li>
+                    <li>前往目標網頁，按 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd
+                            class="px-1.5 py-0.5 bg-gray-100 border rounded">A</kbd> 全選並 <kbd
+                            class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd
+                            class="px-1.5 py-0.5 bg-gray-100 border rounded">C</kbd> 複製。</li>
+                    <li>回到本頁點擊下方編輯區，按 <kbd class="px-1.5 py-0.5 bg-gray-100 border rounded">Ctrl</kbd> + <kbd
+                            class="px-1.5 py-0.5 bg-gray-100 border rounded">V</kbd> 貼上即可自動淨化排版列印。</li>
                 </ol>
             </div>
         </div>
@@ -926,7 +1135,7 @@
                 img.removeAttribute('width');
                 img.removeAttribute('height');
                 img.onload = schedulePageGuidesUpdate;
-                img.onerror = function() {
+                img.onerror = function () {
                     this.style.border = '1px dashed #cbd5e1';
                     this.style.padding = '8px';
                     this.style.background = '#f8fafc';
@@ -1342,4 +1551,5 @@
         updatePageGuides();
     </script>
 </body>
+
 </html>

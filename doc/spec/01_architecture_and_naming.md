@@ -7,8 +7,8 @@
 ## 1.1 雙層導覽系統架構
 
 系統採用 **「主入口網 →（直達工具 或 次主題入口）→ 實際工具 / 操作手冊 / 改版歷史」** 的雙層彈性架構：
-- **第一層（主入口 `index.html`）**：由 `assets/js/portal.js` 讀取 `data/tools.json`，展示所有核心工具卡片與 **[S2 Design 官方網站 (https://s2design.com.tw/)](https://s2design.com.tw/)** 品牌卡片，並內建 BYOK 本地 API 金鑰保險箱 (`assets/js/vault.js`)。
-- **第二層（次主題入口 `learning-language/index.html`）**：點擊「語言學習中心」卡片後進入次主題選擇頁，由 `learning-language/topics.json` 動態渲染「冬季旅遊日文實戰手冊 (`japanese.html`)」與「美東旅遊英文實戰手冊 (`english.html`)」，未來可無限擴充其他語言或學習主題。
+- **第一層（主入口 `index.html`）**：由 `assets/js/portal.js` 讀取 `data/tools.json`，展示三大核心工具緊湊卡片（`trip-planner`、`learning-language`、`web-print`），頂部導覽列右上角提供 **[S2 Design 官網 (https://s2design.com.tw/)](https://s2design.com.tw/)** 按鈕與 BYOK 本地 API 金鑰保險箱 (`assets/js/vault.js`)。除「語言學習中心」在原頁面進入第二層外，其餘工具卡片點擊皆開啟新分頁。
+- **第二層（次主題入口 `learning-language/index.html`）**：點擊「語言學習中心」卡片後進入次主題選擇頁，由 `learning-language/topics.json` 動態渲染「冬季旅遊日文實戰手冊 (`japanese.html`)」與「美東旅遊英文實戰手冊 (`english.html`)」緊湊卡片（點擊皆開啟新分頁），未來可無限擴充其他語言或學習主題。
 
 ---
 
@@ -36,7 +36,7 @@
 | **共用樣式與核心引擎** | `assets/css/dashboard.css`, `assets/js/portal.js`, `assets/js/vault.js` | *(全新建置)* | 含零 `innerHTML` 渲染引擎與 BYOK 金鑰保險箱 |
 | **本地伺服器與腳本** | `server.js`, `start-server.ps1/.bat`, `stop-server.ps1/.bat` | *(全新建置)* | 本地 `http://127.0.0.1:8080` |
 | **行程規劃板 (主程式)** | `trip-planner/index.html` | `旅行計畫表/index.html` | v6.0 版，已完成紅隊 XSS 跳脫修補 |
-| **行程規劃板 (匯入樣板)** | `trip-planner/template-london-35-v4.xlsx` | `旅行計畫表/行程事件匯入樣板_倫敦35點_v4.xlsx` | 可由首頁卡片附屬按鈕直接下載 |
+| **行程規劃板 (匯入樣板)** | `trip-planner/template-london-35-v4.xlsx` | `旅行計畫表/行程事件匯入樣板_倫敦35點_v4.xlsx` | 倫敦 35 點行程匯入樣板 |
 | **行程規劃板 (舊版備份)** | `trip-planner/_archive/trip-board-v4.html`, `v5.html`, `v6.html` | `旅行計畫表/行程規劃板_v4~v6.html` | 歷史版本歸檔保存 |
 | **語言學習 (次主題入口)** | `learning-language/index.html`, `learning-language/topics.json` | *(全新建置)* | 選擇日文/英文手冊之次主題卡片頁 |
 | **冬季旅遊日文手冊** | `learning-language/japanese.html` | `旅遊日文/旅遊日文.html` | 次主題卡片 1 |

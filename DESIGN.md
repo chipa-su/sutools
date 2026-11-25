@@ -8,8 +8,8 @@
 
 - **中文主標題**：`蘇的工具箱`
 - **英文副標題**：`SU's TOOLBOX`
-- **官方品牌外部卡片**：固定包含一張連往 **[S2 Design (https://s2design.com.tw/)](https://s2design.com.tw/)** 的品牌卡片。
-- **設計氣質**：**深藍專業儀表板風（Navy Professional Dashboard）** —— 沉穩、高對比、資訊結構分明、跨平台（桌機/平板/手機）響應式友善。
+- **官方品牌連結**：固定於頂部 Header 右上角提供連往 **[S2 Design (https://s2design.com.tw/)](https://s2design.com.tw/)** 的品牌按鈕（不在卡片網格重複放置官網卡片）。
+- **設計氣質**：**深藍專業儀表板風（Navy Professional Dashboard）** —— 沉穩、高對比、資訊結構分明、緊湊卡片設計與跨平台（桌機/平板/手機）響應式友善。
 
 ---
 
@@ -38,7 +38,7 @@
   --accent-brand: #1971C2;       /* 品牌外部連結強調色 */
 
   /* 圓角與字體 */
-  --radius-card: 10px;
+  --radius-card: 12px;
   --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", "Consolas", "Courier New", monospace;
 }
@@ -60,9 +60,13 @@
 
 ## 4. 雙層卡片導覽與目錄架構設計
 
-### 4.1 雙層入口設計
-1. **主入口頁 (`/index.html`)**：由 `/data/tools.json` 驅動。每張卡片包含：Google Material Icon、工具中文名稱、英文 Mono 副標、版本標籤、簡短說明，以及底部的快速附屬連結列（如 `guide.html` 操作手冊、`history.html` 改版紀錄、或樣板下載）。
-2. **次主題入口頁 (`/learning-language/index.html`)**：當單一領域包含多個平行子工具時（如 `learning-language` 內含冬季旅遊日文 `japanese.html`、美東旅遊英文 `english.html`，以及未來新增的語言手冊），點擊主卡片會進入次主題選擇頁（由 `topics.json` 驅動），維持主入口頁的整潔。
+### 4.1 雙層入口與緊湊卡片設計 (Compact Card Layout)
+1. **緊湊卡片規範**：
+   - 每張卡片上半部包含：Google Material Icon、分類與版本標籤、英文 Mono 副標、以及中文主標題（**標題後方不加箭頭符號**）。
+   - **下半截滿版灰色說明區（`.card-desc-box`）**：取消卡片最下方的附屬小按鈕底欄；在標題下方以一條滿版橫線（`border-top: 1px solid var(--line-default)`）將卡片分為上白、下灰兩半，整個卡片下半截填滿淺灰色（`--bg-subtle: #F4F7FB`）並放置簡短說明文字，使卡片尺寸更緊湊精練。
+2. **點擊開啟行為（新分頁 vs. 原頁面）**：
+   - **主入口頁 (`/index.html`)**：由 `/data/tools.json` 驅動。除了 **「語言學習中心 (`learning-language`)」** 點擊後在**原頁面**進入次主題頁之外，其餘所有工具卡片（`trip-planner`、`web-print` 等）點擊後一律**開啟新分頁**（`target="_blank" rel="noopener noreferrer"`）。
+   - **次主題入口頁 (`/learning-language/index.html`)**：由 `/learning-language/topics.json` 驅動。上面的語言手冊小卡片（如冬季旅遊日文 `japanese.html`、美東旅遊英文 `english.html`）100% 比照上述緊湊卡片格式，且點擊後一律**開啟新分頁**。
 
 ### 4.2 檔案命名與分類設計原則
 - **全小寫英文 `kebab-case`**：所有工具資料夾與檔案名稱一律採用英文小寫與連字號（如 `trip-planner`、`learning-language`、`web-print`）。
